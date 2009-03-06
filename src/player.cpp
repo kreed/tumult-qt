@@ -36,7 +36,7 @@ Player::Player()
 	Phonon::createPath(this, audioOutput);
 
 	_message = new QLabel;
-	_message->setWindowFlags(Qt::X11BypassWindowManagerHint);
+	_message->setWindowFlags(Qt::ToolTip);
 	_message->setAlignment(Qt::AlignCenter);
 	_message->setMargin(5);
 
