@@ -16,15 +16,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "keys.h"
-#include "tumult.h"
+#ifndef STREAMELEMENT_H
+#define STREAMELEMENT_H
 
-bool
-Tumult::x11EventFilter(XEvent *ev)
-{
-	if (ev->type == KeyPress)
-		return keys->event(((XKeyEvent*)ev)->keycode, ((XKeyEvent*)ev)->state);
+#include <QStringList>
 
-	return false;
-}
+class StreamElement {
+public:
+	StreamElement(const QString &name, const QString &uri);
 
+	QString uri();
+
+	void search(const QString &search);
+	QString nextResult();
+
+	inline QString name() const { return _name; }
+	inline bool isPlaylist() const { return _playlist; }
+private:
+	void loadPlaylist();
+
+	QString _name;
+	QString _uri;
+	QStringList _songs;
+	QRegExp _regexp;
+	bool _playlist;
+	int _lastIndex;
+};
+
+#endif

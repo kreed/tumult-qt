@@ -16,15 +16,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "keys.h"
-#include "tumult.h"
+#ifndef SEARCHBOX_H
+#define SEARCHBOX_H
 
-bool
-Tumult::x11EventFilter(XEvent *ev)
-{
-	if (ev->type == KeyPress)
-		return keys->event(((XKeyEvent*)ev)->keycode, ((XKeyEvent*)ev)->state);
+#include <QLineEdit>
 
-	return false;
-}
+class StreamElement;
 
+class SearchBox : public QLineEdit {
+	Q_OBJECT
+public:
+	SearchBox();
+
+	void search(StreamElement *e);
+
+protected slots:
+	void searchCallback();
+
+protected:
+	void keyReleaseEvent(QKeyEvent*);
+
+private:
+	StreamElement *_stream;
+	bool _forceSearch;
+};
+
+#endif

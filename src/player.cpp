@@ -25,10 +25,13 @@
 #include <QStringList>
 #include <QTimer>
 #include <QUrl>
+#include "searchbox.h"
+#include "streamelement.h"
 
 Player *player;
 
 Player::Player()
+	: _searchBox(new SearchBox)
 {
 	Phonon::AudioOutput *audioOutput =
 		new Phonon::AudioOutput(Phonon::MusicCategory, this);
@@ -36,7 +39,7 @@ Player::Player()
 	Phonon::createPath(this, audioOutput);
 
 	_message = new QLabel;
-	_message->setWindowFlags(Qt::ToolTip);
+	_message->setWindowFlags(Qt::X11BypassWindowManagerHint);
 	_message->setAlignment(Qt::AlignCenter);
 	_message->setMargin(5);
 
@@ -51,41 +54,47 @@ Player::Player()
 	connect(_hideMessage, SIGNAL(timeout()),
 	        _message, SLOT(hide()));
 
-	connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
-	        this, SLOT(onStateChange(Phonon::State, Phonon::State)));
+	connect(this, SIGNAL(aboutToFinish()),
+	              SLOT(loadMore()));
 }
 
 void
 Player::showStatus(bool metadata)
 {
 	switch (state()) {
-	case Phonon::PlayingState: {
-		QString text;
-
-		if (metadata) {
-			QString title = metaData(Phonon::TitleMetaData).join(", ");
-			QString artist = metaData(Phonon::ArtistMetaData).join(", ");
-
-			if (artist.isEmpty() && title.contains(" - ")) {
-				QStringList at = title.split(" - ");
-				title = at[1];
-				artist = at[0];
-			}
-
-			if (!title.isEmpty())
-				text += "<b>" + title + "</b><br>";
-			if (!artist.isEmpty())
-				text += artist + "<br>";
-		}
-
-		text += _currentStream->first;
-
-		_message->setText(text);
-		break;
-	}
 	case Phonon::ErrorState:
 		_message->setText(errorString());
 		break;
+	case Phonon::PlayingState:
+	case Phonon::BufferingState:
+	case Phonon::LoadingState:
+		if (_currentStream != 0) {
+			QString text;
+
+			if (metadata) {
+				QString title = metaData(Phonon::TitleMetaData).join(", ");
+				QString artist = metaData(Phonon::ArtistMetaData).join(", ");
+
+				if (artist.isEmpty() && title.contains(" - ")) {
+					QStringList at = title.split(" - ");
+					title = at[1];
+					artist = at[0];
+				}
+
+				if (!title.isEmpty())
+					text += "<b>" + title + "</b><br>";
+				if (!artist.isEmpty())
+					text += artist + "<br>";
+
+				if (text.isEmpty())
+					text += currentSource().url().toString() + "<br>";
+			}
+
+			text += (*_currentStream)->name();
+
+			_message->setText(text);
+			break;
+		}
 	default:
 		_message->setText("Not Playing");
 	}
@@ -93,6 +102,7 @@ Player::showStatus(bool metadata)
 	_message->adjustSize();
 	_message->move(QApplication::desktop()->width() - _message->width() - 5, 5);
 	_message->show();
+	_message->raise();
 
 	_hideMessage->start();
 }
@@ -100,7 +110,7 @@ Player::showStatus(bool metadata)
 bool
 Player::parse(const QByteArray &name, const QByteArray &uri)
 {
-	_streams.append(qMakePair(name, uri));
+	_streams.append(new StreamElement(name, uri));
 	return true;
 }
 
@@ -116,13 +126,22 @@ Player::init()
 }
 
 void
-Player::play()
+Player::insertUri(const QString &uri, bool now)
 {
-	if (_currentStream == 0)
-		_currentStream = _streams.constBegin();
+	QUrl v(uri.startsWith('/') ? "file://" + uri : uri);
+	if (now) {
+		setCurrentSource(v);
+		play();
+	} else
+		enqueue(v);
+}
 
-	setCurrentSource(QUrl(_currentStream->second));
-	Phonon::MediaObject::play();
+void
+Player::shiftStream()
+{
+	_searchBox->close();
+	insertUri((*_currentStream)->uri());
+	showStatus(false);
 }
 
 void
@@ -132,7 +151,7 @@ Player::prev()
 		_currentStream = _streams.constEnd();
 	--_currentStream;
 
-	play();
+	shiftStream();
 }
 
 void
@@ -141,7 +160,7 @@ Player::next()
 	if (_currentStream == 0 || ++_currentStream == _streams.constEnd())
 		_currentStream = _streams.constBegin();
 
-	play();
+	shiftStream();
 }
 
 void
@@ -149,11 +168,16 @@ Player::action(Action action)
 {
 	switch (action) {
 	case ShowStatus:
-		showStatus();
+		showStatus(true);
 		break;
 	case PlayPause:
-		if (state() == Phonon::PlayingState)
-			stop();
+		if (state() == Phonon::PlayingState) {
+			if (currentSource().url().scheme() == "file")
+				pause();
+			else
+				stop();
+		} else if (_currentStream == 0)
+			next();
 		else
 			play();
 		break;
@@ -163,19 +187,38 @@ Player::action(Action action)
 	case Next:
 		next();
 		break;
+	case Search:
+		if (_currentStream != 0 && (*_currentStream)->isPlaylist())
+			_searchBox->search(*_currentStream);
+		break;
+	case PlaylistNext:
+		if (state() != Phonon::PlayingState)
+			play();
+		else if ((*_currentStream)->isPlaylist())
+			insertUri((*_currentStream)->uri());
+		break;
 	default:
 		break;
 	}
 }
 
 void
-Player::onStateChange(Phonon::State, Phonon::State)
+Player::loadMore()
 {
-	showStatus(false);
-/*	qWarning() << next << prev;
-	if (next == Phonon::ErrorState && prev == Phonon::PlayingState) {
-//		QTimer::singleShot(500, this, SLOT(play()));
-		stop();
-		play();
-	}*/
+	insertUri((*_currentStream)->uri(), false);
+}
+
+void
+Player::showNextMetaData()
+{
+	connect(this, SIGNAL(metaDataChanged()),
+	              SLOT(showMetaData()));
+}
+
+void
+Player::showMetaData()
+{
+	showStatus(true);
+	disconnect(this, SIGNAL(metaDataChanged()),
+	           this, SLOT(showMetaData()));
 }

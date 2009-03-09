@@ -37,8 +37,14 @@ Config::add(const QByteArray &key, Callback cb)
 void
 Config::parse()
 {
-	QFile file(qApp->arguments().size() == 1 ? QDir::homePath() + "/.config/tumult/rc"
-	                                         : qApp->arguments().last());
+	QFile file;
+
+	if (qApp->arguments().size() == 1) {
+		QDir::setCurrent(QDir::homePath() + "/.config/tumult");
+		file.setFileName("rc");
+	} else
+		file.setFileName(qApp->arguments().last());
+
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qWarning() << "could not open config file" << file.fileName();
 		return;

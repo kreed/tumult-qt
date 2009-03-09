@@ -25,6 +25,8 @@ int
 main(int argc, char **argv)
 {
 	Tumult app(argc, argv);
+	qsrand(time(NULL));
+	app.setQuitOnLastWindowClosed(false);
 	app.setApplicationName("Tumult");
 	player = new Player;
 	keys = new Keys;

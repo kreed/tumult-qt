@@ -102,29 +102,19 @@ Keys::parse(Player::Action action, const QByteArray &v)
 		qWarning() << "Could not grab key" << v;
 }
 
-void
-next(const QByteArray &v)
-{
-	keys->parse(Player::Next, v);
-}
+#define KEY(function, action) \
+	void \
+	function(const QByteArray &v) \
+	{ \
+		keys->parse(Player::action, v); \
+	}
 
-void
-prev(const QByteArray &v)
-{
-	keys->parse(Player::Prev, v);
-}
-
-void
-status(const QByteArray &v)
-{
-	keys->parse(Player::ShowStatus, v);
-}
-
-void
-play_pause(const QByteArray &v)
-{
-	keys->parse(Player::PlayPause, v);
-}
+KEY(next, Next)
+KEY(prev, Prev)
+KEY(status, ShowStatus)
+KEY(play_pause, PlayPause)
+KEY(search, Search)
+KEY(playlist_next, PlaylistNext)
 
 Keys::Keys()
 {
@@ -135,6 +125,8 @@ Keys::Keys()
 	Config::add("prev", prev);
 	Config::add("status", status);
 	Config::add("play_pause", play_pause);
+	Config::add("search", search);
+	Config::add("playlist_next", playlist_next);
 }
 
 bool
