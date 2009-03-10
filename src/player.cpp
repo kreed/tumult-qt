@@ -163,9 +163,12 @@ void
 Player::action(Action action)
 {
 	switch (action) {
-	case ShowStatus:
-		showStatus(true);
-		break;
+	case PlaylistNext:
+		if (state() == Phonon::PlayingState)  {
+			if (_currentStream->isPlaylist())
+				changeSource(_currentStream->source());
+			break;
+		}
 	case PlayPause:
 		if (state() == Phonon::PlayingState) {
 			if (currentSource().type() == Phonon::MediaSource::LocalFile)
@@ -187,11 +190,8 @@ Player::action(Action action)
 		if (_currentStream != StreamList::iterator() && _currentStream->isPlaylist())
 			_searchBox->search(&*_currentStream);
 		break;
-	case PlaylistNext:
-		if (state() != Phonon::PlayingState)
-			play();
-		else if (_currentStream->isPlaylist())
-			changeSource(_currentStream->source());
+	case ShowStatus:
+		showStatus(true);
 		break;
 	default:
 		break;
