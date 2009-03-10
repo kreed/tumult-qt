@@ -27,6 +27,7 @@ SearchBox::SearchBox()
 {
 	setWindowFlags(Qt::Dialog);
 	setFocus();
+	adjustSize();
 	connect(this, SIGNAL(returnPressed()),
 	              SLOT(searchCallback()));
 	connect(this, SIGNAL(editingFinished()),
@@ -44,7 +45,12 @@ SearchBox::search(StreamElement *stream)
 
 	setText(text());
 	selectAll();
-	move(QCursor::pos());
+
+	QPoint pos = QCursor::pos();
+	pos.rx() -= width() / 2;
+	pos.ry() -= height() / 2;
+	move(pos);
+
 	show();
 	activateWindow();
 }
