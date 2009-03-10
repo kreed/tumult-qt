@@ -55,7 +55,6 @@ SearchBox::search(StreamElement *stream)
 	activateWindow();
 }
 
-#include <QUrl>
 void
 SearchBox::searchCallback()
 {
