@@ -55,13 +55,14 @@ SearchBox::search(StreamElement *stream)
 	activateWindow();
 }
 
+#include <QUrl>
 void
 SearchBox::searchCallback()
 {
 	if (isModified() || _forceSearch)
 		_stream->setSearch(text());
 	Phonon::MediaSource source = _stream->nextResult();
-	if (source.type() != Phonon::MediaSource::Invalid) {
+	if (source.type() != Phonon::MediaSource::Empty) {
 		player->showNextMetaData();
 		player->changeSource(source);
 	}
