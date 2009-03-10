@@ -17,10 +17,10 @@
  */
 
 #include "player.h"
-#include "searchbox.h"
-#include "streamelement.h"
 #include <QCursor>
 #include <QKeyEvent>
+#include "searchbox.h"
+#include "streamelement.h"
 
 SearchBox::SearchBox()
 	: _stream(NULL)
@@ -59,11 +59,11 @@ void
 SearchBox::searchCallback()
 {
 	if (isModified() || _forceSearch)
-		_stream->search(text());
-	QString uri = _stream->nextResult();
-	if (!uri.isEmpty()) {
+		_stream->setSearch(text());
+	Phonon::MediaSource source = _stream->nextResult();
+	if (source.type() != Phonon::MediaSource::Invalid) {
 		player->showNextMetaData();
-		player->insertUri(uri);
+		player->changeSource(source);
 	}
 }
 

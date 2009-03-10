@@ -55,7 +55,7 @@ Player::Player()
 	        _message, SLOT(hide()));
 
 	connect(this, SIGNAL(aboutToFinish()),
-	              SLOT(loadMore()));
+	              SLOT(loadAnother()));
 }
 
 void
@@ -68,7 +68,7 @@ Player::showStatus(bool metadata)
 	case Phonon::PlayingState:
 	case Phonon::BufferingState:
 	case Phonon::LoadingState:
-		if (_currentStream != 0) {
+		if (_currentStream != StreamList::iterator()) {
 			QString text;
 
 			if (metadata) {
@@ -90,7 +90,7 @@ Player::showStatus(bool metadata)
 					text += currentSource().url().toString() + "<br>";
 			}
 
-			text += (*_currentStream)->name();
+			text += _currentStream->name();
 
 			_message->setText(text);
 			break;
@@ -110,7 +110,7 @@ Player::showStatus(bool metadata)
 bool
 Player::parse(const QByteArray &name, const QByteArray &uri)
 {
-	_streams.append(new StreamElement(name, uri));
+	_streams.append(StreamElement(name, uri));
 	return true;
 }
 
@@ -126,35 +126,25 @@ Player::init()
 }
 
 void
-Player::insertUri(const QString &uri, bool now)
+Player::changeSource(const Phonon::MediaSource &source)
 {
-	if (now) {
-		if (uri.startsWith('/'))
-			setCurrentSource(uri);
-		else
-			setCurrentSource(QUrl(uri));
-		play();
-	} else {
-		if (uri.startsWith('/'))
-			enqueue(uri);
-		else
-			enqueue(QUrl(uri));
-	}
+	setCurrentSource(source);
+	play();
 }
 
 void
 Player::shiftStream()
 {
 	_searchBox->close();
-	insertUri((*_currentStream)->uri());
+	changeSource(_currentStream->source());
 	showStatus(false);
 }
 
 void
 Player::prev()
 {
-	if (_currentStream == 0 || _currentStream == _streams.constBegin())
-		_currentStream = _streams.constEnd();
+	if (_currentStream == StreamList::iterator() || _currentStream == _streams.constBegin())
+		_currentStream = _streams.end();
 	--_currentStream;
 
 	shiftStream();
@@ -163,8 +153,8 @@ Player::prev()
 void
 Player::next()
 {
-	if (_currentStream == 0 || ++_currentStream == _streams.constEnd())
-		_currentStream = _streams.constBegin();
+	if (_currentStream == StreamList::iterator() || ++_currentStream == _streams.constEnd())
+		_currentStream = _streams.begin();
 
 	shiftStream();
 }
@@ -178,11 +168,11 @@ Player::action(Action action)
 		break;
 	case PlayPause:
 		if (state() == Phonon::PlayingState) {
-			if (currentSource().url().scheme() == "file")
+			if (currentSource().type() == Phonon::MediaSource::LocalFile)
 				pause();
 			else
 				stop();
-		} else if (_currentStream == 0)
+		} else if (_currentStream == StreamList::iterator())
 			next();
 		else
 			play();
@@ -194,14 +184,14 @@ Player::action(Action action)
 		next();
 		break;
 	case Search:
-		if (_currentStream != 0 && (*_currentStream)->isPlaylist())
-			_searchBox->search(*_currentStream);
+		if (_currentStream != StreamList::iterator() && _currentStream->isPlaylist())
+			_searchBox->search(&*_currentStream);
 		break;
 	case PlaylistNext:
 		if (state() != Phonon::PlayingState)
 			play();
-		else if ((*_currentStream)->isPlaylist())
-			insertUri((*_currentStream)->uri());
+		else if (_currentStream->isPlaylist())
+			changeSource(_currentStream->source());
 		break;
 	default:
 		break;
@@ -209,9 +199,9 @@ Player::action(Action action)
 }
 
 void
-Player::loadMore()
+Player::loadAnother()
 {
-	insertUri((*_currentStream)->uri(), false);
+	enqueue(_currentStream->source());
 }
 
 void

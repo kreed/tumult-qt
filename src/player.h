@@ -21,12 +21,12 @@
 
 #include <phonon/mediaobject.h>
 #include <QLinkedList>
+#include "streamelement.h"
 
 class SearchBox;
-class StreamElement;
 class QLabel;
 class QTimer;
-typedef QLinkedList<StreamElement*> StreamList;
+typedef QLinkedList<StreamElement> StreamList;
 
 class Player : public Phonon::MediaObject {
 	Q_OBJECT
@@ -49,19 +49,19 @@ public:
 	void showStatus(bool metadata);
 	void showNextMetaData();
 
-	void insertUri(const QString &uri, bool now = true);
+	void changeSource(const Phonon::MediaSource&);
 	void next();
 	void prev();
 
 protected slots:
-	void loadMore();
+	void loadAnother();
 	void showMetaData();
 
 private:
 	void shiftStream();
 
 	StreamList _streams;
-	StreamList::const_iterator _currentStream;
+	StreamList::iterator _currentStream;
 	QLabel *_message;
 	QTimer *_hideMessage;
 	SearchBox *_searchBox;

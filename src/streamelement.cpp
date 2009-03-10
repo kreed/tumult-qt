@@ -16,53 +16,73 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include <QFile>
-#include <QRegExp>
-#include <QString>
-#include <QStringList>
+#include <phonon/mediasource.h>
 #include "streamelement.h"
+#include <QFile>
+#include <QUrl>
 
 StreamElement::StreamElement(const QString &name, const QString &uri)
 	: _name(name)
-	, _uri(uri)
-	, _regexp(QString(), Qt::CaseInsensitive)
 	, _playlist(uri.endsWith("m3u"))
+	, _playlistFile(_playlist ? uri : QString())
 {
+	if (!_playlist)
+		append(uri);
 }
 
-QString StreamElement::uri()
+void
+StreamElement::appendUri(const QString &uri)
 {
-	return _playlist ? !_songs.isEmpty() || loadPlaylist()
-	                 ? _songs.takeAt(qrand() % _songs.size())
-	                 : QString()
-	     : _uri;
+	if (uri.startsWith('/'))
+		append(Phonon::MediaSource(uri));
+	else
+		append(Phonon::MediaSource(QUrl(uri)));
 }
 
-void StreamElement::search(const QString &uri)
+Phonon::MediaSource
+StreamElement::source()
 {
-	_regexp.setPattern(".*" + uri + ".*");
+	return _playlist ? !isEmpty() || loadPlaylist()
+	                 ? takeAt(qrand() % size())
+	                 : Phonon::MediaSource()
+	     : first();
+}
+
+void
+StreamElement::setSearch(const QString &uri)
+{
+	_search = uri;
 	_lastIndex = -1;
 }
 
-QString StreamElement::nextResult()
+int
+StreamElement::search(int i)
 {
-	if (!_regexp.isEmpty()) {
-		int i = _songs.indexOf(_regexp, _lastIndex + 1);
-		if (i != -1) {
-			_lastIndex = i;
-			return _songs.at(i);
-		} else if (_lastIndex != -1) {
-			_lastIndex = -1;
-			return nextResult();
-		}
-	}
-	return QString();
+	for (int len = size(); i != len; ++i)
+		if (at(i).url().path().contains(_search, Qt::CaseInsensitive))
+			return i;
+	return -1;
 }
 
-bool StreamElement::loadPlaylist()
+Phonon::MediaSource
+StreamElement::nextResult()
 {
-	QFile file(_uri);
+	int i = search(_lastIndex + 1);
+	if (i != -1) {
+		_lastIndex = i;
+		return at(i);
+	} else if (_lastIndex != -1) {
+		// loop back to the beginning
+		_lastIndex = -1;
+		return nextResult();
+	} else
+		return Phonon::MediaSource();
+}
+
+bool
+StreamElement::loadPlaylist()
+{
+	QFile file(_playlistFile);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qWarning() << "could not open playlist" << file.fileName();
 		return false;
@@ -70,7 +90,7 @@ bool StreamElement::loadPlaylist()
 
 	QTextStream in(&file);
 	while (!in.atEnd())
-		_songs.append(in.readLine());
+		append(in.readLine());
 
 	return true;
 }

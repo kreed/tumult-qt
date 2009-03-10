@@ -19,28 +19,35 @@
 #ifndef STREAMELEMENT_H
 #define STREAMELEMENT_H
 
-#include <QStringList>
+#include <QList>
+#include <QString>
 
-class StreamElement {
+namespace Phonon {
+class MediaSource;
+}
+
+class StreamElement : QList<Phonon::MediaSource> {
 public:
 	StreamElement(const QString &name, const QString &uri);
 
-	QString uri();
+	Phonon::MediaSource source();
 
-	void search(const QString &search);
-	QString nextResult();
+	void setSearch(const QString &search);
+	Phonon::MediaSource nextResult();
 
 	inline QString name() const { return _name; }
 	inline bool isPlaylist() const { return _playlist; }
 private:
+	void appendUri(const QString &uri);
+	int search(int from);
 	bool loadPlaylist();
 
-	QString _name;
-	QString _uri;
-	QStringList _songs;
-	QRegExp _regexp;
-	bool _playlist;
+	QString _search;
 	int _lastIndex;
+
+	QString _name;
+	bool _playlist;
+	QString _playlistFile;
 };
 
 #endif
