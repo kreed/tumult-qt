@@ -33,7 +33,7 @@ public:
 	inline QString name() const { return _name; }
 	inline bool isPlaylist() const { return _playlist; }
 private:
-	void loadPlaylist();
+	bool loadPlaylist();
 
 	QString _name;
 	QString _uri;

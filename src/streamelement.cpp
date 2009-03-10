@@ -33,13 +33,10 @@ StreamElement::StreamElement(const QString &name, const QString &uri)
 
 QString StreamElement::uri()
 {
-	if (_playlist) {
-		if (_songs.isEmpty())
-			loadPlaylist();
-		return _songs.takeAt(qrand() % _songs.size());
-	}
-
-	return _uri;
+	return _playlist ? !_songs.isEmpty() || loadPlaylist()
+	                 ? _songs.takeAt(qrand() % _songs.size())
+	                 : QString()
+	     : _uri;
 }
 
 void StreamElement::search(const QString &uri)
@@ -63,15 +60,17 @@ QString StreamElement::nextResult()
 	return QString();
 }
 
-void StreamElement::loadPlaylist()
+bool StreamElement::loadPlaylist()
 {
 	QFile file(_uri);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qWarning() << "could not open playlist" << file.fileName();
-		return;
+		return false;
 	}
 
 	QTextStream in(&file);
 	while (!in.atEnd())
 		_songs.append(in.readLine());
+
+	return true;
 }
