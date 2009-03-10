@@ -128,6 +128,7 @@ Player::init()
 void
 Player::changeSource(const Phonon::MediaSource &source)
 {
+	clearQueue();
 	setCurrentSource(source);
 	play();
 }
