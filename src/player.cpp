@@ -128,12 +128,18 @@ Player::init()
 void
 Player::insertUri(const QString &uri, bool now)
 {
-	QUrl v(uri.startsWith('/') ? "file://" + uri : uri);
 	if (now) {
-		setCurrentSource(v);
+		if (uri.startsWith('/'))
+			setCurrentSource(uri);
+		else
+			setCurrentSource(QUrl(uri));
 		play();
-	} else
-		enqueue(v);
+	} else {
+		if (uri.startsWith('/'))
+			enqueue(uri);
+		else
+			enqueue(QUrl(uri));
+	}
 }
 
 void
