@@ -23,9 +23,8 @@
 #include <QLinkedList>
 #include "streamelement.h"
 
+class MessageWindow;
 class SearchBox;
-class QLabel;
-class QTimer;
 typedef QLinkedList<StreamElement> StreamList;
 
 class Player : public Phonon::MediaObject {
@@ -62,8 +61,7 @@ private:
 
 	StreamList _streams;
 	StreamList::iterator _currentStream;
-	QLabel *_message;
-	QTimer *_hideMessage;
+	MessageWindow *_message;
 	SearchBox *_searchBox;
 };
 

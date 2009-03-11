@@ -16,14 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "messagewindow.h"
 #include <phonon/audiooutput.h>
 #include <phonon/mediasource.h>
 #include "player.h"
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QLabel>
 #include <QStringList>
-#include <QTimer>
 #include <QUrl>
 #include "searchbox.h"
 #include "streamelement.h"
@@ -31,28 +28,13 @@
 Player *player;
 
 Player::Player()
-	: _searchBox(new SearchBox)
+	: _message(new MessageWindow)
+	, _searchBox(new SearchBox)
 {
 	Phonon::AudioOutput *audioOutput =
 		new Phonon::AudioOutput(Phonon::MusicCategory, this);
 	audioOutput->setName("Tumult");
 	Phonon::createPath(this, audioOutput);
-
-	_message = new QLabel;
-	_message->setWindowFlags(Qt::X11BypassWindowManagerHint);
-	_message->setAlignment(Qt::AlignCenter);
-	_message->setMargin(5);
-
-	QPalette p = _message->palette();
-	p.setColor(QPalette::Window, Qt::black);
-	p.setColor(QPalette::WindowText, Qt::white);
-	_message->setPalette(p);
-
-	_hideMessage = new QTimer(this);
-	_hideMessage->setInterval(3500);
-	_hideMessage->setSingleShot(true);
-	connect(_hideMessage, SIGNAL(timeout()),
-	        _message, SLOT(hide()));
 
 	connect(this, SIGNAL(aboutToFinish()),
 	              SLOT(loadAnother()));
@@ -61,16 +43,16 @@ Player::Player()
 void
 Player::showStatus(bool metadata)
 {
+	QString text;
+
 	switch (state()) {
 	case Phonon::ErrorState:
-		_message->setText(errorString());
+		text = errorString();
 		break;
 	case Phonon::PlayingState:
 	case Phonon::BufferingState:
 	case Phonon::LoadingState:
 		if (_currentStream != StreamList::iterator()) {
-			QString text;
-
 			if (metadata) {
 				QString title = metaData(Phonon::TitleMetaData).join(", ");
 				QString artist = metaData(Phonon::ArtistMetaData).join(", ");
@@ -91,20 +73,13 @@ Player::showStatus(bool metadata)
 			}
 
 			text += _currentStream->name();
-
-			_message->setText(text);
 			break;
 		}
 	default:
-		_message->setText("Not Playing");
+		text = "Not Playing";
 	}
 
-	_message->adjustSize();
-	_message->move(QApplication::desktop()->width() - _message->width() - 5, 5);
-	_message->show();
-	_message->raise();
-
-	_hideMessage->start();
+	_message->showMessage(text);
 }
 
 bool
