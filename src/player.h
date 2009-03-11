@@ -21,11 +21,11 @@
 
 #include <phonon/mediaobject.h>
 #include <QLinkedList>
-#include "streamelement.h"
 
 class MessageWindow;
 class SearchBox;
-typedef QLinkedList<StreamElement> StreamList;
+class StreamElement;
+typedef QLinkedList<StreamElement*> StreamList;
 
 class Player : public Phonon::MediaObject {
 	Q_OBJECT
@@ -45,6 +45,8 @@ public:
 	void action(Action);
 	void init();
 
+	StreamElement *currentStream() const { return *_currentStream; }
+
 	void showStatus(bool metadata);
 	void showNextMetaData();
 
@@ -60,7 +62,7 @@ private:
 	void shiftStream();
 
 	StreamList _streams;
-	StreamList::iterator _currentStream;
+	StreamList::const_iterator _currentStream;
 	MessageWindow *_message;
 	SearchBox *_searchBox;
 };

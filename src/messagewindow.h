@@ -21,7 +21,7 @@
 
 #include <QLabel>
 
-class MessageWindow : private QLabel {
+class MessageWindow : QLabel {
 	Q_OBJECT
 public:
 	MessageWindow();

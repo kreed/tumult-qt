@@ -19,14 +19,16 @@
 #ifndef STREAMELEMENT_H
 #define STREAMELEMENT_H
 
+#include <phonon/mediasource.h>
+#include <QDateTime>
 #include <QList>
+#include <QObject>
 #include <QString>
 
-namespace Phonon {
-class MediaSource;
-}
+class QTimerEvent;
 
-class StreamElement : QList<Phonon::MediaSource> {
+class StreamElement : QObject, QList<Phonon::MediaSource> {
+	Q_OBJECT
 public:
 	StreamElement(const QString &name, const QString &uri);
 
@@ -37,10 +39,18 @@ public:
 
 	inline QString name() const { return _name; }
 	inline bool isPlaylist() const { return _playlist; }
+	inline bool isEmpty() const { return QList<Phonon::MediaSource>::isEmpty(); }
+	inline QString error() const { return _error; }
+
+protected:
+	void timerEvent(QTimerEvent*);
+
 private:
 	void appendUri(const QString &uri);
 	int search(int from);
-	bool loadPlaylist();
+	void loadPlaylist();
+
+	QString _error;
 
 	QString _search;
 	int _lastIndex;
@@ -48,6 +58,7 @@ private:
 	QString _name;
 	bool _playlist;
 	QString _playlistFile;
+	QDateTime _modTime;
 };
 
 #endif

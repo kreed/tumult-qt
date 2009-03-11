@@ -19,6 +19,8 @@
 #include <phonon/mediasource.h>
 #include "streamelement.h"
 #include <QFile>
+#include <QFileInfo>
+#include <QTimerEvent>
 #include <QUrl>
 
 StreamElement::StreamElement(const QString &name, const QString &uri)
@@ -26,7 +28,9 @@ StreamElement::StreamElement(const QString &name, const QString &uri)
 	, _playlist(uri.endsWith("m3u"))
 	, _playlistFile(_playlist ? uri : QString())
 {
-	if (!_playlist)
+	if (_playlist)
+		startTimer(0);
+	else
 		append(uri);
 }
 
@@ -42,10 +46,14 @@ StreamElement::appendUri(const QString &uri)
 Phonon::MediaSource
 StreamElement::source()
 {
-	return _playlist ? !isEmpty() || loadPlaylist()
-	                 ? takeAt(qrand() % size())
-	                 : Phonon::MediaSource()
-	     : first();
+	if (_playlist) {
+		if (isEmpty())
+			loadPlaylist();
+		else if (size() == 1 || QFileInfo(_playlistFile).lastModified() != _modTime)
+			startTimer(0);
+		return isEmpty() ? Phonon::MediaSource() : takeAt(qrand() % size());
+	} else
+		return first();
 }
 
 void
@@ -79,18 +87,29 @@ StreamElement::nextResult()
 		return Phonon::MediaSource();
 }
 
-bool
+void
 StreamElement::loadPlaylist()
 {
 	QFile file(_playlistFile);
+
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qWarning() << "could not open playlist" << file.fileName();
-		return false;
+		_error = QString("Could not read playlist '%1'").arg(file.fileName());
+		qWarning(qPrintable(_error));
+	} else {
+		_error.clear();
+
+		QTextStream in(&file);
+		while (!in.atEnd())
+			append(in.readLine());
+
+		_modTime = QFileInfo(file).lastModified();
 	}
+}
 
-	QTextStream in(&file);
-	while (!in.atEnd())
-		append(in.readLine());
-
-	return true;
+void
+StreamElement::timerEvent(QTimerEvent *ev)
+{
+	killTimer(ev->timerId());
+	qWarning("ev");
+	loadPlaylist();
 }

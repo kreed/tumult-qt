@@ -50,31 +50,35 @@ Player::showStatus(bool metadata)
 		text = errorString();
 		break;
 	case Phonon::PlayingState:
-	case Phonon::BufferingState:
 	case Phonon::LoadingState:
-		if (_currentStream != StreamList::iterator()) {
-			if (metadata) {
-				QString title = metaData(Phonon::TitleMetaData).join(", ");
-				QString artist = metaData(Phonon::ArtistMetaData).join(", ");
-
-				if (artist.isEmpty() && title.contains(" - ")) {
-					QStringList at = title.split(" - ");
-					title = at[1];
-					artist = at[0];
-				}
-
-				if (!title.isEmpty())
-					text += "<b>" + title + "</b><br>";
-				if (!artist.isEmpty())
-					text += artist + "<br>";
-
-				if (text.isEmpty())
-					text += currentSource().url().toString() + "<br>";
-			}
-
-			text += _currentStream->name();
+		if (currentStream()->isEmpty()) {
+			text = currentStream()->error();
+			if (text.isEmpty())
+				text = "No songs in playlist";
 			break;
 		}
+	case Phonon::BufferingState:
+		if (metadata) {
+			QString title = metaData(Phonon::TitleMetaData).join(", ");
+			QString artist = metaData(Phonon::ArtistMetaData).join(", ");
+
+			if (artist.isEmpty() && title.contains(" - ")) {
+				QStringList at = title.split(" - ");
+				title = at[1];
+				artist = at[0];
+			}
+
+			if (!title.isEmpty())
+				text += "<b>" + title + "</b><br>";
+			if (!artist.isEmpty())
+				text += artist + "<br>";
+
+			if (text.isEmpty())
+				text += currentSource().url().toString() + "<br>";
+		}
+
+		text += currentStream()->name();
+		break;
 	default:
 		text = "Not Playing";
 	}
@@ -85,7 +89,7 @@ Player::showStatus(bool metadata)
 bool
 Player::parse(const QByteArray &name, const QByteArray &uri)
 {
-	_streams.append(StreamElement(name, uri));
+	_streams.append(new StreamElement(name, uri));
 	return true;
 }
 
@@ -97,7 +101,8 @@ Player::init()
 		exit(EXIT_FAILURE);
 	}
 
-	_currentStream = 0;
+	_currentStream = _streams.constBegin();
+	setCurrentSource(currentStream()->source());
 }
 
 void
@@ -112,15 +117,15 @@ void
 Player::shiftStream()
 {
 	_searchBox->close();
-	changeSource(_currentStream->source());
+	changeSource(currentStream()->source());
 	showStatus(false);
 }
 
 void
 Player::prev()
 {
-	if (_currentStream == StreamList::iterator() || _currentStream == _streams.constBegin())
-		_currentStream = _streams.end();
+	if (_currentStream == _streams.constBegin())
+		_currentStream = _streams.constEnd();
 	--_currentStream;
 
 	shiftStream();
@@ -129,8 +134,8 @@ Player::prev()
 void
 Player::next()
 {
-	if (_currentStream == StreamList::iterator() || ++_currentStream == _streams.constEnd())
-		_currentStream = _streams.begin();
+	if (++_currentStream == _streams.constEnd())
+		_currentStream = _streams.constBegin();
 
 	shiftStream();
 }
@@ -139,32 +144,44 @@ void
 Player::action(Action action)
 {
 	switch (action) {
-	case PlaylistNext:
-		if (state() == Phonon::PlayingState)  {
-			if (_currentStream->isPlaylist())
-				changeSource(_currentStream->source());
-			break;
+	case Prev:
+		prev();
+		return;
+	case Next:
+		next();
+		return;
+	default:
+		break;
+	}
+
+	if (currentStream()->isEmpty()) {
+		changeSource(currentStream()->source());
+		if (currentStream()->isEmpty()) {
+			showStatus(false);
+			return;
 		}
+	}
+
+	switch (action) {
+	case PlaylistNext:
+		if (state() == Phonon::PlayingState) {
+			if (currentStream()->isPlaylist())
+				changeSource(currentStream()->source());
+		} else
+			play();
+		break;
 	case PlayPause:
 		if (state() == Phonon::PlayingState) {
 			if (currentSource().type() == Phonon::MediaSource::LocalFile)
 				pause();
 			else
 				stop();
-		} else if (_currentStream == StreamList::iterator())
-			next();
-		else
+		} else
 			play();
 		break;
-	case Prev:
-		prev();
-		break;
-	case Next:
-		next();
-		break;
 	case Search:
-		if (_currentStream != StreamList::iterator() && _currentStream->isPlaylist())
-			_searchBox->search(&*_currentStream);
+		if (currentStream()->isPlaylist())
+			_searchBox->search(&*currentStream());
 		break;
 	case ShowStatus:
 		showStatus(true);
@@ -177,7 +194,7 @@ Player::action(Action action)
 void
 Player::loadAnother()
 {
-	enqueue(_currentStream->source());
+	enqueue(currentStream()->source());
 }
 
 void
