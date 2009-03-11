@@ -37,8 +37,10 @@ SearchBox::SearchBox()
 void
 SearchBox::search(Stream *stream)
 {
-	if (isVisible())
+	if (isVisible()) {
+		close();
 		return;
+	}
 
 	_forceSearch = stream != _stream;
 	_stream = stream;
