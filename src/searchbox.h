@@ -21,14 +21,14 @@
 
 #include <QLineEdit>
 
-class StreamElement;
+class Stream;
 
 class SearchBox : public QLineEdit {
 	Q_OBJECT
 public:
 	SearchBox();
 
-	void search(StreamElement *e);
+	void search(Stream *e);
 
 protected slots:
 	void searchCallback();
@@ -37,7 +37,7 @@ protected:
 	void keyReleaseEvent(QKeyEvent*);
 
 private:
-	StreamElement *_stream;
+	Stream *_stream;
 	bool _forceSearch;
 };
 

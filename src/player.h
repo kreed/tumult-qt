@@ -24,8 +24,8 @@
 
 class MessageWindow;
 class SearchBox;
-class StreamElement;
-typedef QLinkedList<StreamElement*> StreamList;
+class Stream;
+typedef QLinkedList<Stream*> StreamList;
 
 class Player : public Phonon::MediaObject {
 	Q_OBJECT
@@ -45,7 +45,7 @@ public:
 	void action(Action);
 	void init();
 
-	StreamElement *currentStream() const { return *_currentStream; }
+	Stream *currentStream() const { return *_currentStream; }
 
 	void showStatus(bool metadata);
 	void showNextMetaData();

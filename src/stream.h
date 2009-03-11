@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STREAMELEMENT_H
-#define STREAMELEMENT_H
+#ifndef STREAM_H
+#define STREAM_H
 
 #include <phonon/mediasource.h>
 #include <QDateTime>
@@ -27,10 +27,10 @@
 
 class QTimerEvent;
 
-class StreamElement : QObject, QList<Phonon::MediaSource> {
+class Stream : QObject, QList<Phonon::MediaSource> {
 	Q_OBJECT
 public:
-	StreamElement(const QString &name, const QString &uri);
+	Stream(const QString &name, const QString &uri);
 
 	Phonon::MediaSource source();
 

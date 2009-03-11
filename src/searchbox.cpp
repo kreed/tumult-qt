@@ -20,7 +20,7 @@
 #include <QCursor>
 #include <QKeyEvent>
 #include "searchbox.h"
-#include "streamelement.h"
+#include "stream.h"
 
 SearchBox::SearchBox()
 	: _stream(NULL)
@@ -35,7 +35,7 @@ SearchBox::SearchBox()
 }
 
 void
-SearchBox::search(StreamElement *stream)
+SearchBox::search(Stream *stream)
 {
 	if (isVisible())
 		return;

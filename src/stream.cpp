@@ -17,13 +17,13 @@
  */
 
 #include <phonon/mediasource.h>
-#include "streamelement.h"
+#include "stream.h"
 #include <QFile>
 #include <QFileInfo>
 #include <QTimerEvent>
 #include <QUrl>
 
-StreamElement::StreamElement(const QString &name, const QString &uri)
+Stream::Stream(const QString &name, const QString &uri)
 	: _name(name)
 	, _playlist(uri.endsWith("m3u"))
 	, _playlistFile(_playlist ? uri : QString())
@@ -35,7 +35,7 @@ StreamElement::StreamElement(const QString &name, const QString &uri)
 }
 
 void
-StreamElement::appendUri(const QString &uri)
+Stream::appendUri(const QString &uri)
 {
 	if (uri.startsWith('/'))
 		append(Phonon::MediaSource(uri));
@@ -44,7 +44,7 @@ StreamElement::appendUri(const QString &uri)
 }
 
 Phonon::MediaSource
-StreamElement::source()
+Stream::source()
 {
 	if (_playlist) {
 		if (isEmpty())
@@ -57,14 +57,14 @@ StreamElement::source()
 }
 
 void
-StreamElement::setSearch(const QString &uri)
+Stream::setSearch(const QString &uri)
 {
 	_search = uri;
 	_lastIndex = -1;
 }
 
 int
-StreamElement::search(int i)
+Stream::search(int i)
 {
 	for (int len = size(); i != len; ++i)
 		if (at(i).url().path().contains(_search, Qt::CaseInsensitive))
@@ -73,7 +73,7 @@ StreamElement::search(int i)
 }
 
 Phonon::MediaSource
-StreamElement::nextResult()
+Stream::nextResult()
 {
 	int i = search(_lastIndex + 1);
 	if (i != -1) {
@@ -88,7 +88,7 @@ StreamElement::nextResult()
 }
 
 void
-StreamElement::loadPlaylist()
+Stream::loadPlaylist()
 {
 	QFile file(_playlistFile);
 
@@ -107,7 +107,7 @@ StreamElement::loadPlaylist()
 }
 
 void
-StreamElement::timerEvent(QTimerEvent *ev)
+Stream::timerEvent(QTimerEvent *ev)
 {
 	killTimer(ev->timerId());
 	qWarning("ev");

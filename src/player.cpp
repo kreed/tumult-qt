@@ -23,7 +23,7 @@
 #include <QStringList>
 #include <QUrl>
 #include "searchbox.h"
-#include "streamelement.h"
+#include "stream.h"
 
 Player *player;
 
@@ -89,7 +89,7 @@ Player::showStatus(bool metadata)
 bool
 Player::parse(const QByteArray &name, const QByteArray &uri)
 {
-	_streams.append(new StreamElement(name, uri));
+	_streams.append(new Stream(name, uri));
 	return true;
 }
 
