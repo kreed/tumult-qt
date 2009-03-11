@@ -53,7 +53,10 @@ MessageWindow::showMessage(const QString &text)
 void
 MessageWindow::timerEvent(QTimerEvent *ev)
 {
-	killTimer(_timerId);
-	_timerId = 0;
-	hide();
+	if (ev->timerId() == _timerId) {
+		killTimer(_timerId);
+		_timerId = 0;
+		hide();
+	}
+	QLabel::timerEvent(ev);
 }
