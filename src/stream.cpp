@@ -110,6 +110,5 @@ void
 Stream::timerEvent(QTimerEvent *ev)
 {
 	killTimer(ev->timerId());
-	qWarning("ev");
 	loadPlaylist();
 }
