@@ -47,7 +47,7 @@ Player::showStatus(bool metadata)
 
 	switch (state()) {
 	case Phonon::ErrorState:
-		text = errorString();
+		text = errorString() + '\n' + currentSource().url().toString();
 		break;
 	case Phonon::PlayingState:
 	case Phonon::LoadingState:
