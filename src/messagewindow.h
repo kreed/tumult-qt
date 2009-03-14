@@ -24,15 +24,25 @@
 class MessageWindow : QLabel {
 	Q_OBJECT
 public:
+	enum Mode {
+		Info,
+		MetaDataBrief,
+		MetaDataVerbose
+	};
+
 	MessageWindow();
 
-	void showMessage(const QString &message);
+	void showText(const QString &text, Mode mode = Info);
+
+	bool verboseReady() const { return _verbose && isVisible(); }
+	void clearVerboseFlag() { _verbose = false; }
 
 protected:
 	void timerEvent(QTimerEvent *ev);
 
 private:
 	int _timerId;
+	bool _verbose;
 };
 
 #endif

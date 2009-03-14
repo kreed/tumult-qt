@@ -44,22 +44,23 @@ Player::Player()
 void
 Player::showStatus(bool metadata)
 {
-	QString text;
-
 	switch (state()) {
 	case Phonon::ErrorState:
-		text = errorString() + '\n' + currentSource().url().toString();
+		_message->showText(errorString() + '\n' + currentSource().url().toString());
 		break;
 	case Phonon::PlayingState:
 	case Phonon::LoadingState:
 		if (currentStream()->count() == 0) {
-			text = currentStream()->error();
-			if (text.isEmpty())
-				text = "No songs in playlist";
+			if (currentStream()->error().isEmpty())
+				_message->showText("No songs in playlist");
+			else
+				_message->showText(currentStream()->error());
 			break;
 		}
 	case Phonon::BufferingState:
 		if (metadata) {
+			QString text;
+
 			QString title = metaData(Phonon::TitleMetaData).join(", ");
 			QString artist = metaData(Phonon::ArtistMetaData).join(", ");
 
@@ -69,22 +70,32 @@ Player::showStatus(bool metadata)
 				artist = at[0];
 			}
 
-			if (!title.isEmpty())
-				text += "<b>" + title + "</b><br>";
-			if (!artist.isEmpty())
-				text += artist + "<br>";
-
-			if (text.isEmpty())
-				text += currentSource().url().toString() + "<br>";
-		}
-
-		text += currentStream()->name();
+			// more detailed information on duplicate request
+			if (_message->verboseReady()) {
+				// if Phonon gains support for it, add cover art here
+				text = "<b>Title: </b>" + title + "<br>";
+				text += "<b>Artist: </b>" + artist + "<br>";
+				text += "<b>Album: </b>" + metaData(Phonon::AlbumMetaData).join(", ") + "<br>";
+				text += "<b>Date: </b>" + metaData(Phonon::DateMetaData).join(", ") + "<br>";
+				text += "<b>Genre: </b>" + metaData(Phonon::GenreMetaData).join(", ") + "<br>";
+				text += "<b>Stream: </b>" + currentStream()->name();
+				_message->showText(text, MessageWindow::MetaDataVerbose);
+			} else {
+				if (!title.isEmpty())
+					text += "<b>" + title + "</b><br>";
+				if (!artist.isEmpty())
+					text += artist + "<br>";
+				if (text.isEmpty())
+					text = currentSource().url().toString() + "<br>";
+				text += currentStream()->name();
+				_message->showText(text, MessageWindow::MetaDataBrief);
+			}
+		} else
+			_message->showText(currentStream()->name());
 		break;
 	default:
-		text = "Not Playing";
+		_message->showText("Not Playing");
 	}
-
-	_message->showMessage(text);
 }
 
 bool
@@ -109,6 +120,7 @@ Player::init()
 void
 Player::changeSource(const Phonon::MediaSource &source)
 {
+	_message->clearVerboseFlag();
 	clearQueue();
 	setCurrentSource(source);
 	play();

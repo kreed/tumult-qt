@@ -23,9 +23,9 @@
 
 MessageWindow::MessageWindow()
 	: _timerId(0)
+	, _verbose(false)
 {
 	setWindowFlags(Qt::X11BypassWindowManagerHint);
-	setAlignment(Qt::AlignCenter);
 	setMargin(5);
 
 	QPalette p = palette();
@@ -35,10 +35,20 @@ MessageWindow::MessageWindow()
 }
 
 void
-MessageWindow::showMessage(const QString &text)
+MessageWindow::showText(const QString &text, Mode mode)
 {
 	if (_timerId)
 		killTimer(_timerId);
+
+	_verbose = mode != Info;
+
+	if (mode == MetaDataVerbose) {
+		setAlignment(Qt::AlignLeft);
+		_timerId = startTimer(5000);
+	} else {
+		setAlignment(Qt::AlignCenter);
+		_timerId = startTimer(3500);
+	}
 
 	setText(text);
 
@@ -47,8 +57,6 @@ MessageWindow::showMessage(const QString &text)
 
 	show();
 	raise();
-
-	_timerId = startTimer(3500);
 }
 
 void
