@@ -52,7 +52,7 @@ Player::showStatus(bool metadata)
 		break;
 	case Phonon::PlayingState:
 	case Phonon::LoadingState:
-		if (currentStream()->isEmpty()) {
+		if (currentStream()->count() == 0) {
 			text = currentStream()->error();
 			if (text.isEmpty())
 				text = "No songs in playlist";
@@ -90,7 +90,7 @@ Player::showStatus(bool metadata)
 bool
 Player::parse(const QByteArray &name, const QByteArray &uri)
 {
-	_streams.append(new Stream(name, uri));
+	_streams.append(Stream::create(name, uri));
 	return true;
 }
 
@@ -155,9 +155,9 @@ Player::action(Action action)
 		break;
 	}
 
-	if (currentStream()->isEmpty()) {
+	if (currentStream()->count() == 0) {
 		changeSource(currentStream()->source());
-		if (currentStream()->isEmpty()) {
+		if (currentStream()->count() == 0) {
 			showStatus(false);
 			return;
 		}
@@ -166,7 +166,7 @@ Player::action(Action action)
 	switch (action) {
 	case PlaylistNext:
 		if (state() == Phonon::PlayingState) {
-			if (currentStream()->isPlaylist())
+			if (currentStream()->count() > 1)
 				changeSource(currentStream()->source());
 		} else
 			play();
@@ -181,7 +181,7 @@ Player::action(Action action)
 			play();
 		break;
 	case Search:
-		if (currentStream()->isPlaylist())
+		if (currentStream()->count() > 1)
 			_searchBox->search(&*currentStream());
 		break;
 	case ShowStatus:

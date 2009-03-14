@@ -16,39 +16,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STREAM_H
-#define STREAM_H
+#ifndef STREAMURI_H
+#define STREAMURI_H
 
-#include <QString>
+#include <phonon/mediasource.h>
+#include "stream.h"
 
-namespace Phonon {
-class MediaSource;
-}
-
-class Stream {
+class StreamUri : public Stream {
 public:
-	static Stream *create(const QString &name, const QString &uri);
+	StreamUri(const QString &name, const QString &uri);
 
-	virtual Phonon::MediaSource source();
-
-	void setSearch(const QString &search);
-	virtual Phonon::MediaSource nextResult();
-
-	virtual int count() const;
-
-	inline QString name() const { return _name; }
-	inline QString error() const { return _error; }
-
-protected:
-	Stream(const QString &name);
-
-	QString _error;
-
-	QString _search;
-	int _lastIndex;
+	Phonon::MediaSource source();
+	Phonon::MediaSource nextResult();
+	int count() const;
 
 private:
-	QString _name;
+	Phonon::MediaSource _source;
 };
 
 #endif
