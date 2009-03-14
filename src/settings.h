@@ -23,7 +23,7 @@ class QByteArray;
 template<class K, class T> class QHash;
 typedef void (*Callback)(const QByteArray&);
 
-class Config {
+class Settings {
 public:
 	static void add(const QByteArray&, Callback);
 	static void parse();

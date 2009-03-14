@@ -16,11 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
 #include "keys.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QX11Info>
+#include "settings.h"
 #include <X11/Xlib.h>
 
 Keys *keys;
@@ -121,12 +121,12 @@ Keys::Keys()
 	memset(keyCodes, 0, sizeof(keyCodes));
 	memset(modMasks, 0, sizeof(modMasks));
 
-	Config::add("next", next);
-	Config::add("prev", prev);
-	Config::add("status", status);
-	Config::add("play_pause", play_pause);
-	Config::add("search", search);
-	Config::add("playlist_next", playlist_next);
+	Settings::add("next", next);
+	Settings::add("prev", prev);
+	Settings::add("status", status);
+	Settings::add("play_pause", play_pause);
+	Settings::add("search", search);
+	Settings::add("playlist_next", playlist_next);
 }
 
 bool

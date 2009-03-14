@@ -16,17 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
 #include "player.h"
 #include <QApplication>
 #include <QDir>
 #include <QFile>
 #include <QHash>
+#include "settings.h"
 
-QHash<QByteArray, Callback> *Config::map = NULL;
+QHash<QByteArray, Callback> *Settings::map = NULL;
 
 void
-Config::add(const QByteArray &key, Callback cb)
+Settings::add(const QByteArray &key, Callback cb)
 {
 	if (!map)
 		map = new QHash<QByteArray, Callback>;
@@ -35,7 +35,7 @@ Config::add(const QByteArray &key, Callback cb)
 }
 
 void
-Config::parse()
+Settings::parse()
 {
 	QFile file;
 

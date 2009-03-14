@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "player.h"
-#include "config.h"
 #include "keys.h"
+#include "player.h"
+#include "settings.h"
 #include "tumult.h"
 
 int
@@ -30,7 +30,7 @@ main(int argc, char **argv)
 	app.setApplicationName("Tumult");
 	player = new Player;
 	keys = new Keys;
-	Config::parse();
+	Settings::parse();
 	player->init();
 	return app.exec();
 }
