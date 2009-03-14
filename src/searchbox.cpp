@@ -16,10 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "searchbox.h"
+
 #include "player.h"
 #include <QCursor>
 #include <QKeyEvent>
-#include "searchbox.h"
 #include "stream.h"
 
 SearchBox::SearchBox()

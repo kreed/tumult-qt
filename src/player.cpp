@@ -16,10 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "player.h"
+
 #include "messagewindow.h"
 #include <phonon/audiooutput.h>
 #include <phonon/mediasource.h>
-#include "player.h"
 #include <QStringList>
 #include <QUrl>
 #include "searchbox.h"

@@ -17,6 +17,7 @@
  */
 
 #include "keys.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QX11Info>

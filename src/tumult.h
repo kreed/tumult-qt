@@ -20,7 +20,6 @@
 #define TUMULT_H
 
 #include <QApplication>
-#include <X11/Xlib.h>
 
 class Tumult : public QApplication {
 	Q_OBJECT

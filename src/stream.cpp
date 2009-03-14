@@ -16,8 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <phonon/mediasource.h>
 #include "stream.h"
+
+#include <phonon/mediasource.h>
 #include <QFile>
 #include <QFileInfo>
 #include <QTimerEvent>

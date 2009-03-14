@@ -16,8 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "keys.h"
 #include "tumult.h"
+
+#include "keys.h"
+#include <X11/Xlib.h>
 
 bool
 Tumult::x11EventFilter(XEvent *ev)

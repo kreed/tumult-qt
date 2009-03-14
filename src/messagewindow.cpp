@@ -17,6 +17,7 @@
  */
 
 #include "messagewindow.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 
