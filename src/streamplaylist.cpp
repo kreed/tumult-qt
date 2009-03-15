@@ -83,6 +83,7 @@ StreamPlaylist::loadPlaylist()
 		_error = QString("Could not read playlist '%1'").arg(file.fileName());
 		qWarning(qPrintable(_error));
 	} else {
+		clear();
 		_error.clear();
 
 		QTextStream in(&file);
