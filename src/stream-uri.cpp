@@ -16,22 +16,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STREAMURI_H
-#define STREAMURI_H
+#include "stream-uri.h"
 
-#include <phonon/mediasource.h>
-#include "stream.h"
+#include <QUrl>
 
-class StreamUri : public Stream {
-public:
-	StreamUri(const QString &name, const QString &uri);
+UriStream::UriStream(const QString &name, const QString &uri)
+	: Stream(name)
+	, _source(uri.startsWith('/')
+	        ? Phonon::MediaSource(uri)
+	        : Phonon::MediaSource(QUrl(uri)))
+{
+}
 
-	Phonon::MediaSource source();
-	Phonon::MediaSource nextResult();
-	int count() const;
+Phonon::MediaSource
+UriStream::source()
+{
+	return _source;
+}
 
-private:
-	Phonon::MediaSource _source;
-};
+Phonon::MediaSource
+UriStream::nextResult()
+{
+	return Phonon::MediaSource();
+}
 
-#endif
+int
+UriStream::count() const
+{
+	return 1;
+}

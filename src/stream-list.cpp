@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "streamplaylist.h"
+#include "stream-list.h"
 
 #include <QDateTime>
 #include <QFile>
@@ -24,7 +24,7 @@
 #include <QTimerEvent>
 #include <QUrl>
 
-StreamPlaylist::StreamPlaylist(const QString &name, const QString &uri)
+ListStream::ListStream(const QString &name, const QString &uri)
 	: Stream(name)
 	, _playlistFile(uri)
 {
@@ -32,7 +32,7 @@ StreamPlaylist::StreamPlaylist(const QString &name, const QString &uri)
 }
 
 void
-StreamPlaylist::appendUri(const QString &uri)
+ListStream::appendUri(const QString &uri)
 {
 	if (uri.startsWith('/'))
 		append(Phonon::MediaSource(uri));
@@ -41,7 +41,7 @@ StreamPlaylist::appendUri(const QString &uri)
 }
 
 Phonon::MediaSource
-StreamPlaylist::source()
+ListStream::source()
 {
 	if (isEmpty())
 		loadPlaylist();
@@ -51,7 +51,7 @@ StreamPlaylist::source()
 }
 
 int
-StreamPlaylist::search(int i)
+ListStream::search(int i)
 {
 	for (int len = size(); i != len; ++i)
 		if (at(i).url().path().contains(_search, Qt::CaseInsensitive))
@@ -60,7 +60,7 @@ StreamPlaylist::search(int i)
 }
 
 Phonon::MediaSource
-StreamPlaylist::nextResult()
+ListStream::nextResult()
 {
 	int i = search(_lastIndex + 1);
 	if (i != -1) {
@@ -75,7 +75,7 @@ StreamPlaylist::nextResult()
 }
 
 void
-StreamPlaylist::loadPlaylist()
+ListStream::loadPlaylist()
 {
 	QFile file(_playlistFile);
 
@@ -95,14 +95,14 @@ StreamPlaylist::loadPlaylist()
 }
 
 void
-StreamPlaylist::timerEvent(QTimerEvent *ev)
+ListStream::timerEvent(QTimerEvent *ev)
 {
 	killTimer(ev->timerId());
 	loadPlaylist();
 }
 
 int
-StreamPlaylist::count() const
+ListStream::count() const
 {
 	return QList<Phonon::MediaSource>::count();
 }

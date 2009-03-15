@@ -26,10 +26,10 @@
 
 class QTimerEvent;
 
-class StreamPlaylist : QObject, public Stream, QList<Phonon::MediaSource> {
+class ListStream : QObject, public Stream, QList<Phonon::MediaSource> {
 	Q_OBJECT
 public:
-	StreamPlaylist(const QString &name, const QString &uri);
+	ListStream(const QString &name, const QString &uri);
 
 	Phonon::MediaSource source();
 	Phonon::MediaSource nextResult();

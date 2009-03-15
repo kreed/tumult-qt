@@ -18,8 +18,8 @@
 
 #include "stream.h"
 
-#include "streamplaylist.h"
-#include "streamuri.h"
+#include "stream-list.h"
+#include "stream-uri.h"
 
 Stream::Stream(const QString &name)
 	: _name(name)
@@ -30,9 +30,9 @@ Stream*
 Stream::create(const QString &name, const QString &uri)
 {
 	if (uri.endsWith(QLatin1String("m3u")))
-		return new StreamPlaylist(name, uri);
+		return new ListStream(name, uri);
 	else
-		return new StreamUri(name, uri);
+		return new UriStream(name, uri);
 }
 
 void
