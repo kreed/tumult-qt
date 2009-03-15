@@ -16,50 +16,28 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "stream.h"
-
-#include <QDir>
 #include "stream-directory.h"
-#include "stream-playlist.h"
-#include "stream-uri.h"
 
-Stream::Stream(const QString &name)
-	: _name(name)
-{
-}
+#include <QDirIterator>
+#include <QFileSystemWatcher>
 
-Stream*
-Stream::create(const QString &name, const QString &uri)
+DirectoryStream::DirectoryStream(const QString &name, const QString &uri)
+	: ListStream(name, uri)
 {
-	if (QDir(uri).exists())
-		return new DirectoryStream(name, uri);
-	else if (uri.endsWith(QLatin1String("m3u")))
-		return new PlaylistStream(name, uri);
-	else
-		return new UriStream(name, uri);
+	_fsWatch = new QFileSystemWatcher(this);
+	_fsWatch->addPath(uri);
+
+	connect(_fsWatch, SIGNAL(directoryChanged(const QString&)),
+	                  SLOT(repopulate()));
 }
 
 void
-Stream::setSearch(const QString &uri)
+DirectoryStream::populate()
 {
-	_search = uri;
-	_lastIndex = -1;
-}
-
-Phonon::MediaSource
-Stream::source()
-{
-	return Phonon::MediaSource();
-}
-
-Phonon::MediaSource
-Stream::nextResult()
-{
-	return Phonon::MediaSource();
-}
-
-int
-Stream::count() const
-{
-	return 0;
+	QStringList filters;
+	filters << "*.m4a" << "*.ogg" << "*.mp3" << "*.flac";
+	QDirIterator it(listSrc(), filters, QDir::NoDotAndDotDot | QDir::Files,
+	                QDirIterator::Subdirectories);
+	while (it.hasNext())
+		append(it.next());
 }

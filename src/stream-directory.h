@@ -16,40 +16,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STREAMLIST_H
-#define STREAMLIST_H
+#ifndef STREAMDIRECTORY_H
+#define STREAMDIRECTORY_H
 
-#include <QStringList>
-#include <QObject>
-#include "stream.h"
+#include "stream-list.h"
 
-class QTimerEvent;
+class QFileSystemWatcher;
 
-class ListStream : protected QObject, public Stream, protected QStringList {
-	Q_OBJECT
+class DirectoryStream : public ListStream {
 public:
-	ListStream(const QString &name, const QString &source);
-
-	Phonon::MediaSource source();
-	Phonon::MediaSource nextResult();
-	int count() const;
-
-	QString listSrc() const { return _listSrc; }
-	bool isListSrcModified() const;
-
-public slots:
-	void repopulate();
+	DirectoryStream(const QString &name, const QString &uri);
 
 protected:
-	void timerEvent(QTimerEvent*);
-	virtual void populate();
+	void populate();
 
 private:
-	Phonon::MediaSource createSource(const QString &uri);
-	int search(int from);
-
-	unsigned _modTime;
-	QString _listSrc;
+	QFileSystemWatcher *_fsWatch;
 };
 
 #endif

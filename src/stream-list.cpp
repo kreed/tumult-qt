@@ -18,43 +18,49 @@
 
 #include "stream-list.h"
 
+#include <phonon/mediasource.h>
 #include <QDateTime>
-#include <QFile>
 #include <QFileInfo>
 #include <QTimerEvent>
 #include <QUrl>
 
 ListStream::ListStream(const QString &name, const QString &uri)
 	: Stream(name)
-	, _playlistFile(uri)
+	, _listSrc(uri)
 {
 	startTimer(0);
 }
 
-void
-ListStream::appendUri(const QString &uri)
+Phonon::MediaSource
+ListStream::createSource(const QString &uri)
 {
 	if (uri.startsWith('/'))
-		append(Phonon::MediaSource(uri));
+		return Phonon::MediaSource(uri);
 	else
-		append(Phonon::MediaSource(QUrl(uri)));
+		return Phonon::MediaSource(QUrl(uri));
+}
+
+bool
+ListStream::isListSrcModified() const
+{
+	return QFileInfo(_listSrc).lastModified().toTime_t() != _modTime;
 }
 
 Phonon::MediaSource
 ListStream::source()
 {
 	if (isEmpty())
-		loadPlaylist();
-	else if (size() == 1 || QFileInfo(_playlistFile).lastModified().toTime_t() != _modTime)
+		repopulate();
+	else if (size() == 1 || isListSrcModified())
 		startTimer(0);
-	return isEmpty() ? Phonon::MediaSource() : takeAt(qrand() % size());
+	return isEmpty() ? Phonon::MediaSource() : createSource(takeAt(qrand() % size()));
 }
 
 int
 ListStream::search(int i)
 {
 	for (int len = size(); i != len; ++i)
-		if (at(i).url().path().contains(_search, Qt::CaseInsensitive))
+		if (at(i).contains(_search, Qt::CaseInsensitive))
 			return i;
 	return -1;
 }
@@ -65,7 +71,7 @@ ListStream::nextResult()
 	int i = search(_lastIndex + 1);
 	if (i != -1) {
 		_lastIndex = i;
-		return at(i);
+		return createSource(at(i));
 	} else if (_lastIndex != -1) {
 		// loop back to the beginning
 		_lastIndex = -1;
@@ -75,34 +81,28 @@ ListStream::nextResult()
 }
 
 void
-ListStream::loadPlaylist()
+ListStream::populate()
 {
-	QFile file(_playlistFile);
+}
 
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		_error = QString("Could not read playlist '%1'").arg(file.fileName());
-		qWarning(qPrintable(_error));
-	} else {
-		clear();
-		_error.clear();
-
-		QTextStream in(&file);
-		while (!in.atEnd())
-			append(in.readLine());
-
-		_modTime = QFileInfo(file).lastModified().toTime_t();
-	}
+void
+ListStream::repopulate()
+{
+	clear();
+	_error.clear();
+	populate();
+	_modTime = QFileInfo(_listSrc).lastModified().toTime_t();
 }
 
 void
 ListStream::timerEvent(QTimerEvent *ev)
 {
 	killTimer(ev->timerId());
-	loadPlaylist();
+	repopulate();
 }
 
 int
 ListStream::count() const
 {
-	return QList<Phonon::MediaSource>::count();
+	return QStringList::count();
 }

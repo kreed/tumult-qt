@@ -16,50 +16,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "stream.h"
-
-#include <QDir>
-#include "stream-directory.h"
 #include "stream-playlist.h"
-#include "stream-uri.h"
 
-Stream::Stream(const QString &name)
-	: _name(name)
-{
-}
+#include <QFile>
+#include <QTextStream>
 
-Stream*
-Stream::create(const QString &name, const QString &uri)
+PlaylistStream::PlaylistStream(const QString &name, const QString &uri)
+	: ListStream(name, uri)
 {
-	if (QDir(uri).exists())
-		return new DirectoryStream(name, uri);
-	else if (uri.endsWith(QLatin1String("m3u")))
-		return new PlaylistStream(name, uri);
-	else
-		return new UriStream(name, uri);
 }
 
 void
-Stream::setSearch(const QString &uri)
+PlaylistStream::populate()
 {
-	_search = uri;
-	_lastIndex = -1;
-}
+	QFile file(listSrc());
 
-Phonon::MediaSource
-Stream::source()
-{
-	return Phonon::MediaSource();
-}
-
-Phonon::MediaSource
-Stream::nextResult()
-{
-	return Phonon::MediaSource();
-}
-
-int
-Stream::count() const
-{
-	return 0;
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		_error = QString("Could not read playlist '%1'").arg(file.fileName());
+		qWarning(qPrintable(_error));
+	} else {
+		QTextStream in(&file);
+		while (!in.atEnd())
+			append(in.readLine());
+	}
 }
