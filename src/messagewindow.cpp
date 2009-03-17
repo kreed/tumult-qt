@@ -26,6 +26,8 @@ MessageWindow::MessageWindow()
 	, _verbose(false)
 {
 	setWindowFlags(Qt::X11BypassWindowManagerHint);
+	setMaximumWidth(300);
+	setWordWrap(true);
 	setMargin(5);
 
 	QPalette p = palette();
