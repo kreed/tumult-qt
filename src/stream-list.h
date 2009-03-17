@@ -28,8 +28,6 @@ class QTimerEvent;
 class ListStream : protected QObject, public Stream, protected QStringList {
 	Q_OBJECT
 public:
-	ListStream(const QString &name, const QString &source);
-
 	Phonon::MediaSource source();
 	Phonon::MediaSource nextResult();
 	int count() const;
@@ -41,6 +39,8 @@ public slots:
 	void repopulate();
 
 protected:
+	ListStream(const QString &name, const QString &source);
+
 	void timerEvent(QTimerEvent*);
 	virtual void populate();
 
