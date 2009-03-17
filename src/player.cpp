@@ -186,17 +186,23 @@ Player::nextInStream()
 }
 
 void
+Player::smartStop()
+{
+	if (currentSource().type() == Phonon::MediaSource::LocalFile)
+		pause();
+	else
+		stop();
+}
+
+void
 Player::playPause()
 {
 	if (checkEmptyStream())
 		return;
 
-	if (state() == Phonon::PlayingState) {
-		if (currentSource().type() == Phonon::MediaSource::LocalFile)
-			pause();
-		else
-			stop();
-	} else
+	if (state() == Phonon::PlayingState)
+		smartStop();
+	else
 		play();
 }
 

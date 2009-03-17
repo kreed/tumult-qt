@@ -46,6 +46,7 @@ public slots:
 	void prevStream();
 	void nextInStream();
 	void openSearchBox();
+	void smartStop();
 	void playPause();
 	void showMetaData();
 
