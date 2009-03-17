@@ -91,7 +91,7 @@ Player::showStatus(bool metadata)
 					"<b>Album: </b>%3<br>"
 					"<b>Date: </b>%4<br>"
 					"<b>Genre: </b>%5<br>"
-					"<b>Stream: </b>%6<br>")
+					"<b>Stream: </b>%6")
 					.arg(title, artist
 					   , metaData(Phonon::AlbumMetaData).join(", ")
 					   , metaData(Phonon::DateMetaData).join(", ")
