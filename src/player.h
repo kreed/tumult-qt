@@ -30,36 +30,31 @@ typedef QLinkedList<Stream*> StreamList;
 class Player : public Phonon::MediaObject {
 	Q_OBJECT
 public:
-	enum Action {
-		Next,
-		Prev,
-		ShowStatus,
-		PlayPause,
-		Search,
-		PlaylistNext,
-		ActionCount
-	};
-
 	Player();
 	bool parse(const QByteArray &name, const QByteArray &uri);
-	void action(Action);
 	void init();
 
 	Stream *currentStream() const { return *_currentStream; }
 
-	void showStatus(bool metadata);
 	void showNextMetaData();
+	void showStatus(bool metadata);
 
 	void changeSource(const Phonon::MediaSource&);
-	void next();
-	void prev();
+
+public slots:
+	void nextStream();
+	void prevStream();
+	void nextInStream();
+	void openSearchBox();
+	void playPause();
+	void showMetaData();
 
 protected slots:
 	void loadAnother();
-	void showMetaData();
 
 private:
 	void shiftStream();
+	bool checkEmptyStream();
 
 	StreamList _streams;
 	StreamList::const_iterator _currentStream;

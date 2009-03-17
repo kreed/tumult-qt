@@ -19,18 +19,27 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-#include "player.h"
-
 class QByteArray;
 
 class Keys {
 public:
+	enum Action {
+		ShowStatus,
+		NextInStream,
+		PlayPause,
+		Search,
+		Prev,
+		Next,
+		ActionCount
+	};
+
 	Keys();
 	bool event(unsigned keyCode, unsigned modMask);
-	void parse(Player::Action action, const QByteArray &v);
+	void parse(Action action, const QByteArray &v);
+
 private:
-	unsigned keyCodes[Player::ActionCount];
-	unsigned modMasks[Player::ActionCount];
+	unsigned keyCodes[ActionCount];
+	unsigned modMasks[ActionCount];
 };
 
 extern Keys *keys;

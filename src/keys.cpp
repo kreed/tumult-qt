@@ -18,6 +18,7 @@
 
 #include "keys.h"
 
+#include "player.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QX11Info>
@@ -35,7 +36,7 @@ catch_error(Display*, XErrorEvent*)
 }
 
 void
-Keys::parse(Player::Action action, const QByteArray &v)
+Keys::parse(Action action, const QByteArray &v)
 {
 	if (keyCodes[action])
 		return;
@@ -107,7 +108,7 @@ Keys::parse(Player::Action action, const QByteArray &v)
 	void \
 	function(const QByteArray &v) \
 	{ \
-		keys->parse(Player::action, v); \
+		keys->parse(Keys::action, v); \
 	}
 
 KEY(next, Next)
@@ -115,28 +116,55 @@ KEY(prev, Prev)
 KEY(status, ShowStatus)
 KEY(play_pause, PlayPause)
 KEY(search, Search)
-KEY(playlist_next, PlaylistNext)
+KEY(next_in_stream, NextInStream)
 
 Keys::Keys()
 {
 	memset(keyCodes, 0, sizeof(keyCodes));
 	memset(modMasks, 0, sizeof(modMasks));
 
-	Settings::add("next", next);
-	Settings::add("prev", prev);
+	Settings::add("next_stream", next);
+	Settings::add("prev_stream", prev);
 	Settings::add("status", status);
 	Settings::add("play_pause", play_pause);
 	Settings::add("search", search);
-	Settings::add("playlist_next", playlist_next);
+	Settings::add("next_in_stream", next_in_stream);
+}
+
+static void
+action(Keys::Action action)
+{
+	switch (action) {
+	case Keys::ShowStatus:
+		player->showMetaData();
+		break;
+	case Keys::NextInStream:
+		player->nextInStream();
+		break;
+	case Keys::PlayPause:
+		player->playPause();
+		break;
+	case Keys::Search:
+		player->openSearchBox();
+		break;
+	case Keys::Prev:
+		player->prevStream();
+		break;
+	case Keys::Next:
+		player->nextStream();
+		break;
+	default:
+		break;
+	}
 }
 
 bool
 Keys::event(unsigned keyCode, unsigned modMask)
 {
 	modMask &= ~(Mod2Mask | Mod5Mask | LockMask);
-	for (int i = 0; i != Player::ActionCount; ++i)
+	for (int i = 0; i != ActionCount; ++i)
 		if (keyCodes[i] == keyCode && (modMasks[i] == AnyModifier || modMask == modMasks[i])) {
-			player->action((Player::Action)i);
+			action((Action)i);
 			return true;
 		}
 

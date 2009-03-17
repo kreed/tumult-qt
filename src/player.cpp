@@ -41,6 +41,20 @@ Player::Player()
 	              SLOT(loadAnother()));
 }
 
+bool
+Player::checkEmptyStream()
+{
+	if (currentStream()->count() == 0) {
+		changeSource(currentStream()->source());
+		if (currentStream()->count() == 0) {
+			showStatus(false);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void
 Player::showStatus(bool metadata)
 {
@@ -52,15 +66,13 @@ Player::showStatus(bool metadata)
 	case Phonon::LoadingState:
 		if (currentStream()->count() == 0) {
 			if (currentStream()->error().isEmpty())
-				_message->showText("No songs in playlist");
+				_message->showText("No sources in stream");
 			else
 				_message->showText(currentStream()->error());
 			break;
 		}
 	case Phonon::BufferingState:
 		if (metadata) {
-			QString text;
-
 			QString title = metaData(Phonon::TitleMetaData).join(", ");
 			QString artist = metaData(Phonon::ArtistMetaData).join(", ");
 
@@ -73,14 +85,21 @@ Player::showStatus(bool metadata)
 			// more detailed information on duplicate request
 			if (_message->verboseReady()) {
 				// if Phonon gains support for it, add cover art here
-				text = "<b>Title: </b>" + title + "<br>";
-				text += "<b>Artist: </b>" + artist + "<br>";
-				text += "<b>Album: </b>" + metaData(Phonon::AlbumMetaData).join(", ") + "<br>";
-				text += "<b>Date: </b>" + metaData(Phonon::DateMetaData).join(", ") + "<br>";
-				text += "<b>Genre: </b>" + metaData(Phonon::GenreMetaData).join(", ") + "<br>";
-				text += "<b>Stream: </b>" + currentStream()->name();
-				_message->showText(text, MessageWindow::MetaDataVerbose);
+				_message->showText(QString(
+					"<b>Title: </b>%1<br>"
+					"<b>Artist: </b>%2<br>"
+					"<b>Album: </b>%3<br>"
+					"<b>Date: </b>%4<br>"
+					"<b>Genre: </b>%5<br>"
+					"<b>Stream: </b>%6<br>")
+					.arg(title, artist
+					   , metaData(Phonon::AlbumMetaData).join(", ")
+					   , metaData(Phonon::DateMetaData).join(", ")
+					   , metaData(Phonon::GenreMetaData).join(", ")
+					   , currentStream()->name())
+					, MessageWindow::MetaDataVerbose);
 			} else {
+				QString text;
 				if (!title.isEmpty())
 					text += "<b>" + title + "</b><br>";
 				if (!artist.isEmpty())
@@ -135,7 +154,7 @@ Player::shiftStream()
 }
 
 void
-Player::prev()
+Player::prevStream()
 {
 	if (_currentStream == _streams.constBegin())
 		_currentStream = _streams.constEnd();
@@ -145,7 +164,7 @@ Player::prev()
 }
 
 void
-Player::next()
+Player::nextStream()
 {
 	if (++_currentStream == _streams.constEnd())
 		_currentStream = _streams.constBegin();
@@ -154,54 +173,41 @@ Player::next()
 }
 
 void
-Player::action(Action action)
+Player::nextInStream()
 {
-	switch (action) {
-	case Prev:
-		prev();
+	if (checkEmptyStream())
 		return;
-	case Next:
-		next();
-		return;
-	default:
-		break;
-	}
 
-	if (currentStream()->count() == 0) {
-		changeSource(currentStream()->source());
-		if (currentStream()->count() == 0) {
-			showStatus(false);
-			return;
-		}
-	}
-
-	switch (action) {
-	case PlaylistNext:
-		if (state() == Phonon::PlayingState) {
-			if (currentStream()->count() > 1)
-				changeSource(currentStream()->source());
-		} else
-			play();
-		break;
-	case PlayPause:
-		if (state() == Phonon::PlayingState) {
-			if (currentSource().type() == Phonon::MediaSource::LocalFile)
-				pause();
-			else
-				stop();
-		} else
-			play();
-		break;
-	case Search:
+	if (state() == Phonon::PlayingState) {
 		if (currentStream()->count() > 1)
-			_searchBox->search(&*currentStream());
-		break;
-	case ShowStatus:
-		showStatus(true);
-		break;
-	default:
-		break;
-	}
+			changeSource(currentStream()->source());
+	} else
+		play();
+}
+
+void
+Player::playPause()
+{
+	if (checkEmptyStream())
+		return;
+
+	if (state() == Phonon::PlayingState) {
+		if (currentSource().type() == Phonon::MediaSource::LocalFile)
+			pause();
+		else
+			stop();
+	} else
+		play();
+}
+
+void
+Player::openSearchBox()
+{
+	if (checkEmptyStream())
+		return;
+
+	if (currentStream()->count() > 1)
+		_searchBox->search(&*currentStream());
 }
 
 void
