@@ -29,4 +29,3 @@ Tumult::x11EventFilter(XEvent *ev)
 
 	return false;
 }
-
