@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += warn_on
 TARGET = tumult
-QT += phonon
+QT += phonon dbus
 target.path = /usr/local/bin
 INSTALLS += target
 MOC_DIR = build

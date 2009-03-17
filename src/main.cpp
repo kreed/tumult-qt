@@ -20,18 +20,26 @@
 #include "player.h"
 #include "settings.h"
 #include "tumult.h"
+#include <QDBusConnection>
 
 int
 main(int argc, char **argv)
 {
-	Tumult app(argc, argv);
 	qsrand(time(NULL));
+
+	Tumult app(argc, argv);
 	app.setQuitOnLastWindowClosed(false);
 	app.setApplicationName("Tumult");
+
 	player = new Player;
 	keys = new Keys;
 	Settings::parse();
 	player->init();
+
+	QDBusConnection bus = QDBusConnection::sessionBus();
+	bus.registerService("org.tumult");
+	bus.registerObject("/", player, QDBusConnection::ExportAllSlots);
+
 	return app.exec();
 }
 
