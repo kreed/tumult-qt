@@ -51,9 +51,9 @@ ListStream::source()
 {
 	if (isEmpty())
 		repopulate();
-	else if (size() == 1 || isListSrcModified())
+	else if (isListSrcModified())
 		startTimer(0);
-	return isEmpty() ? Phonon::MediaSource() : createSource(takeAt(qrand() % size()));
+	return isEmpty() ? Phonon::MediaSource() : createSource(at(qrand() % size()));
 }
 
 int
