@@ -114,7 +114,8 @@ Player::showStatus(bool metadata)
 		} else
 			_message->showText(currentStream()->name());
 		break;
-	default:
+	case Phonon::PausedState:
+	case Phonon::StoppedState:
 		_message->showText("Not Playing");
 	}
 }
