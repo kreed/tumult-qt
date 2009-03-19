@@ -19,16 +19,10 @@
 #include "stream-directory.h"
 
 #include <QDirIterator>
-#include <QFileSystemWatcher>
 
 DirectoryStream::DirectoryStream(const QString &name, const QString &uri)
 	: ListStream(name, uri)
 {
-	_fsWatch = new QFileSystemWatcher(this);
-	_fsWatch->addPath(uri);
-
-	connect(_fsWatch, SIGNAL(directoryChanged(const QString&)),
-	                  SLOT(repopulate()));
 }
 
 void

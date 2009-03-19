@@ -19,16 +19,22 @@
 #include "stream-list.h"
 
 #include <phonon/mediasource.h>
-#include <QDateTime>
-#include <QFileInfo>
-#include <QTimerEvent>
+#include <QFileSystemWatcher>
+#include <QtConcurrentRun>
 #include <QUrl>
 
 ListStream::ListStream(const QString &name, const QString &uri)
 	: Stream(name)
 	, _listSrc(uri)
+	, _watcher(new QFileSystemWatcher(this))
 {
-	startTimer(0);
+	_watcher->addPath(uri);
+	connect(_watcher, SIGNAL(directoryChanged(const QString&)),
+	                  SLOT(repopulateLater()));
+	connect(_watcher, SIGNAL(fileChanged(const QString&)),
+	                  SLOT(repopulateLater()));
+
+	repopulateLater();
 }
 
 Phonon::MediaSource
@@ -40,20 +46,16 @@ ListStream::createSource(const QString &uri)
 		return Phonon::MediaSource(QUrl(uri));
 }
 
-bool
-ListStream::isListSrcModified() const
-{
-	return QFileInfo(_listSrc).lastModified().toTime_t() != _modTime;
-}
-
 Phonon::MediaSource
 ListStream::source()
 {
-	if (isEmpty())
+	if (isEmpty()) {
 		repopulate();
-	else if (isListSrcModified())
-		startTimer(0);
-	return isEmpty() ? Phonon::MediaSource() : createSource(at(qrand() % size()));
+		if (isEmpty())
+			return Phonon::MediaSource();
+	}
+
+	return createSource(at(qrand() % size()));
 }
 
 int
@@ -91,14 +93,18 @@ ListStream::repopulate()
 	clear();
 	_error.clear();
 	populate();
-	_modTime = QFileInfo(_listSrc).lastModified().toTime_t();
+}
+
+static void
+callRepopulate(ListStream *stream)
+{
+	stream->repopulate();
 }
 
 void
-ListStream::timerEvent(QTimerEvent *ev)
+ListStream::repopulateLater()
 {
-	killTimer(ev->timerId());
-	repopulate();
+	QtConcurrent::run(callRepopulate, this);
 }
 
 int

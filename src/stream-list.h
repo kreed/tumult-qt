@@ -23,7 +23,7 @@
 #include <QObject>
 #include "stream.h"
 
-class QTimerEvent;
+class QFileSystemWatcher;
 
 class ListStream : protected QObject, public Stream, protected QStringList {
 	Q_OBJECT
@@ -33,23 +33,22 @@ public:
 	int count() const;
 
 	QString listSrc() const { return _listSrc; }
-	bool isListSrcModified() const;
 
 public slots:
 	void repopulate();
+	void repopulateLater();
 
 protected:
 	ListStream(const QString &name, const QString &source);
 
-	void timerEvent(QTimerEvent*);
 	virtual void populate();
 
 private:
 	Phonon::MediaSource createSource(const QString &uri);
 	int search(int from);
 
-	unsigned _modTime;
 	QString _listSrc;
+	QFileSystemWatcher *_watcher;
 };
 
 #endif
