@@ -59,19 +59,20 @@ Player::checkEmptyStream()
 void
 Player::showStatus(bool metadata)
 {
+	if (currentStream()->count() == 0) {
+		if (currentStream()->error().isEmpty())
+			_message->showText("No sources in stream");
+		else
+			_message->showText(currentStream()->error());
+		return;
+	}
+
 	switch (state()) {
 	case Phonon::ErrorState:
 		_message->showText(errorString() + '\n' + currentSource().url().toString());
 		break;
 	case Phonon::PlayingState:
 	case Phonon::LoadingState:
-		if (currentStream()->count() == 0) {
-			if (currentStream()->error().isEmpty())
-				_message->showText("No sources in stream");
-			else
-				_message->showText(currentStream()->error());
-			break;
-		}
 	case Phonon::BufferingState:
 		if (metadata) {
 			QString title = metaData(Phonon::TitleMetaData).join(", ");
