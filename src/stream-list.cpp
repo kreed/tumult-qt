@@ -37,8 +37,8 @@ ListStream::ListStream(const QString &name, const QString &uri)
 	repopulateLater();
 }
 
-Phonon::MediaSource
-ListStream::createSource(const QString &uri)
+static Phonon::MediaSource
+createSource(const QString &uri)
 {
 	if (uri.startsWith('/'))
 		return Phonon::MediaSource(uri);

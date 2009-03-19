@@ -44,7 +44,6 @@ protected:
 	virtual void populate();
 
 private:
-	Phonon::MediaSource createSource(const QString &uri);
 	int search(int from) const;
 
 	QString _listSrc;
