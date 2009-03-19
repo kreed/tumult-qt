@@ -28,7 +28,7 @@ class QFileSystemWatcher;
 class ListStream : protected QObject, public Stream, protected QStringList {
 	Q_OBJECT
 public:
-	Phonon::MediaSource source();
+	Phonon::MediaSource source() const;
 	Phonon::MediaSource nextResult();
 	int count() const;
 

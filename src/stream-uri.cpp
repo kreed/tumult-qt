@@ -29,7 +29,7 @@ UriStream::UriStream(const QString &name, const QString &uri)
 }
 
 Phonon::MediaSource
-UriStream::source()
+UriStream::source() const
 {
 	return _source;
 }

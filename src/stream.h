@@ -29,7 +29,7 @@ class Stream {
 public:
 	static Stream *create(const QString &name, const QString &uri);
 
-	virtual Phonon::MediaSource source();
+	virtual Phonon::MediaSource source() const;
 
 	virtual void repopulate();
 

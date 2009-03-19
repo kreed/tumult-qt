@@ -47,7 +47,7 @@ Stream::setSearch(const QString &uri)
 }
 
 Phonon::MediaSource
-Stream::source()
+Stream::source() const
 {
 	return Phonon::MediaSource();
 }
