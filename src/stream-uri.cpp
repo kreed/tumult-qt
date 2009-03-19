@@ -18,7 +18,7 @@
 
 #include "stream-uri.h"
 
-#include <QUrl>
+#include <qurl.h>
 
 UriStream::UriStream(const QString &name, const QString &uri)
 	: Stream(name)

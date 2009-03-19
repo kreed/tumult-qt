@@ -21,8 +21,8 @@
 #include "messagewindow.h"
 #include <phonon/audiooutput.h>
 #include <phonon/mediasource.h>
-#include <QStringList>
-#include <QUrl>
+#include <qstringlist.h>
+#include <qurl.h>
 #include "searchbox.h"
 #include "stream.h"
 

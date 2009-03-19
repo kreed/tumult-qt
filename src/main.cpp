@@ -20,7 +20,7 @@
 #include "player.h"
 #include "settings.h"
 #include "tumult.h"
-#include <QDBusConnection>
+#include <qdbusconnection.h>
 
 int
 main(int argc, char **argv)

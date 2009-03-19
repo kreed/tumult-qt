@@ -19,7 +19,7 @@
 #ifndef TUMULT_H
 #define TUMULT_H
 
-#include <QApplication>
+#include <qapplication.h>
 
 class Tumult : public QApplication {
 	Q_OBJECT

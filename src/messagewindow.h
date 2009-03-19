@@ -19,7 +19,7 @@
 #ifndef MESSAGEWINDOW_H
 #define MESSAGEWINDOW_H
 
-#include <QLabel>
+#include <qlabel.h>
 
 class MessageWindow : QLabel {
 	Q_OBJECT

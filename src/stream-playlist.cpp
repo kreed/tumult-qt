@@ -18,8 +18,8 @@
 
 #include "stream-playlist.h"
 
-#include <QFile>
-#include <QTextStream>
+#include <qfile.h>
+#include <qtextstream.h>
 
 PlaylistStream::PlaylistStream(const QString &name, const QString &uri)
 	: ListStream(name, uri)

@@ -18,7 +18,7 @@
 
 #include "stream-directory.h"
 
-#include <QDirIterator>
+#include <qdiriterator.h>
 
 DirectoryStream::DirectoryStream(const QString &name, const QString &uri)
 	: ListStream(name, uri)

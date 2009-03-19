@@ -19,9 +19,9 @@
 #include "keys.h"
 
 #include "player.h"
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QX11Info>
+#include <qapplication.h>
+#include <qdesktopwidget.h>
+#include <qx11info_x11.h>
 #include "settings.h"
 #include <X11/Xlib.h>
 

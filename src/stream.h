@@ -19,7 +19,7 @@
 #ifndef STREAM_H
 #define STREAM_H
 
-#include <QString>
+#include <qstring.h>
 
 namespace Phonon {
 class MediaSource;

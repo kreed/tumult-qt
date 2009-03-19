@@ -20,7 +20,7 @@
 #define PLAYER_H
 
 #include <phonon/mediaobject.h>
-#include <QLinkedList>
+#include <qlinkedlist.h>
 
 class MessageWindow;
 class SearchBox;

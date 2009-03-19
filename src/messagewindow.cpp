@@ -18,8 +18,8 @@
 
 #include "messagewindow.h"
 
-#include <QApplication>
-#include <QDesktopWidget>
+#include <qapplication.h>
+#include <qdesktopwidget.h>
 
 MessageWindow::MessageWindow()
 	: _timerId(0)

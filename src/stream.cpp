@@ -18,7 +18,7 @@
 
 #include "stream.h"
 
-#include <QDir>
+#include <qdir.h>
 #include "stream-directory.h"
 #include "stream-playlist.h"
 #include "stream-uri.h"

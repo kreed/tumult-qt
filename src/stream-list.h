@@ -19,8 +19,8 @@
 #ifndef STREAMLIST_H
 #define STREAMLIST_H
 
-#include <QStringList>
-#include <QObject>
+#include <qstringlist.h>
+#include <qobject.h>
 #include "stream.h"
 
 class QFileSystemWatcher;

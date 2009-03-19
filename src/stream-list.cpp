@@ -19,9 +19,9 @@
 #include "stream-list.h"
 
 #include <phonon/mediasource.h>
-#include <QFileSystemWatcher>
-#include <QtConcurrentRun>
-#include <QUrl>
+#include <qfilesystemwatcher.h>
+#include <qtconcurrentrun.h>
+#include <qurl.h>
 
 ListStream::ListStream(const QString &name, const QString &uri)
 	: Stream(name)

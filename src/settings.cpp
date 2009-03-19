@@ -19,10 +19,10 @@
 #include "settings.h"
 
 #include "player.h"
-#include <QApplication>
-#include <QDir>
-#include <QFile>
-#include <QHash>
+#include <qapplication.h>
+#include <qdir.h>
+#include <qfile.h>
+#include <qhash.h>
 
 QHash<QByteArray, Callback> *Settings::map = NULL;
 

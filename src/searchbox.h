@@ -19,7 +19,7 @@
 #ifndef SEARCHBOX_H
 #define SEARCHBOX_H
 
-#include <QLineEdit>
+#include <qlineedit.h>
 
 class Stream;
 

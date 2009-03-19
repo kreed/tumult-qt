@@ -19,8 +19,8 @@
 #include "searchbox.h"
 
 #include "player.h"
-#include <QCursor>
-#include <QKeyEvent>
+#include <qcursor.h>
+#include <qevent.h>
 #include "stream.h"
 
 SearchBox::SearchBox()
