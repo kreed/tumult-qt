@@ -45,11 +45,12 @@ bool
 Player::checkEmptyStream()
 {
 	if (currentStream()->count() == 0) {
-		changeSource(currentStream()->source());
+		currentStream()->repopulate();
 		if (currentStream()->count() == 0) {
 			showStatus(false);
 			return true;
-		}
+		} else
+			changeSource(currentStream()->source());
 	}
 
 	return false;

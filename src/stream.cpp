@@ -63,3 +63,8 @@ Stream::count() const
 {
 	return 0;
 }
+
+void
+Stream::repopulate()
+{
+}

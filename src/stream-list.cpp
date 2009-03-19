@@ -49,13 +49,7 @@ createSource(const QString &uri)
 Phonon::MediaSource
 ListStream::source()
 {
-	if (isEmpty()) {
-		repopulate();
-		if (isEmpty())
-			return Phonon::MediaSource();
-	}
-
-	return createSource(at(qrand() % size()));
+	return isEmpty() ? Phonon::MediaSource() : createSource(at(qrand() % size()));
 }
 
 int
