@@ -45,7 +45,7 @@ protected:
 
 private:
 	Phonon::MediaSource createSource(const QString &uri);
-	int search(int from);
+	int search(int from) const;
 
 	QString _listSrc;
 	QFileSystemWatcher *_watcher;

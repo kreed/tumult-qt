@@ -59,7 +59,7 @@ ListStream::source()
 }
 
 int
-ListStream::search(int i)
+ListStream::search(int i) const
 {
 	for (int len = size(); i != len; ++i)
 		if (at(i).contains(_search, Qt::CaseInsensitive))
