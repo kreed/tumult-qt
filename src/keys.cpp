@@ -19,8 +19,6 @@
 #include "keys.h"
 
 #include "player.h"
-#include <qapplication.h>
-#include <qdesktopwidget.h>
 #include <qx11info_x11.h>
 #include "settings.h"
 #include <X11/Xlib.h>
@@ -72,7 +70,7 @@ Keys::parse(Action action, const QByteArray &v)
 
 	errorCount = 0;
 	XErrorHandler savedErrorHandler = XSetErrorHandler(catch_error);
-	Window root = QApplication::desktop()->winId();
+	Window root = QX11Info::appRootWindow();
 
 	if (modMasks[action]) {
 		XGrabKey(dpy, keyCodes[action], modMasks[action], root,
