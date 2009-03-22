@@ -109,24 +109,26 @@ Keys::parse(Action action, const QByteArray &v)
 		keys->parse(Keys::action, v); \
 	}
 
-KEY(next, Next)
-KEY(prev, Prev)
+KEY(next_stream, Next)
+KEY(prev_stream, Prev)
 KEY(status, ShowStatus)
 KEY(play_pause, PlayPause)
 KEY(search, Search)
 KEY(next_in_stream, NextInStream)
+
+#define ADD(func) Settings::add(#func, func)
 
 Keys::Keys()
 {
 	memset(keyCodes, 0, sizeof(keyCodes));
 	memset(modMasks, 0, sizeof(modMasks));
 
-	Settings::add("next_stream", next);
-	Settings::add("prev_stream", prev);
-	Settings::add("status", status);
-	Settings::add("play_pause", play_pause);
-	Settings::add("search", search);
-	Settings::add("next_in_stream", next_in_stream);
+	ADD(next_stream);
+	ADD(prev_stream);
+	ADD(status);
+	ADD(play_pause);
+	ADD(search);
+	ADD(next_in_stream);
 }
 
 static void
