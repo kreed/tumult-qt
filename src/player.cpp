@@ -100,17 +100,12 @@ Player::showStatus(bool metadata)
 					   , metaData(Phonon::GenreMetaData).join(", ")
 					   , currentStream()->name())
 					, MessageWindow::MetaDataVerbose);
-			} else {
-				QString text;
-				if (!title.isEmpty())
-					text += "<b>" + title + "</b><br>";
-				if (!artist.isEmpty())
-					text += artist + "<br>";
-				if (text.isEmpty())
-					text = currentSource().url().toString() + "<br>";
-				text += currentStream()->name();
-				_message->showText(text, MessageWindow::MetaDataBrief);
-			}
+			} else if (!title.isEmpty() || !artist.isEmpty())
+				_message->showText(QString("<b>%1</b><br>%2<br>%3")
+				                      .arg(title, artist, currentStream()->name())
+				                 , MessageWindow::MetaDataBrief);
+			else
+				_message->showText(currentSource().url().toString() + "<br>" + currentStream()->name());
 		} else
 			_message->showText(currentStream()->name());
 		break;
