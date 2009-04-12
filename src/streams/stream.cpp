@@ -18,11 +18,11 @@
 
 #include "stream.h"
 
+#include "directory.h"
+#include "playlist.h"
 #include <qdir.h>
 #include <qurl.h>
-#include "stream-directory.h"
-#include "stream-playlist.h"
-#include "stream-uri.h"
+#include "uri.h"
 
 Stream::Stream(const QString &name)
 	: _name(name)

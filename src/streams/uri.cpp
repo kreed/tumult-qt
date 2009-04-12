@@ -16,22 +16,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "stream-directory.h"
+#include "uri.h"
 
-#include <qdiriterator.h>
-
-DirectoryStream::DirectoryStream(const QString &name, const QString &uri)
-	: ListStream(name, uri)
+UriStream::UriStream(const QString &name, const QString &uri)
+	: Stream(name)
+	, _source(createSource(uri))
 {
 }
 
-void
-DirectoryStream::populate()
+Phonon::MediaSource
+UriStream::source() const
 {
-	QStringList filters;
-	filters << "*.m4a" << "*.ogg" << "*.mp3" << "*.flac";
-	QDirIterator it(listSrc(), filters, QDir::NoDotAndDotDot | QDir::Files,
-	                QDirIterator::Subdirectories);
-	while (it.hasNext())
-		append(it.next());
+	return _source;
+}
+
+int
+UriStream::count() const
+{
+	return 1;
 }

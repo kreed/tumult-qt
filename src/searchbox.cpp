@@ -21,7 +21,7 @@
 #include "player.h"
 #include <qcursor.h>
 #include <qevent.h>
-#include "stream.h"
+#include "streams/stream.h"
 
 SearchBox::SearchBox()
 	: _stream(NULL)

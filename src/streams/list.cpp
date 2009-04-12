@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "stream-list.h"
+#include "list.h"
 
 #include <phonon/mediasource.h>
 #include <qfilesystemwatcher.h>

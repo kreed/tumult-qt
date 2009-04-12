@@ -16,17 +16,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STREAMPLAYLIST_H
-#define STREAMPLAYLIST_H
+#include "playlist.h"
 
-#include "stream-list.h"
+#include <qfile.h>
+#include <qtextstream.h>
 
-class PlaylistStream : public ListStream {
-public:
-	PlaylistStream(const QString &name, const QString &uri);
+PlaylistStream::PlaylistStream(const QString &name, const QString &uri)
+	: ListStream(name, uri)
+{
+}
 
-protected:
-	void populate();
-};
+void
+PlaylistStream::populate()
+{
+	QFile file(listSrc());
 
-#endif
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		_error = QString("Could not read playlist '%1'").arg(file.fileName());
+		qWarning(qPrintable(_error));
+	} else {
+		QTextStream in(&file);
+		while (!in.atEnd())
+			append(in.readLine());
+	}
+}

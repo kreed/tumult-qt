@@ -16,22 +16,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STREAMDIRECTORY_H
-#define STREAMDIRECTORY_H
+#include "directory.h"
 
-#include "stream-list.h"
+#include <qdiriterator.h>
 
-class QFileSystemWatcher;
+DirectoryStream::DirectoryStream(const QString &name, const QString &uri)
+	: ListStream(name, uri)
+{
+}
 
-class DirectoryStream : public ListStream {
-public:
-	DirectoryStream(const QString &name, const QString &uri);
-
-protected:
-	void populate();
-
-private:
-	QFileSystemWatcher *_fsWatch;
-};
-
-#endif
+void
+DirectoryStream::populate()
+{
+	QStringList filters;
+	filters << "*.m4a" << "*.ogg" << "*.mp3" << "*.flac";
+	QDirIterator it(listSrc(), filters, QDir::NoDotAndDotDot | QDir::Files,
+	                QDirIterator::Subdirectories);
+	while (it.hasNext())
+		append(it.next());
+}

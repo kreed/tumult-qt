@@ -24,7 +24,7 @@
 #include <qstringlist.h>
 #include <qurl.h>
 #include "searchbox.h"
-#include "stream.h"
+#include "streams/stream.h"
 
 Player *player;
 

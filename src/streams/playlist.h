@@ -16,22 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "stream-uri.h"
+#ifndef STREAMPLAYLIST_H
+#define STREAMPLAYLIST_H
 
-UriStream::UriStream(const QString &name, const QString &uri)
-	: Stream(name)
-	, _source(createSource(uri))
-{
-}
+#include "list.h"
 
-Phonon::MediaSource
-UriStream::source() const
-{
-	return _source;
-}
+class PlaylistStream : public ListStream {
+public:
+	PlaylistStream(const QString &name, const QString &uri);
 
-int
-UriStream::count() const
-{
-	return 1;
-}
+protected:
+	void populate();
+};
+
+#endif
