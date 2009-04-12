@@ -19,6 +19,7 @@
 #include "stream.h"
 
 #include <qdir.h>
+#include <qurl.h>
 #include "stream-directory.h"
 #include "stream-playlist.h"
 #include "stream-uri.h"
@@ -39,6 +40,15 @@ Stream::create(const QString &name, const QString &uri)
 		return new UriStream(name, uri);
 }
 
+Phonon::MediaSource
+Stream::createSource(const QString &uri)
+{
+	if (uri.startsWith('/'))
+		return Phonon::MediaSource(uri);
+	else
+		return Phonon::MediaSource(QUrl(uri));
+}
+
 void
 Stream::setSearch(const QString &uri)
 {
@@ -47,21 +57,9 @@ Stream::setSearch(const QString &uri)
 }
 
 Phonon::MediaSource
-Stream::source() const
-{
-	return Phonon::MediaSource();
-}
-
-Phonon::MediaSource
 Stream::nextResult()
 {
 	return Phonon::MediaSource();
-}
-
-int
-Stream::count() const
-{
-	return 0;
 }
 
 void

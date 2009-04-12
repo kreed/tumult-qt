@@ -18,13 +18,9 @@
 
 #include "stream-uri.h"
 
-#include <qurl.h>
-
 UriStream::UriStream(const QString &name, const QString &uri)
 	: Stream(name)
-	, _source(uri.startsWith('/')
-	        ? Phonon::MediaSource(uri)
-	        : Phonon::MediaSource(QUrl(uri)))
+	, _source(createSource(uri))
 {
 }
 
@@ -32,12 +28,6 @@ Phonon::MediaSource
 UriStream::source() const
 {
 	return _source;
-}
-
-Phonon::MediaSource
-UriStream::nextResult()
-{
-	return Phonon::MediaSource();
 }
 
 int

@@ -27,7 +27,6 @@ public:
 	UriStream(const QString &name, const QString &uri);
 
 	Phonon::MediaSource source() const;
-	Phonon::MediaSource nextResult();
 	int count() const;
 
 private:

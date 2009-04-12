@@ -29,17 +29,19 @@ class Stream {
 public:
 	static Stream *create(const QString &name, const QString &uri);
 
-	virtual Phonon::MediaSource source() const;
+	virtual Phonon::MediaSource source() const = 0;
 
 	virtual void repopulate();
 
 	void setSearch(const QString &search);
 	virtual Phonon::MediaSource nextResult();
 
-	virtual int count() const;
+	virtual int count() const = 0;
 
 	inline QString name() const { return _name; }
 	inline QString error() const { return _error; }
+
+	static Phonon::MediaSource createSource(const QString &source);
 
 protected:
 	Stream(const QString &name);

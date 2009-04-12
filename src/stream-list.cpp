@@ -21,7 +21,6 @@
 #include <phonon/mediasource.h>
 #include <qfilesystemwatcher.h>
 #include <qtconcurrentrun.h>
-#include <qurl.h>
 
 ListStream::ListStream(const QString &name, const QString &uri)
 	: Stream(name)
@@ -35,15 +34,6 @@ ListStream::ListStream(const QString &name, const QString &uri)
 	                  SLOT(repopulateLater()));
 
 	repopulateLater();
-}
-
-static Phonon::MediaSource
-createSource(const QString &uri)
-{
-	if (uri.startsWith('/'))
-		return Phonon::MediaSource(uri);
-	else
-		return Phonon::MediaSource(QUrl(uri));
 }
 
 Phonon::MediaSource
@@ -74,11 +64,6 @@ ListStream::nextResult()
 		return nextResult();
 	} else
 		return Phonon::MediaSource();
-}
-
-void
-ListStream::populate()
-{
 }
 
 void

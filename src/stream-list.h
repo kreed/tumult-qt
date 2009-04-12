@@ -41,7 +41,7 @@ public slots:
 protected:
 	ListStream(const QString &name, const QString &source);
 
-	virtual void populate();
+	virtual void populate() = 0;
 
 private:
 	int search(int from) const;
