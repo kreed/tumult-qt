@@ -22,8 +22,7 @@
 #include <qdesktopwidget.h>
 
 MessageWindow::MessageWindow()
-	: _timerId(0)
-	, _verbose(false)
+	: _verbose(false)
 {
 	setWindowFlags(Qt::X11BypassWindowManagerHint);
 	setMaximumWidth(300);
@@ -39,17 +38,16 @@ MessageWindow::MessageWindow()
 void
 MessageWindow::showText(const QString &text, Mode mode)
 {
-	if (_timerId)
-		killTimer(_timerId);
+	_timer.stop();
 
 	_verbose = mode != Info;
 
 	if (mode == MetaDataVerbose) {
 		setAlignment(Qt::AlignLeft);
-		_timerId = startTimer(5000);
+		_timer.start(5000, this);
 	} else {
 		setAlignment(Qt::AlignCenter);
-		_timerId = startTimer(3500);
+		_timer.start(3500, this);
 	}
 
 	setText(text);
@@ -64,9 +62,8 @@ MessageWindow::showText(const QString &text, Mode mode)
 void
 MessageWindow::timerEvent(QTimerEvent *ev)
 {
-	if (ev->timerId() == _timerId) {
-		killTimer(_timerId);
-		_timerId = 0;
+	if (ev->timerId() == _timer.timerId()) {
+		_timer.stop();
 		hide();
 	}
 	QLabel::timerEvent(ev);

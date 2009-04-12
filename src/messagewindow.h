@@ -20,6 +20,7 @@
 #define MESSAGEWINDOW_H
 
 #include <qlabel.h>
+#include <qbasictimer.h>
 
 class MessageWindow : QLabel {
 	Q_OBJECT
@@ -41,7 +42,7 @@ protected:
 	void timerEvent(QTimerEvent *ev);
 
 private:
-	int _timerId;
+	QBasicTimer _timer;
 	bool _verbose;
 };
 
