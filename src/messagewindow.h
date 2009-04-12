@@ -22,28 +22,26 @@
 #include <qlabel.h>
 #include <qbasictimer.h>
 
+template<class Key, class T> class QMultiMap;
+
 class MessageWindow : QLabel {
 	Q_OBJECT
 public:
-	enum Mode {
-		Info,
-		MetaDataBrief,
-		MetaDataVerbose
-	};
-
 	MessageWindow();
 
-	void showText(const QString &text, Mode mode = Info);
+	void showText(const QString &text);
+	void showMetadata(const QMultiMap<QString, QString>&);
 
-	bool verboseReady() const { return _verbose && isVisible(); }
-	void clearVerboseFlag() { _verbose = false; }
+	using QLabel::hide;
 
 protected:
 	void timerEvent(QTimerEvent *ev);
 
 private:
+	void show(int timeout);
+
 	QBasicTimer _timer;
-	bool _verbose;
+	bool _metadataShown;
 };
 
 #endif

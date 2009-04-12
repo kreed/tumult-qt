@@ -20,10 +20,12 @@
 
 #include <qapplication.h>
 #include <qdesktopwidget.h>
+#include <qmap.h>
 
 MessageWindow::MessageWindow()
-	: _verbose(false)
 {
+	_metadataShown = false;
+
 	setWindowFlags(Qt::X11BypassWindowManagerHint);
 	setMaximumWidth(300);
 	setWordWrap(true);
@@ -36,27 +38,70 @@ MessageWindow::MessageWindow()
 }
 
 void
-MessageWindow::showText(const QString &text, Mode mode)
+MessageWindow::show(int timeout)
 {
-	_timer.stop();
-
-	_verbose = mode != Info;
-
-	if (mode == MetaDataVerbose) {
-		setAlignment(Qt::AlignLeft);
-		_timer.start(5000, this);
-	} else {
-		setAlignment(Qt::AlignCenter);
-		_timer.start(3500, this);
-	}
-
-	setText(text);
+	_timer.start(timeout, this);
 
 	adjustSize();
 	move(QApplication::desktop()->width() - width() - 5, 5);
 
-	show();
+	QLabel::show();
 	raise();
+}
+
+void
+MessageWindow::showText(const QString &text)
+{
+	setText(text);
+	_metadataShown = false;
+	show(3500);
+}
+
+void
+MessageWindow::showMetadata(const QMultiMap<QString, QString> &data)
+{
+	// FIXME: should use join for metadata
+	int timeout = 3500;
+
+	QString title = data.value("TITLE");
+	QString artist = data.value("ARTIST");
+
+	if (artist.isEmpty() && title.contains(" - ")) {
+		QStringList at = title.split(" - ");
+		title = at[1];
+		artist = at[0];
+	}
+
+	// more detailed information on duplicate request
+	if (_metadataShown && isVisible()) {
+		// if Phonon gains support for it, add cover art here
+		setAlignment(Qt::AlignLeft);
+		setText(QString(
+			"<b>Title: </b>%1<br>"
+			"<b>Artist: </b>%2<br>"
+			"<b>Album: </b>%3<br>"
+			"<b>Date: </b>%4<br>"
+			"<b>Genre: </b>%5<br>"
+			"<b>Stream: </b>%6")
+			.arg(
+			     title
+			   , artist
+			   , data.value("ALBUM")
+			   , data.value("DATE")
+			   , data.value("GENRE")
+			   , data.value("STREAM")));
+		timeout = 5000;
+	} else {
+		setAlignment(Qt::AlignCenter);
+		if (!title.isEmpty() || !artist.isEmpty())
+			setText(QString("<b>%1</b><br>%2<br>%3")
+			           .arg(title, artist, data.value("STREAM")));
+		else
+			setText(data.value("URL") + "<br>" + data.value("STREAM"));
+	}
+
+	_metadataShown = true;
+	show(timeout);
 }
 
 void

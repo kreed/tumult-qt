@@ -21,6 +21,7 @@
 #include "messagewindow.h"
 #include <phonon/audiooutput.h>
 #include <phonon/mediasource.h>
+#include <qmap.h>
 #include <qstringlist.h>
 #include <qurl.h>
 #include "searchbox.h"
@@ -75,37 +76,10 @@ Player::showStatus(bool metadata)
 	case Phonon::LoadingState:
 	case Phonon::BufferingState:
 		if (metadata) {
-			QString title = metaData(Phonon::TitleMetaData).join(", ");
-			QString artist = metaData(Phonon::ArtistMetaData).join(", ");
-
-			if (artist.isEmpty() && title.contains(" - ")) {
-				QStringList at = title.split(" - ");
-				title = at[1];
-				artist = at[0];
-			}
-
-			// more detailed information on duplicate request
-			if (_message->verboseReady()) {
-				// if Phonon gains support for it, add cover art here
-				_message->showText(QString(
-					"<b>Title: </b>%1<br>"
-					"<b>Artist: </b>%2<br>"
-					"<b>Album: </b>%3<br>"
-					"<b>Date: </b>%4<br>"
-					"<b>Genre: </b>%5<br>"
-					"<b>Stream: </b>%6")
-					.arg(title, artist
-					   , metaData(Phonon::AlbumMetaData).join(", ")
-					   , metaData(Phonon::DateMetaData).join(", ")
-					   , metaData(Phonon::GenreMetaData).join(", ")
-					   , currentStream()->name())
-					, MessageWindow::MetaDataVerbose);
-			} else if (!title.isEmpty() || !artist.isEmpty())
-				_message->showText(QString("<b>%1</b><br>%2<br>%3")
-				                      .arg(title, artist, currentStream()->name())
-				                 , MessageWindow::MetaDataBrief);
-			else
-				_message->showText(currentSource().url().toString() + "<br>" + currentStream()->name());
+			QMultiMap<QString, QString> metadata = metaData();
+			metadata.insert("STREAM", currentStream()->name());
+			metadata.insert("URL", currentSource().url().toString());
+			_message->showMetadata(metadata);
 		} else
 			_message->showText(currentStream()->name());
 		break;
@@ -137,7 +111,7 @@ Player::init()
 void
 Player::changeSource(const Phonon::MediaSource &source)
 {
-	_message->clearVerboseFlag();
+	_message->hide();
 	clearQueue();
 	setCurrentSource(source);
 	play();
