@@ -161,8 +161,8 @@ action(Keys::Action action)
 bool
 Keys::event(unsigned keyCode, unsigned modMask)
 {
-	modMask &= ~(Mod2Mask | Mod5Mask | LockMask);
-	for (int i = 0; i != ActionCount; ++i)
+	modMask &= ~(Mod2Mask | LockMask);
+	for (int i = ActionCount; --i != -1;)
 		if (keyCodes[i] == keyCode && (modMasks[i] == AnyModifier || modMask == modMasks[i])) {
 			action((Action)i);
 			return true;
