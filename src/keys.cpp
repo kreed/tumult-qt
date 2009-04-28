@@ -56,13 +56,15 @@ Keys::parse(Action action, const QByteArray &v)
 	if (i) {
 		QByteArray mods = v.left(i).toLower();
 
-		if (mods.contains("<alt>"))
+		if (mods.contains("<alt>") || mods.contains("<mod1>"))
 			modMasks[action] |= Mod1Mask;
 		if (mods.contains("<shift>"))
 			modMasks[action] |= ShiftMask;
 		if (mods.contains("<ctrl>") || mods.contains("<control>"))
 			modMasks[action] |= ControlMask;
-		if (mods.contains("<win>") || mods.contains("<super>"))
+		if (mods.contains("<win>") || mods.contains("<super>") || mods.contains("<mod4>"))
+			modMasks[action] |= Mod4Mask;
+		if (mods.contains("<mod5>"))
 			modMasks[action] |= Mod5Mask;
 		if (mods.contains("<any>"))
 			modMasks[action] = AnyModifier;
