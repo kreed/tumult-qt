@@ -31,7 +31,7 @@ Player *player;
 
 Player::Player()
 	: _message(new MessageWindow)
-	, _searchBox(new SearchBox)
+	, _searchBox(NULL)
 {
 	Phonon::AudioOutput *audioOutput =
 		new Phonon::AudioOutput(Phonon::MusicCategory, this);
@@ -120,7 +120,8 @@ Player::changeSource(const Phonon::MediaSource &source)
 void
 Player::shiftStream()
 {
-	_searchBox->close();
+	if (_searchBox)
+		_searchBox->close();
 	changeSource(currentStream()->source());
 	showStatus(false);
 }
@@ -181,11 +182,45 @@ Player::playPause()
 void
 Player::openSearchBox()
 {
-	if (checkEmptyStream())
+	if (_searchBox) {
+		_searchBox->close();
+		return;
+	}
+
+	if (checkEmptyStream() || currentStream()->count() == 1)
 		return;
 
-	if (currentStream()->count() > 1)
-		_searchBox->search(&*currentStream());
+	_searchBox = new SearchBox;
+	connect(_searchBox, SIGNAL(returnPressed()),
+			            SLOT(search()));
+	connect(_searchBox, SIGNAL(destroyed(QObject*)),
+			            SLOT(searchBoxDestroyed()));
+	_searchBox->search(_lastSearch);
+}
+
+void
+Player::search()
+{
+	if (!_searchBox)
+		return;
+
+	const QString text = _searchBox->text();
+	if (currentStream()->currentSearch() != text)
+		currentStream()->setSearch(text);
+
+	const Phonon::MediaSource source = currentStream()->nextResult();
+	if (source.type() != Phonon::MediaSource::Empty) {
+		showNextMetaData();
+		changeSource(source);
+	}
+
+	_lastSearch = text;
+}
+
+void
+Player::searchBoxDestroyed()
+{
+	_searchBox = NULL;
 }
 
 void
@@ -208,3 +243,4 @@ Player::showMetaData()
 	disconnect(this, SIGNAL(metaDataChanged()),
 	           this, SLOT(showMetaData()));
 }
+

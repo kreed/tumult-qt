@@ -33,6 +33,7 @@ public:
 
 	virtual void repopulate();
 
+	inline QString currentSearch() const { return _search; }
 	void setSearch(const QString &search);
 	virtual Phonon::MediaSource nextResult();
 

@@ -28,17 +28,10 @@ class SearchBox : public QLineEdit {
 public:
 	SearchBox();
 
-	void search(Stream *e);
-
-protected slots:
-	void searchCallback();
+	void search(const QString &lastText);
 
 protected:
 	void keyReleaseEvent(QKeyEvent*);
-
-private:
-	Stream *_stream;
-	bool _forceSearch;
 };
 
 #endif

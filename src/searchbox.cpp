@@ -18,35 +18,23 @@
 
 #include "searchbox.h"
 
-#include "player.h"
 #include <qcursor.h>
 #include <qevent.h>
-#include "streams/stream.h"
 
 SearchBox::SearchBox()
-	: _stream(NULL)
 {
+	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowFlags(Qt::Dialog);
 	setFocus();
 	adjustSize();
-	connect(this, SIGNAL(returnPressed()),
-	              SLOT(searchCallback()));
 	connect(this, SIGNAL(editingFinished()),
 	              SLOT(close()));
 }
 
 void
-SearchBox::search(Stream *stream)
+SearchBox::search(const QString &lastText)
 {
-	if (isVisible()) {
-		close();
-		return;
-	}
-
-	_forceSearch = stream != _stream;
-	_stream = stream;
-
-	setText(text());
+	setText(lastText);
 	selectAll();
 
 	QPoint pos = QCursor::pos();
@@ -56,18 +44,6 @@ SearchBox::search(Stream *stream)
 
 	show();
 	activateWindow();
-}
-
-void
-SearchBox::searchCallback()
-{
-	if (isModified() || _forceSearch)
-		_stream->setSearch(text());
-	Phonon::MediaSource source = _stream->nextResult();
-	if (source.type() != Phonon::MediaSource::Empty) {
-		player->showNextMetaData();
-		player->changeSource(source);
-	}
 }
 
 void

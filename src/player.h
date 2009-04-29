@@ -50,8 +50,10 @@ public slots:
 	void playPause();
 	void showMetaData();
 
-protected slots:
+private slots:
 	void loadAnother();
+	void search();
+	void searchBoxDestroyed();
 
 private:
 	void shiftStream();
@@ -61,6 +63,7 @@ private:
 	StreamList::const_iterator _currentStream;
 	MessageWindow *_message;
 	SearchBox *_searchBox;
+	QString _lastSearch;
 };
 
 extern Player *player;
