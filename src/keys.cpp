@@ -67,7 +67,7 @@ Keys::parse(Action action, const QByteArray &v)
 		if (mods.contains("<mod5>"))
 			modMasks[action] |= Mod5Mask;
 		if (mods.contains("<any>"))
-			modMasks[action] = AnyModifier;
+			modMasks[action] = 0;
 	}
 
 	errorCount = 0;
@@ -77,21 +77,11 @@ Keys::parse(Action action, const QByteArray &v)
 	if (modMasks[action]) {
 		XGrabKey(dpy, keyCodes[action], modMasks[action], root,
 				True, GrabModeAsync, GrabModeAsync);
-		XGrabKey(dpy, keyCodes[action], modMasks[action] | Mod5Mask, root,
-				True, GrabModeAsync, GrabModeAsync);
 		XGrabKey(dpy, keyCodes[action], modMasks[action] | LockMask, root,
 				True, GrabModeAsync, GrabModeAsync);
 		XGrabKey(dpy, keyCodes[action], modMasks[action] | Mod2Mask, root,
 				True, GrabModeAsync, GrabModeAsync);
-		XGrabKey(dpy, keyCodes[action], modMasks[action] | Mod2Mask | Mod5Mask, root,
-				True, GrabModeAsync, GrabModeAsync);
 		XGrabKey(dpy, keyCodes[action], modMasks[action] | Mod2Mask | LockMask, root,
-				True, GrabModeAsync, GrabModeAsync);
-		XGrabKey(dpy, keyCodes[action], modMasks[action] | Mod5Mask | LockMask, root,
-				True, GrabModeAsync, GrabModeAsync);
-		XGrabKey(dpy, keyCodes[action], modMasks[action] | Mod5Mask | LockMask | Mod2Mask, root,
-				True, GrabModeAsync, GrabModeAsync);
-		XGrabKey(dpy, keyCodes[action], modMasks[action], root,
 				True, GrabModeAsync, GrabModeAsync);
 	} else
 		XGrabKey(dpy, keyCodes[action], AnyModifier, root,
