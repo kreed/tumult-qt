@@ -20,9 +20,7 @@
 
 #include "messagewindow.h"
 #include <phonon/audiooutput.h>
-#include <phonon/mediasource.h>
-#include <qmap.h>
-#include <qstringlist.h>
+#include <qsettings.h>
 #include <qurl.h>
 #include "searchbox.h"
 #include "streams/stream.h"
@@ -40,6 +38,19 @@ Player::Player()
 
 	connect(this, SIGNAL(aboutToFinish()),
 	              SLOT(loadAnother()));
+
+	QSettings settings;
+	settings.beginGroup("stream");
+	foreach (const QString &key, settings.childKeys())
+		_streams.append(Stream::create(key, settings.value(key).toString()));
+
+	if (_streams.isEmpty()) {
+		qWarning() << "No streams specified in" << settings.fileName();
+		exit(EXIT_FAILURE);
+	}
+
+	_currentStream = _streams.constBegin();
+	setCurrentSource(currentStream()->source());
 }
 
 bool
@@ -87,25 +98,6 @@ Player::showStatus(bool metadata)
 	case Phonon::StoppedState:
 		_message->showText("Not Playing");
 	}
-}
-
-bool
-Player::parse(const QByteArray &name, const QByteArray &uri)
-{
-	_streams.append(Stream::create(name, uri));
-	return true;
-}
-
-void
-Player::init()
-{
-	if (_streams.isEmpty()) {
-		qWarning() << "No streams specified";
-		exit(EXIT_FAILURE);
-	}
-
-	_currentStream = _streams.constBegin();
-	setCurrentSource(currentStream()->source());
 }
 
 void

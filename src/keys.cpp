@@ -19,8 +19,8 @@
 #include "keys.h"
 
 #include "player.h"
+#include <qsettings.h>
 #include <qx11info_x11.h>
-#include "settings.h"
 #include <X11/Xlib.h>
 
 Keys *keys;
@@ -36,7 +36,7 @@ catch_error(Display*, XErrorEvent*)
 void
 Keys::parse(Action action, const QByteArray &v)
 {
-	if (keyCodes[action])
+	if (keyCodes[action] || v.isEmpty())
 		return;
 
 	Display *dpy = QX11Info::display();
@@ -104,33 +104,19 @@ Keys::parse(Action action, const QByteArray &v)
 		qWarning() << "Could not grab key" << v;
 }
 
-#define KEY(function, action) \
-	void \
-	function(const QByteArray &v) \
-	{ \
-		keys->parse(Keys::action, v); \
-	}
-
-KEY(next_stream, Next)
-KEY(prev_stream, Prev)
-KEY(status, ShowStatus)
-KEY(play_pause, PlayPause)
-KEY(search, Search)
-KEY(next_in_stream, NextInStream)
-
-#define ADD(func) Settings::add(#func, func)
-
 Keys::Keys()
 {
 	memset(keyCodes, 0, sizeof(keyCodes));
 	memset(modMasks, 0, sizeof(modMasks));
 
-	ADD(next_stream);
-	ADD(prev_stream);
-	ADD(status);
-	ADD(play_pause);
-	ADD(search);
-	ADD(next_in_stream);
+	QSettings settings;
+	settings.beginGroup("keys");
+	parse(Next, settings.value("next_stream").toByteArray());
+	parse(Prev, settings.value("prev_stream").toByteArray());
+	parse(ShowStatus, settings.value("status").toByteArray());
+	parse(PlayPause, settings.value("play_pause").toByteArray());
+	parse(Search, settings.value("search").toByteArray());
+	parse(NextInStream, settings.value("next_in_stream").toByteArray());
 }
 
 static void

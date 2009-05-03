@@ -18,9 +18,8 @@
 
 #include "keys.h"
 #include "player.h"
-#include "settings.h"
-#include "tumult.h"
 #include <qdbusconnection.h>
+#include "tumult.h"
 
 int
 main(int argc, char **argv)
@@ -29,12 +28,12 @@ main(int argc, char **argv)
 
 	Tumult app(argc, argv);
 	app.setQuitOnLastWindowClosed(false);
+	app.setOrganizationName("Kreed.org");
+	app.setOrganizationDomain("kreed.org");
 	app.setApplicationName("Tumult");
 
 	player = new Player;
 	keys = new Keys;
-	Settings::parse();
-	player->init();
 
 	QDBusConnection bus = QDBusConnection::sessionBus();
 	bus.registerService("org.tumult");

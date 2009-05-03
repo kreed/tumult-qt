@@ -31,8 +31,6 @@ class Player : public Phonon::MediaObject {
 	Q_OBJECT
 public:
 	Player();
-	bool parse(const QByteArray &name, const QByteArray &uri);
-	void init();
 
 	Stream *currentStream() const { return *_currentStream; }
 
