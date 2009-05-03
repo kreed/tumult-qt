@@ -39,6 +39,8 @@ public:
 
 	void changeSource(const Phonon::MediaSource&);
 
+	static Player *instance;
+
 public slots:
 	void nextStream();
 	void prevStream();
@@ -63,7 +65,5 @@ private:
 	SearchBox *_searchBox;
 	QString _lastSearch;
 };
-
-extern Player *player;
 
 #endif

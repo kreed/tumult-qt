@@ -25,7 +25,7 @@
 #include "searchbox.h"
 #include "streams/stream.h"
 
-Player *player;
+Player *Player::instance;
 
 Player::Player()
 	: _message(new MessageWindow)
@@ -51,6 +51,8 @@ Player::Player()
 
 	_currentStream = _streams.constBegin();
 	setCurrentSource(currentStream()->source());
+
+	instance = this;
 }
 
 bool

@@ -25,7 +25,7 @@ bool
 Tumult::x11EventFilter(XEvent *ev)
 {
 	if (ev->type == KeyPress)
-		return keys->event(((XKeyEvent*)ev)->keycode, ((XKeyEvent*)ev)->state);
+		return Keys::instance->event(((XKeyEvent*)ev)->keycode, ((XKeyEvent*)ev)->state);
 
 	return false;
 }

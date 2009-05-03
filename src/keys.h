@@ -37,11 +37,11 @@ public:
 	bool event(unsigned keyCode, unsigned modMask);
 	void parse(Action action, const QByteArray &v);
 
+	static Keys *instance;
+
 private:
 	unsigned keyCodes[ActionCount];
 	unsigned modMasks[ActionCount];
 };
-
-extern Keys *keys;
 
 #endif

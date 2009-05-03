@@ -32,12 +32,12 @@ main(int argc, char **argv)
 	app.setOrganizationDomain("kreed.org");
 	app.setApplicationName("Tumult");
 
-	player = new Player;
-	keys = new Keys;
+	Player player;
+	Keys keys;
 
 	QDBusConnection bus = QDBusConnection::sessionBus();
 	bus.registerService("org.tumult");
-	bus.registerObject("/", player, QDBusConnection::ExportAllSlots);
+	bus.registerObject("/", &player, QDBusConnection::ExportAllSlots);
 
 	return app.exec();
 }

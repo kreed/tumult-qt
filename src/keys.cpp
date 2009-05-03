@@ -23,9 +23,9 @@
 #include <qx11info_x11.h>
 #include <X11/Xlib.h>
 
-Keys *keys;
-static int errorCount = 0;
+Keys *Keys::instance;
 
+static int errorCount = 0;
 static int
 catch_error(Display*, XErrorEvent*)
 {
@@ -107,6 +107,8 @@ Keys::Keys()
 	parse(PlayPause, settings.value("play_pause").toByteArray());
 	parse(Search, settings.value("search").toByteArray());
 	parse(NextInStream, settings.value("next_in_stream").toByteArray());
+
+	instance = this;
 }
 
 static void
@@ -114,22 +116,22 @@ action(Keys::Action action)
 {
 	switch (action) {
 	case Keys::ShowStatus:
-		player->showMetaData();
+		Player::instance->showMetaData();
 		break;
 	case Keys::NextInStream:
-		player->nextInStream();
+		Player::instance->nextInStream();
 		break;
 	case Keys::PlayPause:
-		player->playPause();
+		Player::instance->playPause();
 		break;
 	case Keys::Search:
-		player->openSearchBox();
+		Player::instance->openSearchBox();
 		break;
 	case Keys::Prev:
-		player->prevStream();
+		Player::instance->prevStream();
 		break;
 	case Keys::Next:
-		player->nextStream();
+		Player::instance->nextStream();
 		break;
 	default:
 		break;
