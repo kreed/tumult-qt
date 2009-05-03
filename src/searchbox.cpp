@@ -18,7 +18,9 @@
 
 #include "searchbox.h"
 
+#include <qapplication.h>
 #include <qcursor.h>
+#include <qdesktopwidget.h>
 #include <qevent.h>
 
 SearchBox::SearchBox()
@@ -37,10 +39,10 @@ SearchBox::search(const QString &lastText)
 	setText(lastText);
 	selectAll();
 
-	QPoint pos = QCursor::pos();
-	pos.rx() -= width() / 2;
-	pos.ry() -= height() / 2;
-	move(pos);
+	const QPoint &pos = QCursor::pos();
+	QDesktopWidget *desktop = QApplication::desktop();
+	move(qMin(desktop->width() - width(), qMax(0, pos.x() - width() / 2))
+	   , qMin(desktop->height() - height(), qMax(0, pos.y() - height() / 2)));
 
 	show();
 	activateWindow();
