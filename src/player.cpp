@@ -29,7 +29,6 @@ Player *Player::instance;
 
 Player::Player()
 	: _message(new MessageWindow)
-	, _searchBox(NULL)
 {
 	Phonon::AudioOutput *audioOutput =
 		new Phonon::AudioOutput(Phonon::MusicCategory, this);
@@ -187,8 +186,6 @@ Player::openSearchBox()
 	_searchBox = new SearchBox;
 	connect(_searchBox, SIGNAL(returnPressed()),
 			            SLOT(search()));
-	connect(_searchBox, SIGNAL(destroyed(QObject*)),
-			            SLOT(searchBoxDestroyed()));
 	_searchBox->search(_lastSearch);
 }
 
@@ -209,12 +206,6 @@ Player::search()
 	}
 
 	_lastSearch = text;
-}
-
-void
-Player::searchBoxDestroyed()
-{
-	_searchBox = NULL;
 }
 
 void

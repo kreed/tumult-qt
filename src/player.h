@@ -21,6 +21,7 @@
 
 #include <phonon/mediaobject.h>
 #include <qlinkedlist.h>
+#include <qpointer.h>
 
 class MessageWindow;
 class SearchBox;
@@ -53,7 +54,6 @@ public slots:
 private slots:
 	void loadAnother();
 	void search();
-	void searchBoxDestroyed();
 
 private:
 	void shiftStream();
@@ -62,7 +62,7 @@ private:
 	StreamList _streams;
 	StreamList::const_iterator _currentStream;
 	MessageWindow *_message;
-	SearchBox *_searchBox;
+	QPointer<SearchBox> _searchBox;
 	QString _lastSearch;
 };
 
