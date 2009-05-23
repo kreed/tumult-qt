@@ -21,6 +21,7 @@
 #include <phonon/mediasource.h>
 #include <qfilesystemwatcher.h>
 #include <qtconcurrentrun.h>
+#include <qtimer.h>
 
 ListStream::ListStream(const QString &name, const QString &uri)
 	: Stream(name)
@@ -33,7 +34,7 @@ ListStream::ListStream(const QString &name, const QString &uri)
 	connect(_watcher, SIGNAL(fileChanged(const QString&)),
 	                  SLOT(repopulateLater()));
 
-	repopulateLater();
+	QTimer::singleShot(0, this, SLOT(repopulateLater()));
 }
 
 Phonon::MediaSource
