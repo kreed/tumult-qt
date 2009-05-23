@@ -62,6 +62,12 @@ Stream::nextResult()
 	return Phonon::MediaSource();
 }
 
+QList<Phonon::MediaSource>
+Stream::allResults(const QString&) const
+{
+	return QList<Phonon::MediaSource>();
+}
+
 void
 Stream::repopulate()
 {

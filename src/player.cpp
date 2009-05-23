@@ -20,6 +20,7 @@
 
 #include "messagewindow.h"
 #include <phonon/audiooutput.h>
+#include <qapplication.h>
 #include <qsettings.h>
 #include <qurl.h>
 #include "searchbox.h"
@@ -152,6 +153,28 @@ Player::nextInStream()
 }
 
 void
+Player::nextInQueue()
+{
+	if (checkEmptyStream())
+		return;
+
+	if (state() == Phonon::PlayingState) {
+		if (currentStream()->count() < 2)
+		   return;
+
+		QList<Phonon::MediaSource> next = queue();
+		if (next.isEmpty())
+			return;
+
+		_message->hide();
+		setCurrentSource(next.takeAt(qrand() % next.length()));
+		setQueue(next);
+	}
+
+	play();
+}
+
+void
 Player::smartStop()
 {
 	if (currentSource().type() == Phonon::MediaSource::LocalFile)
@@ -196,13 +219,20 @@ Player::search()
 		return;
 
 	const QString text = _searchBox->text();
-	if (currentStream()->currentSearch() != text)
-		currentStream()->setSearch(text);
 
-	const Phonon::MediaSource source = currentStream()->nextResult();
-	if (source.type() != Phonon::MediaSource::Empty) {
+	if (qApp->keyboardModifiers() & Qt::ControlModifier) {
+		setQueue(currentStream()->allResults(text));
 		showNextMetaData();
-		changeSource(source);
+		nextInQueue();
+	} else {
+		if (currentStream()->currentSearch() != text)
+			currentStream()->setSearch(text);
+
+		const Phonon::MediaSource source = currentStream()->nextResult();
+		if (source.type() != Phonon::MediaSource::Empty) {
+			showNextMetaData();
+			changeSource(source);
+		}
 	}
 
 	_lastSearch = text;

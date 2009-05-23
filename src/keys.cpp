@@ -107,6 +107,7 @@ Keys::Keys()
 	parse(PlayPause, settings.value("play_pause").toByteArray());
 	parse(Search, settings.value("search").toByteArray());
 	parse(NextInStream, settings.value("next_in_stream").toByteArray());
+	parse(NextInQueue, settings.value("next_in_queue").toByteArray());
 
 	instance = this;
 }
@@ -123,6 +124,9 @@ action(Keys::Action action)
 		break;
 	case Keys::PlayPause:
 		Player::instance->playPause();
+		break;
+	case Keys::NextInQueue:
+		Player::instance->nextInQueue();
 		break;
 	case Keys::Search:
 		Player::instance->openSearchBox();

@@ -46,6 +46,7 @@ public slots:
 	void nextStream();
 	void prevStream();
 	void nextInStream();
+	void nextInQueue();
 	void openSearchBox();
 	void smartStop();
 	void playPause();
