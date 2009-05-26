@@ -220,11 +220,7 @@ Player::search()
 
 	const QString text = _searchBox->text();
 
-	if (qApp->keyboardModifiers() & Qt::ControlModifier) {
-		setQueue(currentStream()->allResults(text));
-		showNextMetaData();
-		nextInQueue();
-	} else {
+	if (qApp->keyboardModifiers() == Qt::NoModifier) {
 		if (currentStream()->currentSearch() != text)
 			currentStream()->setSearch(text);
 
@@ -233,6 +229,10 @@ Player::search()
 			showNextMetaData();
 			changeSource(source);
 		}
+	} else {
+		setQueue(currentStream()->allResults(text));
+		showNextMetaData();
+		nextInQueue();
 	}
 
 	_lastSearch = text;
