@@ -75,7 +75,6 @@ MessageWindow::showMetadata(const QMultiMap<QString, QString> &data)
 	// more detailed information on duplicate request
 	if (_metadataShown && isVisible()) {
 		// if Phonon gains support for it, add cover art here
-		// ditto for year
 		setAlignment(Qt::AlignLeft);
 		setText(QString(
 			"<b>Title: </b>%1<br>"
