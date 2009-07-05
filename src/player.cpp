@@ -30,12 +30,15 @@ Player *Player::instance;
 
 Player::Player()
 	: _message(new MessageWindow)
+	, _expectingSourceChange(false)
 {
 	Phonon::AudioOutput *audioOutput =
 		new Phonon::AudioOutput(Phonon::MusicCategory, this);
 	audioOutput->setName("Tumult");
 	Phonon::createPath(this, audioOutput);
 
+	connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
+	              SLOT(newState(Phonon::State, Phonon::State)));
 	connect(this, SIGNAL(aboutToFinish()),
 	              SLOT(loadAnother()));
 
@@ -99,6 +102,13 @@ Player::showStatus(bool metadata)
 	case Phonon::StoppedState:
 		_message->showText("Not Playing");
 	}
+}
+
+void
+Player::setCurrentSource(const Phonon::MediaSource &source)
+{
+	_expectingSourceChange = true;
+	MediaObject::setCurrentSource(source);
 }
 
 void
@@ -266,3 +276,23 @@ Player::showMetaData()
 	           this, SLOT(showMetaData()));
 }
 
+void
+Player::newState(Phonon::State news, Phonon::State olds)
+{
+	if (olds == Phonon::PlayingState && news == Phonon::LoadingState) {
+		if (_expectingSourceChange)
+			_expectingSourceChange = false;
+		else
+			saveHit();
+	} else if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
+		_savedUrl = currentSource().url().toString();
+	}
+}
+
+void
+Player::saveHit()
+{
+	QSettings settings;
+	settings.beginGroup("hits");
+	settings.setValue(_savedUrl, settings.value(_savedUrl, 0).toInt() + 1);
+}

@@ -38,6 +38,7 @@ public:
 	void showNextMetaData();
 	void showStatus(bool metadata);
 
+	void setCurrentSource(const Phonon::MediaSource&);
 	void changeSource(const Phonon::MediaSource&);
 
 	static Player *instance;
@@ -56,8 +57,10 @@ public slots:
 private slots:
 	void loadAnother();
 	void search();
+	void newState(Phonon::State, Phonon::State);
 
 private:
+	void saveHit();
 	void shiftStream();
 	bool checkEmptyStream();
 
@@ -66,6 +69,8 @@ private:
 	MessageWindow *_message;
 	QPointer<SearchBox> _searchBox;
 	QString _lastSearch;
+	bool _expectingSourceChange;
+	QString _savedUrl;
 };
 
 #endif
