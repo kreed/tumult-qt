@@ -25,6 +25,7 @@
 #include <qurl.h>
 #include "searchbox.h"
 #include "streams/stream.h"
+#include "tumult.h"
 
 Player *Player::instance;
 
@@ -292,6 +293,8 @@ Player::newState(Phonon::State news, Phonon::State olds)
 void
 Player::saveHit()
 {
+	if (static_cast<Tumult*>(qApp)->isIdle(180))
+		return;
 	QSettings settings;
 	settings.beginGroup("hits");
 	settings.setValue(_savedUrl, settings.value(_savedUrl, 0).toInt() + 1);

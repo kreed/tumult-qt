@@ -28,7 +28,9 @@ public:
 		: QApplication(argc, argv)
 	{
 	}
+
 	bool x11EventFilter(XEvent*);
+	bool isIdle(int secs);
 };
 
 #endif

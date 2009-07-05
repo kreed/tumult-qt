@@ -19,7 +19,9 @@
 #include "tumult.h"
 
 #include "keys.h"
+#include <qx11info_x11.h>
 #include <X11/Xlib.h>
+#include <X11/extensions/sync.h>
 
 bool
 Tumult::x11EventFilter(XEvent *ev)
@@ -28,4 +30,39 @@ Tumult::x11EventFilter(XEvent *ev)
 		return Keys::instance->event(((XKeyEvent*)ev)->keycode, ((XKeyEvent*)ev)->state);
 
 	return false;
+}
+
+bool
+Tumult::isIdle(int secs)
+{
+	static XSyncCounter idle = 0;
+	if (idle == -1)
+		return false;
+
+	Display *dpy = QX11Info::display();
+
+	if (idle == None) {
+		int xsync_major = SYNC_MAJOR_VERSION;
+	    int xsync_minor = SYNC_MINOR_VERSION;
+		int i;
+		if (XSyncQueryExtension(dpy, &i, &i) && XSyncInitialize(dpy, &xsync_major, &xsync_minor)) {
+			XSyncSystemCounter *counters = XSyncListSystemCounters(dpy, &i);
+			while (i--)
+				if (!strcmp(counters[i].name, "IDLETIME"))
+					idle = counters[i].counter;
+			XSyncFreeSystemCounterList(counters);
+			if (idle)
+				goto test;
+		}
+
+		idle = -1;
+		return false;
+	}
+
+test:
+	XSyncValue threshold;
+	XSyncValue idleTime;
+	XSyncIntToValue(&threshold, secs * 1000);
+	XSyncQueryCounter(dpy, idle, &idleTime);
+	return XSyncValueLessThan(threshold, idleTime);
 }
