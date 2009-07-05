@@ -50,7 +50,6 @@ Player::Player()
 	}
 
 	_currentStream = _streams.constBegin();
-	setCurrentSource(currentStream()->source());
 
 	instance = this;
 }
@@ -109,6 +108,14 @@ Player::changeSource(const Phonon::MediaSource &source)
 	clearQueue();
 	setCurrentSource(source);
 	play();
+}
+
+void
+Player::play()
+{
+	if (currentSource().type() == Phonon::MediaSource::Empty && !checkEmptyStream())
+		setCurrentSource(currentStream()->source());
+	MediaObject::play();
 }
 
 void

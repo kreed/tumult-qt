@@ -43,6 +43,7 @@ public:
 	static Player *instance;
 
 public slots:
+	void play();
 	void nextStream();
 	void prevStream();
 	void nextInStream();
