@@ -75,6 +75,7 @@ MessageWindow::showMetadata(const QMultiMap<QString, QString> &data)
 	// more detailed information on duplicate request
 	if (_metadataShown && isVisible()) {
 		// if Phonon gains support for it, add cover art here
+		// ditto for year
 		setAlignment(Qt::AlignLeft);
 		setText(QString(
 			"<b>Title: </b>%1<br>"
@@ -82,13 +83,15 @@ MessageWindow::showMetadata(const QMultiMap<QString, QString> &data)
 			"<b>Album: </b>%3<br>"
 			"<b>Date: </b>%4<br>"
 			"<b>Genre: </b>%5<br>"
-			"<b>Stream: </b>%6")
+			"<b>Progress: </b>%6<br>"
+			"<b>Stream: </b>%7")
 			.arg(
 			     title
 			   , artist
 			   , data.value("ALBUM")
 			   , data.value("DATE")
 			   , data.value("GENRE")
+			   , data.value("PROGRESS")
 			   , data.value("STREAM")));
 		timeout = 5000;
 	} else {
