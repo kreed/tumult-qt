@@ -43,7 +43,7 @@ Tumult::isIdle(int secs)
 
 	if (idle == None) {
 		int xsync_major = SYNC_MAJOR_VERSION;
-	    int xsync_minor = SYNC_MINOR_VERSION;
+		int xsync_minor = SYNC_MINOR_VERSION;
 		int i;
 		if (XSyncQueryExtension(dpy, &i, &i) && XSyncInitialize(dpy, &xsync_major, &xsync_minor)) {
 			XSyncSystemCounter *counters = XSyncListSystemCounters(dpy, &i);

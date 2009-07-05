@@ -188,7 +188,7 @@ Player::nextInQueue()
 
 	if (state() == Phonon::PlayingState) {
 		if (currentStream()->count() < 2)
-		   return;
+			return;
 
 		QList<Phonon::MediaSource> next = queue();
 		if (next.isEmpty())
