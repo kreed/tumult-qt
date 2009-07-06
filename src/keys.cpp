@@ -117,7 +117,7 @@ action(Keys::Action action)
 {
 	switch (action) {
 	case Keys::ShowStatus:
-		Player::instance->showMetaData();
+		Player::instance->showStatus(true);
 		break;
 	case Keys::NextInStream:
 		Player::instance->nextInStream();

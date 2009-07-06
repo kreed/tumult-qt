@@ -32,12 +32,16 @@ Player *Player::instance;
 Player::Player()
 	: _message(new MessageWindow)
 	, _expectingSourceChange(false)
+	, _metaDataValid(true)
+	, _showNextMetaData(false)
 {
 	Phonon::AudioOutput *audioOutput =
 		new Phonon::AudioOutput(Phonon::MusicCategory, this);
 	audioOutput->setName("Tumult");
 	Phonon::createPath(this, audioOutput);
 
+	connect(this, SIGNAL(currentSourceChanged(const Phonon::MediaSource&)),
+	              SLOT(newSource(const Phonon::MediaSource&)));
 	connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
 	              SLOT(newState(Phonon::State, Phonon::State)));
 	connect(this, SIGNAL(aboutToFinish()),
@@ -101,11 +105,14 @@ Player::showStatus(bool metadata)
 	case Phonon::LoadingState:
 	case Phonon::BufferingState:
 		if (metadata) {
-			QMultiMap<QString, QString> metadata = metaData();
-			metadata.insert("STREAM", currentStream()->name());
-			metadata.insert("URL", currentSource().url().toString());
-			metadata.insert("PROGRESS", QString(QLatin1String("%1 / %2")).arg(formatTime(totalTime() - remainingTime()), formatTime(totalTime())));
-			_message->showMetadata(metadata);
+			if (_metaDataValid) {
+				QMultiMap<QString, QString> metadata = metaData();
+				metadata.insert("STREAM", currentStream()->name());
+				metadata.insert("URL", currentSource().url().toString());
+				metadata.insert("PROGRESS", QString(QLatin1String("%1 / %2")).arg(formatTime(totalTime() - remainingTime()), formatTime(totalTime())));
+				_message->showMetadata(metadata);
+			} else
+				_message->showText(currentSource().url().toString() + '\n' + currentStream()->name());
 		} else
 			_message->showText(currentStream()->name());
 		break;
@@ -254,12 +261,12 @@ Player::search()
 
 		const Phonon::MediaSource source = currentStream()->nextResult();
 		if (source.type() != Phonon::MediaSource::Empty) {
-			showNextMetaData();
+			_showNextMetaData = true;
 			changeSource(source);
 		}
 	} else {
 		setQueue(currentStream()->allResults(text));
-		showNextMetaData();
+		_showNextMetaData = true;
 		nextInQueue();
 	}
 
@@ -273,30 +280,14 @@ Player::loadAnother()
 }
 
 void
-Player::showNextMetaData()
-{
-	connect(this, SIGNAL(metaDataChanged()),
-	              SLOT(showMetaData()));
-}
-
-void
-Player::showMetaData()
-{
-	showStatus(true);
-	disconnect(this, SIGNAL(metaDataChanged()),
-	           this, SLOT(showMetaData()));
-}
-
-void
 Player::newState(Phonon::State news, Phonon::State olds)
 {
-	if (olds == Phonon::PlayingState && news == Phonon::LoadingState) {
-		if (_expectingSourceChange)
-			_expectingSourceChange = false;
-		else
-			saveHit();
-	} else if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
-		_savedUrl = currentSource().url().toString();
+	if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
+		_metaDataValid = true;
+		if (_showNextMetaData) {
+			_showNextMetaData = false;
+			showStatus(true);
+		}
 	}
 }
 
@@ -308,4 +299,15 @@ Player::saveHit()
 	QSettings settings;
 	settings.beginGroup("hits");
 	settings.setValue(_savedUrl, settings.value(_savedUrl, 0).toInt() + 1);
+}
+
+void
+Player::newSource(const Phonon::MediaSource &src)
+{
+	if (_expectingSourceChange)
+		_expectingSourceChange = false;
+	else
+		saveHit();
+	_savedUrl = src.url().toString();
+	_metaDataValid = false;
 }

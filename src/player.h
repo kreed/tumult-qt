@@ -35,7 +35,6 @@ public:
 
 	Stream *currentStream() const { return *_currentStream; }
 
-	void showNextMetaData();
 	void showStatus(bool metadata);
 
 	void setCurrentSource(const Phonon::MediaSource&);
@@ -52,12 +51,12 @@ public slots:
 	void openSearchBox();
 	void smartStop();
 	void playPause();
-	void showMetaData();
 
 private slots:
 	void loadAnother();
 	void search();
 	void newState(Phonon::State, Phonon::State);
+	void newSource(const Phonon::MediaSource&);
 
 private:
 	void saveHit();
@@ -71,6 +70,8 @@ private:
 	QString _lastSearch;
 	bool _expectingSourceChange;
 	QString _savedUrl;
+	bool _metaDataValid;
+	bool _showNextMetaData;
 };
 
 #endif
