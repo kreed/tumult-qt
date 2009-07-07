@@ -16,32 +16,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "keys.h"
-#include "player.h"
-#include <qdbusconnection.h>
 #include "trayicon.h"
-#include "tumult.h"
 
-int
-main(int argc, char **argv)
+#include "player.h"
+#include <qapplication.h>
+#include <qmenu.h>
+
+TrayIcon::TrayIcon()
+	: QSystemTrayIcon(QIcon(":icon.svg"))
 {
-	qsrand(time(NULL));
-
-	Tumult app(argc, argv);
-	app.setQuitOnLastWindowClosed(false);
-	app.setOrganizationName("Kreed.org");
-	app.setOrganizationDomain("kreed.org");
-	app.setApplicationName("Tumult");
-
-	Player player;
-	Keys keys;
-
-	TrayIcon tray;
-	tray.show();
-
-	QDBusConnection bus = QDBusConnection::sessionBus();
-	bus.registerService("org.tumult");
-	bus.registerObject("/", &player, QDBusConnection::ExportAllSlots);
-
-	return app.exec();
+	QMenu *menu = new QMenu;
+	menu->addAction("Quit", qApp, SLOT(quit()), QKeySequence("Ctrl+Q"))->setShortcutContext(Qt::ApplicationShortcut);
+	setContextMenu(menu);
 }

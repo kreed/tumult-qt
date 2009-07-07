@@ -9,6 +9,9 @@ INSTALLS += target
 MOC_DIR = build
 OBJECTS_DIR = build
 
+RESOURCES += \
+	res/res.qrc
+
 SOURCES += \
 	src/*.cpp \
 	src/streams/*.cpp

@@ -16,32 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "keys.h"
-#include "player.h"
-#include <qdbusconnection.h>
-#include "trayicon.h"
-#include "tumult.h"
+#ifndef TRAYICON_H
+#define TRAYICON_H
 
-int
-main(int argc, char **argv)
-{
-	qsrand(time(NULL));
+#include <qsystemtrayicon.h>
 
-	Tumult app(argc, argv);
-	app.setQuitOnLastWindowClosed(false);
-	app.setOrganizationName("Kreed.org");
-	app.setOrganizationDomain("kreed.org");
-	app.setApplicationName("Tumult");
+class TrayIcon : public QSystemTrayIcon {
+	Q_OBJECT
+public:
+	TrayIcon();
+};
 
-	Player player;
-	Keys keys;
-
-	TrayIcon tray;
-	tray.show();
-
-	QDBusConnection bus = QDBusConnection::sessionBus();
-	bus.registerService("org.tumult");
-	bus.registerObject("/", &player, QDBusConnection::ExportAllSlots);
-
-	return app.exec();
-}
+#endif
