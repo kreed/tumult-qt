@@ -96,15 +96,6 @@ Player::checkEmptyStream()
 	return false;
 }
 
-static QString
-formatTime(qint64 time)
-{
-	int sec = qRound(time / 1000.0);
-	int min = sec / 60;
-	sec -= min * 60;
-	return QString(QLatin1String("%1:%2")).arg(min).arg(sec, 2, 10, QLatin1Char('0'));
-}
-
 void
 Player::showStatus(bool metadata)
 {
