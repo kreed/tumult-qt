@@ -65,6 +65,7 @@ private slots:
 	void search();
 	void newState(Phonon::State, Phonon::State);
 	void newSource(const Phonon::MediaSource&);
+	void setMetaData();
 
 private:
 	void saveHit();

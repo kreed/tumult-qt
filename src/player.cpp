@@ -52,6 +52,8 @@ Player::Player()
 	              SLOT(newSource(const Phonon::MediaSource&)));
 	connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
 	              SLOT(newState(Phonon::State, Phonon::State)));
+	connect(this, SIGNAL(metaDataChanged()),
+	              SLOT(setMetaData()));
 	connect(this, SIGNAL(aboutToFinish()),
 	              SLOT(loadAnother()));
 
@@ -302,6 +304,13 @@ Player::newState(Phonon::State news, Phonon::State olds)
 		}
 	}
 	playPauseAction->setChecked(news == Phonon::PlayingState);
+}
+
+void
+Player::setMetaData()
+{
+	_metaDataInvalid = false;
+	_message->setMetaData(metaData());
 }
 
 void
