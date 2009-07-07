@@ -30,7 +30,7 @@ public:
 	}
 
 	bool x11EventFilter(XEvent*);
-	bool isIdle(int secs);
+	qint64 idleTime();
 };
 
 #endif

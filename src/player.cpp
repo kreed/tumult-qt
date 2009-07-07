@@ -294,7 +294,7 @@ Player::newState(Phonon::State news, Phonon::State olds)
 void
 Player::saveHit()
 {
-	if (static_cast<Tumult*>(qApp)->isIdle(180))
+	if (static_cast<Tumult*>(qApp)->idleTime() > 180000)
 		return;
 	QSettings settings;
 	settings.beginGroup("hits");

@@ -32,11 +32,12 @@ Tumult::x11EventFilter(XEvent *ev)
 	return false;
 }
 
-bool
-Tumult::isIdle(int secs)
+qint64
+Tumult::idleTime()
 {
-	static XSyncCounter idle = 0;
-	if (idle == -1)
+	static XSyncCounter idle = None;
+	static bool failed = false;
+	if (failed)
 		return false;
 
 	Display *dpy = QX11Info::display();
@@ -55,14 +56,12 @@ Tumult::isIdle(int secs)
 				goto test;
 		}
 
-		idle = -1;
+		failed = true;
 		return false;
 	}
 
 test:
-	XSyncValue threshold;
 	XSyncValue idleTime;
-	XSyncIntToValue(&threshold, secs * 1000);
 	XSyncQueryCounter(dpy, idle, &idleTime);
-	return XSyncValueLessThan(threshold, idleTime);
+	return (qint64(XSyncValueHigh32(idleTime)) << 32) | XSyncValueLow32(idleTime);
 }
