@@ -25,6 +25,9 @@ class TrayIcon : public QSystemTrayIcon {
 	Q_OBJECT
 public:
 	TrayIcon();
+
+private slots:
+	void activate(QSystemTrayIcon::ActivationReason);
 };
 
 #endif

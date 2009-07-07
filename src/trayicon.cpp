@@ -25,6 +25,9 @@
 TrayIcon::TrayIcon()
 	: QSystemTrayIcon(QIcon(":icon.svg"))
 {
+	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+	              SLOT(activate(QSystemTrayIcon::ActivationReason)));
+
 	QMenu *menu = new QMenu;
 	Player *player = Player::instance;
 
@@ -44,4 +47,11 @@ TrayIcon::TrayIcon()
 	menu->addAction("Quit", qApp, SLOT(quit()), QKeySequence("Ctrl+Q"))->setShortcutContext(Qt::ApplicationShortcut);
 
 	setContextMenu(menu);
+}
+
+void
+TrayIcon::activate(ActivationReason reason)
+{
+	if (reason == Trigger)
+		Player::instance->showStatus();
 }
