@@ -81,15 +81,13 @@ MessageWindow::showMetadata(const QMultiMap<QString, QString> &data)
 			"<b>Artist: </b>%2<br>"
 			"<b>Album: </b>%3<br>"
 			"<b>Date: </b>%4<br>"
-			"<b>Genre: </b>%5<br>"
-			"<b>Progress: </b>%6<br>"
-			"<b>Stream: </b>%7")
+			"<b>Progress: </b>%5<br>"
+			"<b>Stream: </b>%6")
 			.arg(
 			     title
 			   , artist
 			   , data.value("ALBUM")
 			   , data.value("DATE")
-			   , data.value("GENRE")
 			   , data.value("PROGRESS")
 			   , data.value("STREAM")));
 		timeout = 5000;
