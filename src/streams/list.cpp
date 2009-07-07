@@ -40,14 +40,14 @@ ListStream::ListStream(const QString &name, const QString &uri)
 Phonon::MediaSource
 ListStream::source() const
 {
-	return isEmpty() ? Phonon::MediaSource() : createSource(at(qrand() % size()));
+	return _list.isEmpty() ? Phonon::MediaSource() : createSource(_list.at(qrand() % _list.size()));
 }
 
 int
 ListStream::search(const QString &search, int i) const
 {
-	for (int len = size(); i != len; ++i)
-		if (at(i).contains(search, Qt::CaseInsensitive))
+	for (int len = _list.size(); i != len; ++i)
+		if (_list.at(i).contains(search, Qt::CaseInsensitive))
 			return i;
 	return -1;
 }
@@ -58,7 +58,7 @@ ListStream::nextResult()
 	int i = search(_search, _lastIndex + 1);
 	if (i != -1) {
 		_lastIndex = i;
-		return createSource(at(i));
+		return createSource(_list.at(i));
 	} else if (_lastIndex != -1) {
 		// loop back to the beginning
 		_lastIndex = -1;
@@ -73,14 +73,14 @@ ListStream::allResults(const QString &text) const
 	QList<Phonon::MediaSource> result;
 	int i = -1;
 	while ((i = search(text, i + 1)) != -1)
-		result << createSource(at(i));
+		result << createSource(_list.at(i));
 	return result;
 }
 
 void
 ListStream::repopulate()
 {
-	clear();
+	_list.clear();
 	_error.clear();
 	populate();
 }
@@ -100,5 +100,5 @@ ListStream::repopulateLater()
 int
 ListStream::count() const
 {
-	return QStringList::count();
+	return _list.count();
 }

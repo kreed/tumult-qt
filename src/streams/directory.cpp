@@ -28,10 +28,9 @@ DirectoryStream::DirectoryStream(const QString &name, const QString &uri)
 void
 DirectoryStream::populate()
 {
-	QStringList filters;
-	filters << "*.m4a" << "*.ogg" << "*.mp3" << "*.flac";
-	QDirIterator it(listSrc(), filters, QDir::NoDotAndDotDot | QDir::Files,
-	                QDirIterator::Subdirectories);
+	QDirIterator it(listSrc(),
+		QStringList() << "*.m4a" << "*.ogg" << "*.mp3" << "*.flac",
+		QDir::Files, QDirIterator::Subdirectories);
 	while (it.hasNext())
-		append(it.next());
+		_list.append(it.next());
 }

@@ -31,12 +31,12 @@ PlaylistStream::populate()
 {
 	QFile file(listSrc());
 
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		_error = QString("Could not read playlist '%1'").arg(file.fileName());
-		qWarning(qPrintable(_error));
-	} else {
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QTextStream in(&file);
 		while (!in.atEnd())
-			append(in.readLine());
+			_list.append(in.readLine());
+	} else {
+		_error = QString("Could not read playlist '%1'").arg(file.fileName());
+		qWarning(qPrintable(_error));
 	}
 }
