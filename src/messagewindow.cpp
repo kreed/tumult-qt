@@ -45,7 +45,7 @@ MessageWindow::show(int timeout)
 	adjustSize();
 	move(QApplication::desktop()->width() - width() - 5, 5);
 
-	QLabel::show();
+	show();
 	raise();
 }
 
@@ -57,20 +57,19 @@ MessageWindow::showText(const QString &text)
 	show(3500);
 }
 
-void
-MessageWindow::showMetadata(const QMultiMap<QString, QString> &data)
+static QString
+formatTime(qint64 time)
 {
-	// FIXME: should use join for metadata
+	int sec = qRound(time / 1000.0);
+	int min = sec / 60;
+	sec -= min * 60;
+	return QString(QLatin1String("%1:%2")).arg(min).arg(sec, 2, 10, QLatin1Char('0'));
+}
+
+void
+MessageWindow::showMetaData()
+{
 	int timeout = 3500;
-
-	QString title = data.value("TITLE");
-	QString artist = data.value("ARTIST");
-
-	if (artist.isEmpty() && title.contains(" - ")) {
-		QStringList at = title.split(" - ");
-		title = at[1];
-		artist = at[0];
-	}
 
 	// more detailed information on duplicate request
 	if (_metadataShown && isVisible()) {
@@ -81,27 +80,63 @@ MessageWindow::showMetadata(const QMultiMap<QString, QString> &data)
 			"<b>Artist: </b>%2<br>"
 			"<b>Album: </b>%3<br>"
 			"<b>Date: </b>%4<br>"
-			"<b>Progress: </b>%5<br>"
-			"<b>Stream: </b>%6")
-			.arg(
-			     title
-			   , artist
-			   , data.value("ALBUM")
-			   , data.value("DATE")
-			   , data.value("PROGRESS")
-			   , data.value("STREAM")));
+			"<b>Progress: </b>%5 / %6<br>"
+			"<b>Stream: </b>%7")
+			.arg(_title
+			   , _artist
+			   , _album
+			   , _date
+			   , formatTime(_currentTime)
+			   , _totalTime
+			   , _stream));
 		timeout = 5000;
 	} else {
 		setAlignment(Qt::AlignCenter);
-		if (!title.isEmpty() || !artist.isEmpty())
+		if (!_title.isEmpty() || !_artist.isEmpty())
 			setText(QString("<b>%1</b><br>%2<br>%3")
-			           .arg(title, artist, data.value("STREAM")));
+			           .arg(_title, _artist, _stream));
 		else
-			setText(data.value("URL") + "<br>" + data.value("STREAM"));
+			setText(_url + "<br>" + _stream);
 	}
 
 	_metadataShown = true;
 	show(timeout);
+}
+
+void
+MessageWindow::setMetaData(const QMultiMap<QString, QString> &data)
+{
+	// FIXME: should use join for metadata
+	_title = data.value("TITLE");
+	_artist = data.value("ARTIST");
+	_album = data.value("ALBUM");
+	_date = data.value("DATE");
+
+	if (_artist.isEmpty() && _title.contains(" - ")) {
+		QStringList at = _title.split(" - ");
+		_title = at[1];
+		_artist = at[0];
+	}
+}
+
+void
+MessageWindow::setProgress(qint64 current, qint64 total)
+{
+	_currentTime = current;
+	if (total)
+		_totalTime = formatTime(total);
+}
+
+void
+MessageWindow::setStream(const QString &stream)
+{
+	_stream = stream;
+}
+
+void
+MessageWindow::setUrl(const QString &url)
+{
+	_url = url;
 }
 
 void

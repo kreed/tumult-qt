@@ -76,6 +76,7 @@ Player::Player()
 	}
 
 	_currentStream = _streams.constBegin();
+	_message->setStream(currentStream()->name());
 
 	instance = this;
 }
@@ -128,11 +129,8 @@ Player::showStatus(bool metadata)
 				return;
 			}
 
-			QMultiMap<QString, QString> metadata = metaData();
-			metadata.insert("STREAM", currentStream()->name());
-			metadata.insert("URL", currentSource().url().toString());
-			metadata.insert("PROGRESS", QString(QLatin1String("%1 / %2")).arg(formatTime(totalTime() - remainingTime()), formatTime(totalTime())));
-			_message->showMetadata(metadata);
+			_message->setProgress(totalTime() - remainingTime());
+			_message->showMetaData();
 		} else
 			_message->showText(currentStream()->name());
 		break;
@@ -171,6 +169,7 @@ Player::shiftStream()
 {
 	if (_searchBox)
 		_searchBox->close();
+	_message->setStream(currentStream()->name());
 	changeSource(currentStream()->source());
 	showStatus(false);
 }
@@ -304,6 +303,8 @@ Player::newState(Phonon::State news, Phonon::State olds)
 {
 	if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
 		_metaDataInvalid = false;
+		_message->setMetaData(metaData());
+		_message->setProgress(0, totalTime());
 		if (_showNextMetaData) {
 			_showNextMetaData = false;
 			showStatus(true);
@@ -331,4 +332,5 @@ Player::newSource(const Phonon::MediaSource &src)
 		saveHit();
 	_savedUrl = src.url().toString();
 	_metaDataInvalid = true;
+	_message->setUrl(_savedUrl);
 }

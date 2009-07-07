@@ -30,9 +30,15 @@ public:
 	MessageWindow();
 
 	void showText(const QString &text);
-	void showMetadata(const QMultiMap<QString, QString>&);
+	void showMetaData();
+
+	void setMetaData(const QMultiMap<QString, QString>&);
+	void setProgress(qint64 current, qint64 total = 0);
+	void setStream(const QString&);
+	void setUrl(const QString&);
 
 	using QLabel::hide;
+	using QLabel::show;
 
 protected:
 	void timerEvent(QTimerEvent *ev);
@@ -42,6 +48,15 @@ private:
 
 	QBasicTimer _timer;
 	bool _metadataShown;
+
+	QString _title;
+	QString _artist;
+	QString _album;
+	QString _date;
+	QString _stream;
+	qint64 _currentTime;
+	QString _totalTime;
+	QString _url;
 };
 
 #endif
