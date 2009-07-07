@@ -70,7 +70,7 @@ private:
 	QString _lastSearch;
 	bool _expectingSourceChange;
 	QString _savedUrl;
-	bool _metaDataValid;
+	bool _metaDataInvalid;
 	bool _showNextMetaData;
 };
 

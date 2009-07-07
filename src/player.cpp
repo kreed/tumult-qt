@@ -32,7 +32,7 @@ Player *Player::instance;
 Player::Player()
 	: _message(new MessageWindow)
 	, _expectingSourceChange(false)
-	, _metaDataValid(true)
+	, _metaDataInvalid(false)
 	, _showNextMetaData(false)
 {
 	Phonon::AudioOutput *audioOutput =
@@ -105,14 +105,16 @@ Player::showStatus(bool metadata)
 	case Phonon::LoadingState:
 	case Phonon::BufferingState:
 		if (metadata) {
-			if (_metaDataValid) {
-				QMultiMap<QString, QString> metadata = metaData();
-				metadata.insert("STREAM", currentStream()->name());
-				metadata.insert("URL", currentSource().url().toString());
-				metadata.insert("PROGRESS", QString(QLatin1String("%1 / %2")).arg(formatTime(totalTime() - remainingTime()), formatTime(totalTime())));
-				_message->showMetadata(metadata);
-			} else
-				_message->showText(currentSource().url().toString() + '\n' + currentStream()->name());
+			if (_metaDataInvalid) {
+				_showNextMetaData = true;
+				return;
+			}
+
+			QMultiMap<QString, QString> metadata = metaData();
+			metadata.insert("STREAM", currentStream()->name());
+			metadata.insert("URL", currentSource().url().toString());
+			metadata.insert("PROGRESS", QString(QLatin1String("%1 / %2")).arg(formatTime(totalTime() - remainingTime()), formatTime(totalTime())));
+			_message->showMetadata(metadata);
 		} else
 			_message->showText(currentStream()->name());
 		break;
@@ -283,7 +285,7 @@ void
 Player::newState(Phonon::State news, Phonon::State olds)
 {
 	if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
-		_metaDataValid = true;
+		_metaDataInvalid = false;
 		if (_showNextMetaData) {
 			_showNextMetaData = false;
 			showStatus(true);
@@ -309,5 +311,5 @@ Player::newSource(const Phonon::MediaSource &src)
 	else
 		saveHit();
 	_savedUrl = src.url().toString();
-	_metaDataValid = false;
+	_metaDataInvalid = true;
 }
