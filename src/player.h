@@ -26,6 +26,7 @@
 class MessageWindow;
 class SearchBox;
 class Stream;
+class QAction;
 typedef QLinkedList<Stream*> StreamList;
 
 class Player : public Phonon::MediaObject {
@@ -35,14 +36,21 @@ public:
 
 	Stream *currentStream() const { return *_currentStream; }
 
-	void showStatus(bool metadata);
-
 	void setCurrentSource(const Phonon::MediaSource&);
 	void changeSource(const Phonon::MediaSource&);
 
 	static Player *instance;
 
+	QAction* const showStatusAction;
+	QAction* const searchAction;
+	QAction* const playPauseAction;
+	QAction* const prevStreamAction;
+	QAction* const nextStreamAction;
+	QAction* const nextInStreamAction;
+	QAction* const nextInQueueAction;
+
 public slots:
+	void showStatus(bool metadata = true);
 	void play();
 	void nextStream();
 	void prevStream();

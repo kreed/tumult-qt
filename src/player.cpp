@@ -20,6 +20,7 @@
 
 #include "messagewindow.h"
 #include <phonon/audiooutput.h>
+#include <qaction.h>
 #include <qapplication.h>
 #include <qsettings.h>
 #include <qurl.h>
@@ -30,7 +31,14 @@
 Player *Player::instance;
 
 Player::Player()
-	: _message(new MessageWindow)
+	: showStatusAction(new QAction("Show Status", this))
+	, searchAction(new QAction("Search in Stream", this))
+	, playPauseAction(new QAction("Playing", this))
+	, prevStreamAction(new QAction("Previous Stream", this))
+	, nextStreamAction(new QAction("Next Stream", this))
+	, nextInStreamAction(new QAction("Next Item in Stream", this))
+	, nextInQueueAction(new QAction("Next Item in Queue", this))
+	, _message(new MessageWindow)
 	, _expectingSourceChange(false)
 	, _metaDataInvalid(false)
 	, _showNextMetaData(false)
@@ -46,6 +54,16 @@ Player::Player()
 	              SLOT(newState(Phonon::State, Phonon::State)));
 	connect(this, SIGNAL(aboutToFinish()),
 	              SLOT(loadAnother()));
+
+	connect(showStatusAction, SIGNAL(triggered()), SLOT(showStatus()));
+	connect(searchAction, SIGNAL(triggered()), SLOT(openSearchBox()));
+	connect(playPauseAction, SIGNAL(triggered()), SLOT(playPause()));
+	connect(prevStreamAction, SIGNAL(triggered()), SLOT(prevStream()));
+	connect(nextStreamAction, SIGNAL(triggered()), SLOT(nextStream()));
+	connect(nextInStreamAction, SIGNAL(triggered()), SLOT(nextInStream()));
+	connect(nextInQueueAction, SIGNAL(triggered()), SLOT(nextInQueue()));
+
+	playPauseAction->setCheckable(true);
 
 	QSettings settings;
 	settings.beginGroup("stream");
@@ -291,6 +309,7 @@ Player::newState(Phonon::State news, Phonon::State olds)
 			showStatus(true);
 		}
 	}
+	playPauseAction->setChecked(news == Phonon::PlayingState);
 }
 
 void

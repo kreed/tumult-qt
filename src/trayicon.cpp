@@ -26,6 +26,22 @@ TrayIcon::TrayIcon()
 	: QSystemTrayIcon(QIcon(":icon.svg"))
 {
 	QMenu *menu = new QMenu;
+	Player *player = Player::instance;
+
+	menu->addAction(player->showStatusAction);
+	menu->addAction(player->searchAction);
+
+	menu->addSeparator();
+
+	menu->addAction(player->playPauseAction);
+	menu->addAction(player->prevStreamAction);
+	menu->addAction(player->nextStreamAction);
+	menu->addAction(player->nextInStreamAction);
+	menu->addAction(player->nextInQueueAction);
+
+	menu->addSeparator();
+
 	menu->addAction("Quit", qApp, SLOT(quit()), QKeySequence("Ctrl+Q"))->setShortcutContext(Qt::ApplicationShortcut);
+
 	setContextMenu(menu);
 }
