@@ -19,6 +19,7 @@
 #include "messagewindow.h"
 
 #include <qapplication.h>
+#include <qdatetime.h>
 #include <qdesktopwidget.h>
 #include <qmap.h>
 
@@ -57,15 +58,6 @@ MessageWindow::showText(const QString &text)
 	show(3500);
 }
 
-static QString
-formatTime(qint64 time)
-{
-	int sec = qRound(time / 1000.0);
-	int min = sec / 60;
-	sec -= min * 60;
-	return QString(QLatin1String("%1:%2")).arg(min).arg(sec, 2, 10, QLatin1Char('0'));
-}
-
 void
 MessageWindow::showMetaData()
 {
@@ -86,7 +78,7 @@ MessageWindow::showMetaData()
 			   , _artist
 			   , _album
 			   , _date
-			   , formatTime(_currentTime)
+			   , QTime().addMSecs(_currentTime).toString("m:ss")
 			   , _totalTime
 			   , _stream));
 		timeout = 5000;
@@ -124,7 +116,7 @@ MessageWindow::setProgress(qint64 current, qint64 total)
 {
 	_currentTime = current;
 	if (total)
-		_totalTime = formatTime(total);
+		_totalTime = QTime().addMSecs(total).toString("m:ss");
 }
 
 void
