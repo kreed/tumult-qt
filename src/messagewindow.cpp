@@ -71,7 +71,7 @@ MessageWindow::showMetaData()
 			"<b>Title: </b>%1<br>"
 			"<b>Artist: </b>%2<br>"
 			"<b>Album: </b>%3<br>"
-			"<b>Date: </b>%4<br>"
+			"<b>Year: </b>%4<br>"
 			"<b>Progress: </b>%5 / %6<br>"
 			"<b>Stream: </b>%7")
 			.arg(_title
@@ -103,6 +103,10 @@ MessageWindow::setMetaData(const QMultiMap<QString, QString> &data)
 	_artist = data.value("ARTIST");
 	_album = data.value("ALBUM");
 	_date = data.value("DATE");
+
+	int i = _date.indexOf('-');
+	if (i != -1)
+		_date = _date.left(i);
 
 	if (_artist.isEmpty() && _title.contains(" - ")) {
 		QStringList at = _title.split(" - ");
