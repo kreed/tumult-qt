@@ -49,21 +49,8 @@ Stream::createSource(const QString &uri)
 		return Phonon::MediaSource(QUrl(uri));
 }
 
-void
-Stream::setSearch(const QString &uri)
-{
-	_search = uri;
-	_lastIndex = -1;
-}
-
-Phonon::MediaSource
-Stream::nextResult()
-{
-	return Phonon::MediaSource();
-}
-
 QList<Phonon::MediaSource>
-Stream::allResults(const QString&) const
+Stream::search(const QString&) const
 {
 	return QList<Phonon::MediaSource>();
 }

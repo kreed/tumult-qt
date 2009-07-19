@@ -28,7 +28,7 @@ class SearchBox : public QLineEdit {
 public:
 	SearchBox();
 
-	void search(const QString &lastText);
+	void search(const QString &defaultText);
 
 protected:
 	void keyReleaseEvent(QKeyEvent*);

@@ -267,20 +267,8 @@ Player::search()
 
 	const QString text = _searchBox->text();
 
-	if (qApp->keyboardModifiers() == Qt::NoModifier) {
-		if (currentStream()->currentSearch() != text)
-			currentStream()->setSearch(text);
-
-		const Phonon::MediaSource source = currentStream()->nextResult();
-		if (source.type() != Phonon::MediaSource::Empty) {
-			_showNextMetaData = true;
-			changeSource(source);
-		}
-	} else {
-		setQueue(currentStream()->allResults(text));
-		_showNextMetaData = true;
-		nextInQueue();
-	}
+	setQueue(currentStream()->search(text));
+	nextInQueue();
 
 	_lastSearch = text;
 }

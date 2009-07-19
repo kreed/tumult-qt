@@ -29,8 +29,7 @@ class ListStream : protected QObject, public Stream {
 	Q_OBJECT
 public:
 	Phonon::MediaSource source() const;
-	Phonon::MediaSource nextResult();
-	QList<Phonon::MediaSource> allResults(const QString &search) const;
+	QList<Phonon::MediaSource> search(const QString &search) const;
 	int count() const;
 
 	QString listSrc() const { return _listSrc; }
@@ -47,8 +46,6 @@ protected:
 	QStringList _list;
 
 private:
-	int search(const QString &serach, int from) const;
-
 	QString _listSrc;
 	QFileSystemWatcher *_watcher;
 };

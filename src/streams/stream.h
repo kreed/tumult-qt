@@ -33,10 +33,7 @@ public:
 
 	virtual void repopulate();
 
-	inline QString currentSearch() const { return _search; }
-	void setSearch(const QString &search);
-	virtual Phonon::MediaSource nextResult();
-	virtual QList<Phonon::MediaSource> allResults(const QString &search) const;
+	virtual QList<Phonon::MediaSource> search(const QString &search) const;
 
 	virtual int count() const = 0;
 
@@ -49,9 +46,6 @@ protected:
 	Stream(const QString &name);
 
 	QString _error;
-
-	QString _search;
-	int _lastIndex;
 
 private:
 	QString _name;

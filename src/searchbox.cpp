@@ -34,9 +34,9 @@ SearchBox::SearchBox()
 }
 
 void
-SearchBox::search(const QString &lastText)
+SearchBox::search(const QString &text)
 {
-	setText(lastText);
+	setText(text);
 	selectAll();
 
 	const QPoint &pos = QCursor::pos();
