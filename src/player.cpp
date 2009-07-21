@@ -210,8 +210,10 @@ Player::nextInQueue()
 			return;
 
 		QList<Phonon::MediaSource> next = queue();
-		if (next.isEmpty())
+		if (next.isEmpty()) {
+			nextInStream();
 			return;
+		}
 
 		_message->hide();
 		setCurrentSource(next.takeAt(qrand() % next.length()));
