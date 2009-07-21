@@ -5,19 +5,13 @@
    xmlns="http://www.w3.org/2000/svg"
    version="1.0"
    width="400"
-   height="400"
-   id="svg2">
-  <defs
-     id="defs4" />
-  <g
-     id="layer1">
+   height="400">
+  <g>
     <path
        d="M 0.12544016,204.63953 L 41.906949,204.63953 L 55.308565,183.94011 L 77.381814,274.58925 C 77.381814,274.58925 122.31665,84.725714 127.04663,102.57003 C 131.7766,120.41435 153.06153,341.68388 153.06153,341.68388 L 187.74806,25.482582 L 215.33963,374.51742 L 245.29618,85.439487 L 289.44268,319.55692 L 306.78594,131.12094 L 335.16584,294.57488 L 356.45075,195.36048 L 364.33406,204.63953 L 400.04437,204.63953"
-       id="path3215"
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:5.25088024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        d="M 59.257141,62.859673 L 59.257141,88.884001 L 185.66311,88.884001 L 185.66311,337.14033 L 214.53746,337.14033 L 214.53746,89.397107 L 214.53746,88.484141 L 214.53746,89.397107 L 214.53746,88.899126 L 340.74286,88.899126 L 340.74286,62.869208 L 59.383219,63.626556"
-       id="path4566"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:2.81700969;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>
