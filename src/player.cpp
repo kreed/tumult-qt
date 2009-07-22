@@ -113,9 +113,6 @@ Player::showStatus(bool metadata)
 	case Phonon::ErrorState:
 		_message->showText(errorString() + '\n' + currentSource().url().toString());
 		break;
-	case Phonon::LoadingState:
-		_message->showText("Loading...");
-		break;
 	case Phonon::BufferingState:
 		_message->showText("Buffering...");
 		break;
@@ -131,9 +128,16 @@ Player::showStatus(bool metadata)
 		} else
 			_message->showText(currentStream()->name());
 		break;
+	case Phonon::LoadingState:
+		if (currentSource().type() != Phonon::MediaSource::Empty) {
+			_message->showText("Loading...");
+			break;
+		}
+		// else we haven't loaded anything yet since the stream has just been created, don't show "Loading..."
 	case Phonon::PausedState:
 	case Phonon::StoppedState:
 		_message->showText("Not Playing");
+		break;
 	}
 }
 
