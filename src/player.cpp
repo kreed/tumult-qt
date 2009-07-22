@@ -113,9 +113,13 @@ Player::showStatus(bool metadata)
 	case Phonon::ErrorState:
 		_message->showText(errorString() + '\n' + currentSource().url().toString());
 		break;
-	case Phonon::PlayingState:
 	case Phonon::LoadingState:
+		_message->showText("Loading...");
+		break;
 	case Phonon::BufferingState:
+		_message->showText("Buffering...");
+		break;
+	case Phonon::PlayingState:
 		if (metadata) {
 			if (_metaDataInvalid) {
 				_showNextMetaData = true;
