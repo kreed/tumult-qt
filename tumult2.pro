@@ -8,6 +8,7 @@ INSTALLS += target
 
 MOC_DIR = build
 OBJECTS_DIR = build
+RCC_DIR = build
 
 RESOURCES += \
 	res/res.qrc
