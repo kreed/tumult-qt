@@ -109,6 +109,11 @@ Player::showStatus(bool metadata)
 		return;
 	}
 
+	if (metadata && _metaDataInvalid) {
+		_showNextMetaData = true;
+		return;
+	}
+
 	switch (state()) {
 	case Phonon::ErrorState:
 		_message->showText(errorString() + '\n' + currentSource().url().toString());
@@ -118,11 +123,6 @@ Player::showStatus(bool metadata)
 		break;
 	case Phonon::PlayingState:
 		if (metadata) {
-			if (_metaDataInvalid) {
-				_showNextMetaData = true;
-				return;
-			}
-
 			_message->setProgress(totalTime() - remainingTime());
 			_message->showMetaData();
 		} else
