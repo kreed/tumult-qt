@@ -277,15 +277,13 @@ Player::search()
 
 	const QString text = _searchBox->text();
 
-	if (!queue().isEmpty() && text == _lastSearch) {
-		nextInQueue();
-		return;
+	if (text != _lastSearch) {
+		setQueue(currentStream()->search(text));
+		_lastSearch = text;
 	}
 
-	setQueue(currentStream()->search(text));
-	nextInQueue();
-
-	_lastSearch = text;
+	if (!queue().isEmpty())
+		nextInQueue();
 }
 
 void
