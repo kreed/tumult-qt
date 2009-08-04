@@ -59,6 +59,7 @@ public slots:
 	void openSearchBox();
 	void smartStop();
 	void playPause();
+	void repopulateStream();
 
 private slots:
 	void loadAnother();

@@ -335,3 +335,9 @@ Player::newSource(const Phonon::MediaSource &src)
 	_metaDataInvalid = true;
 	_message->setUrl(_savedUrl);
 }
+
+void
+Player::repopulateStream()
+{
+	currentStream()->repopulate();
+}
