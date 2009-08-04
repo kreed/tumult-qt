@@ -339,5 +339,5 @@ Player::newSource(const Phonon::MediaSource &src)
 void
 Player::repopulateStream()
 {
-	currentStream()->repopulate();
+	currentStream()->repopulateLater();
 }

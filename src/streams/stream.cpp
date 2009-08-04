@@ -59,3 +59,8 @@ void
 Stream::repopulate()
 {
 }
+
+void
+Stream::repopulateLater()
+{
+}

@@ -32,6 +32,7 @@ public:
 	virtual Phonon::MediaSource source() const = 0;
 
 	virtual void repopulate();
+	virtual void repopulateLater();
 
 	virtual QList<Phonon::MediaSource> search(const QString &search) const;
 
