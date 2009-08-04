@@ -60,16 +60,10 @@ ListStream::repopulate()
 	populate();
 }
 
-static void
-callRepopulate(ListStream *stream)
-{
-	stream->repopulate();
-}
-
 void
 ListStream::repopulateLater()
 {
-	QtConcurrent::run(callRepopulate, this);
+	QtConcurrent::run(this, &ListStream::repopulate);
 }
 
 int
