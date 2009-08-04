@@ -33,8 +33,11 @@ PlaylistStream::populate()
 
 	if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QTextStream in(&file);
-		while (!in.atEnd())
-			_list.append(in.readLine());
+		while (!in.atEnd()) {
+			QString line = in.readLine();
+			if (!line.startsWith('#'))
+				_list << line;
+		}
 	} else {
 		_error = QString("Could not read playlist '%1'").arg(file.fileName());
 		qWarning(qPrintable(_error));
