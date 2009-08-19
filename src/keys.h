@@ -26,7 +26,7 @@ public:
 	enum Action {
 		ShowStatus,
 		NextInStream,
-		NextInQueue,
+		ClearQueue,
 		PlayPause,
 		Search,
 		Prev,

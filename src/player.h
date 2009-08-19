@@ -47,7 +47,7 @@ public:
 	QAction* const prevStreamAction;
 	QAction* const nextStreamAction;
 	QAction* const nextInStreamAction;
-	QAction* const nextInQueueAction;
+	QAction* const clearQueueAction;
 
 public slots:
 	void showStatus(bool metadata = true);
@@ -55,7 +55,7 @@ public slots:
 	void nextStream();
 	void prevStream();
 	void nextInStream();
-	void nextInQueue();
+	void clearQueue();
 	void openSearchBox();
 	void smartStop();
 	void playPause();

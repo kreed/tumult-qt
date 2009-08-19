@@ -53,7 +53,7 @@ Phonon::MediaSource
 Stream::source()
 {
 	if (_source.type() == Phonon::MediaSource::Empty)
-		nextInQueue();
+		next();
 	return _source;
 }
 
@@ -68,14 +68,13 @@ Stream::hasQueue() const
 	return false;
 }
 
-bool
-Stream::next()
+void
+Stream::clearQueue()
 {
-	return false;
 }
 
 bool
-Stream::nextInQueue()
+Stream::next()
 {
 	return false;
 }

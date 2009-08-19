@@ -31,9 +31,9 @@ public:
 	int count() const;
 
 	bool next();
-	bool nextInQueue();
 	void fillQueue(const QString &search);
 	bool hasQueue() const;
+	void clearQueue();
 
 	QString listSrc() const { return _listSrc; }
 

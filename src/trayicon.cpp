@@ -32,7 +32,11 @@ TrayIcon::TrayIcon()
 	Player *player = Player::instance;
 
 	menu->addAction(player->showStatusAction);
+
+	menu->addSeparator();
+
 	menu->addAction(player->searchAction);
+	menu->addAction(player->clearQueueAction);
 
 	menu->addSeparator();
 
@@ -40,7 +44,6 @@ TrayIcon::TrayIcon()
 	menu->addAction(player->prevStreamAction);
 	menu->addAction(player->nextStreamAction);
 	menu->addAction(player->nextInStreamAction);
-	menu->addAction(player->nextInQueueAction);
 
 	menu->addSeparator();
 

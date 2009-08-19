@@ -41,19 +41,11 @@ ListStream::next()
 	if (_list.isEmpty())
 		return false;
 
-	_source = createSource(_list.at(qrand() % _list.size()));
-	return true;
-}
-
-bool
-ListStream::nextInQueue()
-{
-	if (_queue.isEmpty()) {
-		return next();
-	} else {
+	if (_queue.isEmpty())
+		_source = createSource(_list.at(qrand() % _list.size()));
+	else
 		_source = _queue.takeAt(qrand() % _queue.size());
-		return true;
-	}
+	return true;
 }
 
 void
@@ -69,6 +61,12 @@ bool
 ListStream::hasQueue() const
 {
 	return !_queue.isEmpty();
+}
+
+void
+ListStream::clearQueue()
+{
+	_queue.clear();
 }
 
 void

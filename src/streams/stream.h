@@ -32,9 +32,9 @@ public:
 	virtual void repopulateLater();
 
 	virtual bool next();
-	virtual bool nextInQueue();
 	virtual void fillQueue(const QString &search);
 	virtual bool hasQueue() const;
+	virtual void clearQueue();
 
 	virtual int count() const = 0;
 

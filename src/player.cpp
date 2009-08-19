@@ -37,7 +37,7 @@ Player::Player()
 	, prevStreamAction(new QAction("Previous Stream", this))
 	, nextStreamAction(new QAction("Next Stream", this))
 	, nextInStreamAction(new QAction("Next Item in Stream", this))
-	, nextInQueueAction(new QAction("Next Item in Queue", this))
+	, clearQueueAction(new QAction("Clear Queue", this))
 	, _message(new MessageWindow)
 	, _expectingSourceChange(false)
 	, _metaDataInvalid(false)
@@ -63,7 +63,7 @@ Player::Player()
 	connect(prevStreamAction, SIGNAL(triggered()), SLOT(prevStream()));
 	connect(nextStreamAction, SIGNAL(triggered()), SLOT(nextStream()));
 	connect(nextInStreamAction, SIGNAL(triggered()), SLOT(nextInStream()));
-	connect(nextInQueueAction, SIGNAL(triggered()), SLOT(nextInQueue()));
+	connect(clearQueueAction, SIGNAL(triggered()), SLOT(clearQueue()));
 
 	playPauseAction->setCheckable(true);
 
@@ -152,7 +152,7 @@ void
 Player::changeSource(const Phonon::MediaSource &source)
 {
 	_message->hide();
-	clearQueue();
+	Phonon::MediaObject::clearQueue();
 	setCurrentSource(source);
 	play();
 }
@@ -208,16 +208,9 @@ Player::nextInStream()
 }
 
 void
-Player::nextInQueue()
+Player::clearQueue()
 {
-	if (checkEmptyStream())
-		return;
-
-	if (state() == Phonon::PlayingState) {
-		if (currentStream()->nextInQueue())
-			changeSource(currentStream()->source());
-	} else
-		play();
+	currentStream()->clearQueue();
 }
 
 void
@@ -272,13 +265,13 @@ Player::search()
 	}
 
 	if (currentStream()->hasQueue())
-		nextInQueue();
+		nextInStream();
 }
 
 void
 Player::loadAnother()
 {
-	currentStream()->nextInQueue();
+	currentStream()->next();
 	enqueue(currentStream()->source());
 }
 
