@@ -19,22 +19,22 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+#include <mediasource.h>
 #include <qstring.h>
-
-namespace Phonon {
-class MediaSource;
-}
 
 class Stream {
 public:
 	static Stream *create(const QString &name, const QString &uri);
 
-	virtual Phonon::MediaSource source() const = 0;
+	Phonon::MediaSource source();
 
 	virtual void repopulate();
 	virtual void repopulateLater();
 
-	virtual QList<Phonon::MediaSource> search(const QString &search) const;
+	virtual bool next();
+	virtual bool nextInQueue();
+	virtual void fillQueue(const QString &search);
+	virtual bool hasQueue() const;
 
 	virtual int count() const = 0;
 
@@ -47,6 +47,7 @@ protected:
 	Stream(const QString &name);
 
 	QString _error;
+	Phonon::MediaSource _source;
 
 private:
 	QString _name;

@@ -201,7 +201,7 @@ Player::nextInStream()
 		return;
 
 	if (state() == Phonon::PlayingState) {
-		if (currentStream()->count() > 1)
+		if (currentStream()->next())
 			changeSource(currentStream()->source());
 	} else
 		play();
@@ -214,21 +214,10 @@ Player::nextInQueue()
 		return;
 
 	if (state() == Phonon::PlayingState) {
-		if (currentStream()->count() < 2)
-			return;
-
-		QList<Phonon::MediaSource> next = queue();
-		if (next.isEmpty()) {
-			nextInStream();
-			return;
-		}
-
-		_message->hide();
-		setCurrentSource(next.takeAt(qrand() % next.length()));
-		setQueue(next);
-	}
-
-	play();
+		if (currentStream()->nextInQueue())
+			changeSource(currentStream()->source());
+	} else
+		play();
 }
 
 void
@@ -277,18 +266,19 @@ Player::search()
 
 	const QString text = _searchBox->text();
 
-	if (text != _lastSearch || queue().isEmpty()) {
-		setQueue(currentStream()->search(text));
+	if (text != _lastSearch || !currentStream()->hasQueue()) {
+		currentStream()->fillQueue(text);
 		_lastSearch = text;
 	}
 
-	if (!queue().isEmpty())
+	if (currentStream()->hasQueue())
 		nextInQueue();
 }
 
 void
 Player::loadAnother()
 {
+	currentStream()->nextInQueue();
 	enqueue(currentStream()->source());
 }
 

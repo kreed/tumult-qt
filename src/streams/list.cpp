@@ -18,7 +18,6 @@
 
 #include "list.h"
 
-#include <phonon/mediasource.h>
 #include <qfilesystemwatcher.h>
 #include <qtconcurrentrun.h>
 
@@ -36,20 +35,40 @@ ListStream::ListStream(const QString &name, const QString &uri)
 	QMetaObject::invokeMethod(this, "repopulateLater", Qt::QueuedConnection);
 }
 
-Phonon::MediaSource
-ListStream::source() const
+bool
+ListStream::next()
 {
-	return _list.isEmpty() ? Phonon::MediaSource() : createSource(_list.at(qrand() % _list.size()));
+	if (_list.isEmpty())
+		return false;
+
+	_source = createSource(_list.at(qrand() % _list.size()));
+	return true;
 }
 
-QList<Phonon::MediaSource>
-ListStream::search(const QString &text) const
+bool
+ListStream::nextInQueue()
 {
-	QList<Phonon::MediaSource> result;
+	if (_queue.isEmpty()) {
+		return next();
+	} else {
+		_source = _queue.takeAt(qrand() % _queue.size());
+		return true;
+	}
+}
+
+void
+ListStream::fillQueue(const QString &text)
+{
+	_queue.clear();
 	foreach (const QString &src, _list)
 		if (src.contains(text, Qt::CaseInsensitive))
-			result << createSource(src);
-	return result;
+			_queue << createSource(src);
+}
+
+bool
+ListStream::hasQueue() const
+{
+	return !_queue.isEmpty();
 }
 
 void
@@ -57,6 +76,7 @@ ListStream::repopulate()
 {
 	_list.clear();
 	_error.clear();
+	_source = Phonon::MediaSource();
 	populate();
 }
 

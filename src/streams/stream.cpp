@@ -49,10 +49,35 @@ Stream::createSource(const QString &uri)
 		return Phonon::MediaSource(QUrl(uri));
 }
 
-QList<Phonon::MediaSource>
-Stream::search(const QString&) const
+Phonon::MediaSource
+Stream::source()
 {
-	return QList<Phonon::MediaSource>();
+	if (_source.type() == Phonon::MediaSource::Empty)
+		nextInQueue();
+	return _source;
+}
+
+void
+Stream::fillQueue(const QString&)
+{
+}
+
+bool
+Stream::hasQueue() const
+{
+	return false;
+}
+
+bool
+Stream::next()
+{
+	return false;
+}
+
+bool
+Stream::nextInQueue()
+{
+	return false;
 }
 
 void

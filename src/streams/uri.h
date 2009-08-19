@@ -19,18 +19,13 @@
 #ifndef STREAMURI_H
 #define STREAMURI_H
 
-#include <phonon/mediasource.h>
 #include "stream.h"
 
 class UriStream : public Stream {
 public:
 	UriStream(const QString &name, const QString &uri);
 
-	Phonon::MediaSource source() const;
 	int count() const;
-
-private:
-	Phonon::MediaSource _source;
 };
 
 #endif
