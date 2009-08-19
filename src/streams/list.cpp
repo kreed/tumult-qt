@@ -44,17 +44,14 @@ ListStream::next()
 	if (_queue.isEmpty())
 		_source = createSource(_list.at(qrand() % _list.size()));
 	else
-		_source = _queue.takeAt(qrand() % _queue.size());
+		_source = createSource(_queue.takeAt(qrand() % _queue.size()));
 	return true;
 }
 
 void
 ListStream::fillQueue(const QString &text)
 {
-	_queue.clear();
-	foreach (const QString &src, _list)
-		if (src.contains(text, Qt::CaseInsensitive))
-			_queue << createSource(src);
+	_queue = _list.filter(text, Qt::CaseInsensitive);
 }
 
 bool

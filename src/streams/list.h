@@ -49,7 +49,7 @@ protected:
 	QStringList _list;
 
 private:
-	QList<Phonon::MediaSource> _queue;
+	QStringList _queue;
 	QString _listSrc;
 	QFileSystemWatcher *_watcher;
 };
