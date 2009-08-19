@@ -43,6 +43,7 @@ TrayIcon::TrayIcon()
 	menu->addAction(player->playPauseAction);
 	menu->addAction(player->prevStreamAction);
 	menu->addAction(player->nextStreamAction);
+	menu->addAction(player->prevInStreamAction);
 	menu->addAction(player->nextInStreamAction);
 
 	menu->addSeparator();

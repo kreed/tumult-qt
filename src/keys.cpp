@@ -106,6 +106,7 @@ Keys::Keys()
 	parse(ShowStatus, settings.value("status").toByteArray());
 	parse(PlayPause, settings.value("play_pause").toByteArray());
 	parse(Search, settings.value("search").toByteArray());
+	parse(PrevInStream, settings.value("prev_in_stream").toByteArray());
 	parse(NextInStream, settings.value("next_in_stream").toByteArray());
 	parse(ClearQueue, settings.value("clear_queue").toByteArray());
 
@@ -118,6 +119,9 @@ action(Keys::Action action)
 	switch (action) {
 	case Keys::ShowStatus:
 		Player::instance->showStatus(true);
+		break;
+	case Keys::PrevInStream:
+		Player::instance->prevInStream();
 		break;
 	case Keys::NextInStream:
 		Player::instance->nextInStream();

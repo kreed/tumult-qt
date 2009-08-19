@@ -46,6 +46,7 @@ public:
 	QAction* const playPauseAction;
 	QAction* const prevStreamAction;
 	QAction* const nextStreamAction;
+	QAction* const prevInStreamAction;
 	QAction* const nextInStreamAction;
 	QAction* const clearQueueAction;
 
@@ -54,6 +55,7 @@ public slots:
 	void play();
 	void nextStream();
 	void prevStream();
+	void prevInStream();
 	void nextInStream();
 	void clearQueue();
 	void openSearchBox();

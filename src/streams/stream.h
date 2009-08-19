@@ -31,7 +31,9 @@ public:
 	virtual void repopulate();
 	virtual void repopulateLater();
 
+	virtual bool prev();
 	virtual bool next();
+
 	virtual void fillQueue(const QString &search);
 	virtual bool hasQueue() const;
 	virtual void clearQueue();

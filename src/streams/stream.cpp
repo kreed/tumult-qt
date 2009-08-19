@@ -75,6 +75,12 @@ Stream::clearQueue()
 }
 
 bool
+Stream::prev()
+{
+	return false;
+}
+
+bool
 Stream::next()
 {
 	return false;

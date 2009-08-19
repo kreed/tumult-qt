@@ -36,6 +36,7 @@ Player::Player()
 	, playPauseAction(new QAction("Playing", this))
 	, prevStreamAction(new QAction("Previous Stream", this))
 	, nextStreamAction(new QAction("Next Stream", this))
+	, prevInStreamAction(new QAction("Previous Item in Stream", this))
 	, nextInStreamAction(new QAction("Next Item in Stream", this))
 	, clearQueueAction(new QAction("Clear Queue", this))
 	, _message(new MessageWindow)
@@ -63,6 +64,7 @@ Player::Player()
 	connect(playPauseAction, SIGNAL(triggered()), SLOT(playPause()));
 	connect(prevStreamAction, SIGNAL(triggered()), SLOT(prevStream()));
 	connect(nextStreamAction, SIGNAL(triggered()), SLOT(nextStream()));
+	connect(prevInStreamAction, SIGNAL(triggered()), SLOT(prevInStream()));
 	connect(nextInStreamAction, SIGNAL(triggered()), SLOT(nextInStream()));
 	connect(clearQueueAction, SIGNAL(triggered()), SLOT(clearQueue()));
 
@@ -201,6 +203,19 @@ Player::nextStream()
 	if (stream == _streams.constEnd())
 		stream = _streams.constBegin();
 	setStream(stream);
+}
+
+void
+Player::prevInStream()
+{
+	if (checkEmptyStream())
+		return;
+
+	if (state() == Phonon::PlayingState) {
+		if (currentStream()->prev())
+			changeSource(currentStream()->source());
+	} else
+		play();
 }
 
 void

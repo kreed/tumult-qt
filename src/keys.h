@@ -25,6 +25,7 @@ class Keys {
 public:
 	enum Action {
 		ShowStatus,
+		PrevInStream,
 		NextInStream,
 		ClearQueue,
 		PlayPause,

@@ -36,10 +36,26 @@ ListStream::ListStream(const QString &name, const QString &uri)
 }
 
 bool
+ListStream::prev()
+{
+	if (_prevSources.isEmpty())
+		return false;
+
+	_source = _prevSources.pop();
+	return true;
+}
+
+bool
 ListStream::next()
 {
 	if (_list.isEmpty())
 		return false;
+
+	if (_source.type() != Phonon::MediaSource::Empty) {
+		_prevSources.push(_source);
+		while (_prevSources.size() > 20)
+			_prevSources.pop_front();
+	}
 
 	if (_queue.isEmpty())
 		_source = createSource(_list.at(qrand() % _list.size()));

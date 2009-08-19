@@ -21,6 +21,7 @@
 
 #include <qstringlist.h>
 #include <qobject.h>
+#include <qstack.h>
 #include "stream.h"
 
 class QFileSystemWatcher;
@@ -30,7 +31,9 @@ class ListStream : protected QObject, public Stream {
 public:
 	int count() const;
 
+	bool prev();
 	bool next();
+
 	void fillQueue(const QString &search);
 	bool hasQueue() const;
 	void clearQueue();
@@ -52,6 +55,7 @@ private:
 	QStringList _queue;
 	QString _listSrc;
 	QFileSystemWatcher *_watcher;
+	QStack<Phonon::MediaSource> _prevSources;
 };
 
 #endif
