@@ -118,7 +118,7 @@ action(Keys::Action action)
 {
 	switch (action) {
 	case Keys::ShowStatus:
-		Player::instance->showStatus(true);
+		Player::instance->showStatus();
 		break;
 	case Keys::PrevInStream:
 		Player::instance->prevInStream();

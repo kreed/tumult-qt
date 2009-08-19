@@ -92,7 +92,7 @@ Player::checkEmptyStream()
 	if (currentStream()->count() == 0) {
 		currentStream()->repopulate();
 		if (currentStream()->count() == 0) {
-			showStatus(false);
+			showStatus();
 			return true;
 		} else
 			changeSource(currentStream()->source());
@@ -102,7 +102,7 @@ Player::checkEmptyStream()
 }
 
 void
-Player::showStatus(bool metadata)
+Player::showStatus()
 {
 	if (currentStream()->count() == 0) {
 		if (currentStream()->error().isEmpty())
@@ -112,7 +112,7 @@ Player::showStatus(bool metadata)
 		return;
 	}
 
-	if (metadata && _metaDataInvalid) {
+	if (_metaDataInvalid) {
 		_showNextMetaData = true;
 		return;
 	}
@@ -125,11 +125,8 @@ Player::showStatus(bool metadata)
 		_message->showText("Buffering...");
 		break;
 	case Phonon::PlayingState:
-		if (metadata) {
-			_message->setProgress(totalTime() - remainingTime());
-			_message->showMetaData();
-		} else
-			_message->showText(currentStream()->name());
+		_message->setProgress(totalTime() - remainingTime());
+		_message->showMetaData();
 		break;
 	case Phonon::LoadingState:
 		if (currentSource().type() != Phonon::MediaSource::Empty) {
@@ -183,8 +180,6 @@ Player::setStream(const StreamList::const_iterator &stream)
 
 	_toSeek = currentStream()->currentTime();
 	_message->setStream(currentStream()->name());
-
-	showStatus(false);
 }
 
 void
@@ -310,7 +305,7 @@ Player::newState(Phonon::State news, Phonon::State olds)
 		_message->setProgress(0, totalTime());
 		if (_showNextMetaData) {
 			_showNextMetaData = false;
-			showStatus(true);
+			showStatus();
 		}
 	}
 	playPauseAction->setChecked(news == Phonon::PlayingState);

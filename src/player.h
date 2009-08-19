@@ -51,7 +51,7 @@ public:
 	QAction* const clearQueueAction;
 
 public slots:
-	void showStatus(bool metadata = true);
+	void showStatus();
 	void play();
 	void nextStream();
 	void prevStream();
