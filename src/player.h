@@ -70,7 +70,7 @@ private slots:
 
 private:
 	void saveHit();
-	void shiftStream();
+	void setStream(const StreamList::const_iterator &stream);
 	bool checkEmptyStream();
 
 	StreamList _streams;
@@ -82,6 +82,7 @@ private:
 	QString _savedUrl;
 	bool _metaDataInvalid;
 	bool _showNextMetaData;
+	qint64 _toSeek;
 };
 
 #endif

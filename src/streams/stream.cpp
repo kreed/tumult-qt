@@ -26,6 +26,7 @@
 
 Stream::Stream(const QString &name)
 	: _name(name)
+	, _currentTime(0)
 {
 }
 
@@ -87,4 +88,10 @@ Stream::repopulate()
 void
 Stream::repopulateLater()
 {
+}
+
+void
+Stream::setCurrentTime(qint64 time)
+{
+	_currentTime = time;
 }

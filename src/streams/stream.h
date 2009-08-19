@@ -43,6 +43,9 @@ public:
 
 	static Phonon::MediaSource createSource(const QString &source);
 
+	qint64 currentTime() const { return _currentTime; }
+	void setCurrentTime(qint64);
+
 protected:
 	Stream(const QString &name);
 
@@ -51,6 +54,7 @@ protected:
 
 private:
 	QString _name;
+	qint64 _currentTime;
 };
 
 #endif

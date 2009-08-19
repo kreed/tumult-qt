@@ -42,6 +42,7 @@ Player::Player()
 	, _expectingSourceChange(false)
 	, _metaDataInvalid(false)
 	, _showNextMetaData(false)
+	, _toSeek(0)
 {
 	Phonon::AudioOutput *audioOutput =
 		new Phonon::AudioOutput(Phonon::MusicCategory, this);
@@ -166,32 +167,40 @@ Player::play()
 }
 
 void
-Player::shiftStream()
+Player::setStream(const StreamList::const_iterator &stream)
 {
 	if (_searchBox)
 		_searchBox->close();
-	_message->setStream(currentStream()->name());
+
+	// isSeekable does not seem to actually return the correct value... so just ignore urls
+	if (isSeekable() && currentSource().type() != Phonon::MediaSource::Url)
+		currentStream()->setCurrentTime(currentTime());
+
+	_currentStream = stream;
 	changeSource(currentStream()->source());
+
+	_toSeek = currentStream()->currentTime();
+	_message->setStream(currentStream()->name());
+
 	showStatus(false);
 }
 
 void
 Player::prevStream()
 {
+	StreamList::const_iterator stream = _currentStream;
 	if (_currentStream == _streams.constBegin())
-		_currentStream = _streams.constEnd();
-	--_currentStream;
-
-	shiftStream();
+		stream = _streams.constEnd();
+	setStream(stream - 1);
 }
 
 void
 Player::nextStream()
 {
-	if (++_currentStream == _streams.constEnd())
-		_currentStream = _streams.constBegin();
-
-	shiftStream();
+	StreamList::const_iterator stream = _currentStream + 1;
+	if (stream == _streams.constEnd())
+		stream = _streams.constBegin();
+	setStream(stream);
 }
 
 void
@@ -279,6 +288,8 @@ void
 Player::newState(Phonon::State news, Phonon::State olds)
 {
 	if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
+		if (_toSeek)
+			seek(_toSeek);
 		_metaDataInvalid = false;
 		_message->setMetaData(metaData());
 		_message->setProgress(0, totalTime());
