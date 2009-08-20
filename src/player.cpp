@@ -298,8 +298,10 @@ void
 Player::newState(Phonon::State news, Phonon::State olds)
 {
 	if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
-		if (_toSeek)
+		if (_toSeek) {
 			seek(_toSeek);
+			_toSeek = 0;
+		}
 		_metaDataInvalid = false;
 		_message->setMetaData(metaData());
 		_message->setProgress(0, totalTime());
