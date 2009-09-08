@@ -20,6 +20,7 @@
 
 #include <qfilesystemwatcher.h>
 #include <qtconcurrentrun.h>
+#include <qurl.h>
 
 ListStream::ListStream(const QString &name, const QString &uri)
 	: Stream(name)
@@ -35,12 +36,21 @@ ListStream::ListStream(const QString &name, const QString &uri)
 	QMetaObject::invokeMethod(this, "repopulateLater", Qt::QueuedConnection);
 }
 
+template<class T> static void
+shuffle(QList<T> *list)
+{
+	int size, i;
+	for (size = i = list->count(); --i != -1; )
+		list->swap(i, i + qrand() % (size - i));
+}
+
 bool
 ListStream::prev()
 {
 	if (_prevSources.isEmpty())
 		return false;
 
+	_queue.prepend(_source.url().toString());
 	_source = _prevSources.pop();
 	return true;
 }
@@ -60,7 +70,7 @@ ListStream::next()
 	if (_queue.isEmpty())
 		_source = createSource(_list.at(qrand() % _list.size()));
 	else
-		_source = createSource(_queue.takeAt(qrand() % _queue.size()));
+		_source = createSource(_queue.takeFirst());
 	return true;
 }
 
@@ -68,6 +78,7 @@ void
 ListStream::fillQueue(const QString &text)
 {
 	_queue = _list.filter(text, Qt::CaseInsensitive);
+	shuffle(&_queue);
 }
 
 bool
