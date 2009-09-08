@@ -52,7 +52,6 @@ public:
 
 public slots:
 	void showStatus();
-	void play();
 	void nextStream();
 	void prevStream();
 	void prevInStream();
@@ -73,7 +72,7 @@ private slots:
 private:
 	void saveHit();
 	void setStream(const StreamList::const_iterator &stream);
-	bool checkEmptyStream();
+	bool fixEmptyOrStopped();
 
 	StreamList _streams;
 	StreamList::const_iterator _currentStream;

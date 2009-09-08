@@ -88,18 +88,24 @@ Player::Player()
 }
 
 bool
-Player::checkEmptyStream()
+Player::fixEmptyOrStopped()
 {
 	if (currentStream()->count() == 0) {
 		currentStream()->repopulate();
 		if (currentStream()->count() == 0) {
 			showStatus();
-			return true;
-		} else
-			changeSource(currentStream()->source());
+			return false;
+		}
 	}
 
-	return false;
+	if (state() != Phonon::PlayingState) {
+		if (currentSource().type() == Phonon::MediaSource::Empty)
+			setCurrentSource(currentStream()->source());
+		play();
+		return false;
+	}
+
+	return true;
 }
 
 void
@@ -159,14 +165,6 @@ Player::changeSource(const Phonon::MediaSource &source)
 }
 
 void
-Player::play()
-{
-	if (currentSource().type() == Phonon::MediaSource::Empty && !checkEmptyStream())
-		setCurrentSource(currentStream()->source());
-	MediaObject::play();
-}
-
-void
 Player::setStream(const StreamList::const_iterator &stream)
 {
 	if (_searchBox)
@@ -205,27 +203,21 @@ Player::nextStream()
 void
 Player::prevInStream()
 {
-	if (checkEmptyStream())
+	if (!fixEmptyOrStopped())
 		return;
 
-	if (state() == Phonon::PlayingState) {
-		if (currentStream()->prev())
-			changeSource(currentStream()->source());
-	} else
-		play();
+	if (currentStream()->prev())
+		changeSource(currentStream()->source());
 }
 
 void
 Player::nextInStream()
 {
-	if (checkEmptyStream())
+	if (!fixEmptyOrStopped())
 		return;
 
-	if (state() == Phonon::PlayingState) {
-		if (currentStream()->next())
-			changeSource(currentStream()->source());
-	} else
-		play();
+	if (currentStream()->next())
+		changeSource(currentStream()->source());
 }
 
 void
@@ -246,13 +238,10 @@ Player::smartStop()
 void
 Player::playPause()
 {
-	if (checkEmptyStream())
+	if (!fixEmptyOrStopped())
 		return;
 
-	if (state() == Phonon::PlayingState)
-		smartStop();
-	else
-		play();
+	smartStop();
 }
 
 void
@@ -263,7 +252,7 @@ Player::openSearchBox()
 		return;
 	}
 
-	if (checkEmptyStream() || currentStream()->count() == 1)
+	if (currentStream()->count() < 2)
 		return;
 
 	_searchBox = new SearchBox;
