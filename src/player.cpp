@@ -76,7 +76,7 @@ Player::Player()
 		_streams.append(Stream::create(key, settings.value(key).toString()));
 
 	if (_streams.isEmpty()) {
-		qWarning() << "No streams specified in" << settings.fileName();
+		qWarning("No streams specified in '%s'", qPrintable(settings.fileName()));
 		exit(EXIT_FAILURE);
 	}
 

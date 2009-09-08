@@ -47,7 +47,7 @@ Keys::parse(Action action, const QByteArray &v)
 
 	KeySym sym = XStringToKeysym(key.constData());
 	if (sym == NoSymbol) {
-		qWarning() << "Error parsing key" << v;
+		qWarning("Error parsing key '%s'", v.constData());
 		return;
 	}
 
@@ -91,7 +91,7 @@ Keys::parse(Action action, const QByteArray &v)
 
 	XSetErrorHandler(savedErrorHandler);
 	if (errorCount)
-		qWarning() << "Could not grab key" << v;
+		qWarning("Could not grab key '%s'", v.constData());
 }
 
 Keys::Keys()
