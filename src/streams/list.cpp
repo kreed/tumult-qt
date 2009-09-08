@@ -51,7 +51,8 @@ ListStream::prev()
 		return false;
 
 	_queue.prepend(_source.url().toString());
-	_source = _prevSources.pop();
+	_source = _prevSources.first();
+	_prevSources.pop_front();
 	return true;
 }
 
@@ -62,9 +63,9 @@ ListStream::next()
 		return false;
 
 	if (_source.type() != Phonon::MediaSource::Empty) {
-		_prevSources.push(_source);
-		while (_prevSources.size() > 20)
-			_prevSources.pop_front();
+		_prevSources.prepend(_source);
+		if (_prevSources.size() > 20)
+			_prevSources.resize(20);
 	}
 
 	if (_queue.isEmpty())

@@ -21,7 +21,7 @@
 
 #include <qstringlist.h>
 #include <qobject.h>
-#include <qstack.h>
+#include <qvector.h>
 #include "stream.h"
 
 class QFileSystemWatcher;
@@ -55,7 +55,7 @@ private:
 	QStringList _queue;
 	QString _listSrc;
 	QFileSystemWatcher *_watcher;
-	QStack<Phonon::MediaSource> _prevSources;
+	QVector<Phonon::MediaSource> _prevSources;
 };
 
 #endif
