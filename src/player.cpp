@@ -40,6 +40,7 @@ Player::Player()
 	, nextInStreamAction(new QAction("Next Item in Stream", this))
 	, clearQueueAction(new QAction("Clear Queue", this))
 	, _message(new MessageWindow)
+	, _currentStream(NULL)
 	, _expectingSourceChange(false)
 	, _metaDataInvalid(false)
 	, _showNextMetaData(false)
@@ -73,16 +74,16 @@ Player::Player()
 	QSettings settings;
 	settings.beginGroup("stream");
 	foreach (const QString &key, settings.childKeys())
-		_streams.append(Stream::create(key, settings.value(key).toString()));
+		_currentStream = Stream::create(key, settings.value(key).toString(), _currentStream);
 
-	if (_streams.isEmpty()) {
+	if (_currentStream) {
+		_currentStream = _currentStream->nextStream();
+		_message->setStream(_currentStream->name());
+		searchAction->setEnabled(_currentStream->count() != 1);
+	} else {
 		qWarning("No streams specified in '%s'", qPrintable(settings.fileName()));
 		exit(EXIT_FAILURE);
 	}
-
-	_currentStream = _streams.constBegin();
-	_message->setStream(currentStream()->name());
-	searchAction->setEnabled(currentStream()->count() != 1);
 
 	instance = this;
 }
@@ -165,7 +166,7 @@ Player::changeSource(const Phonon::MediaSource &source)
 }
 
 void
-Player::setStream(const StreamList::const_iterator &stream)
+Player::setStream(Stream *stream)
 {
 	if (_searchBox)
 		_searchBox->close();
@@ -185,19 +186,13 @@ Player::setStream(const StreamList::const_iterator &stream)
 void
 Player::prevStream()
 {
-	StreamList::const_iterator stream = _currentStream;
-	if (_currentStream == _streams.constBegin())
-		stream = _streams.constEnd();
-	setStream(stream - 1);
+	setStream(_currentStream->prevStream());
 }
 
 void
 Player::nextStream()
 {
-	StreamList::const_iterator stream = _currentStream + 1;
-	if (stream == _streams.constEnd())
-		stream = _streams.constBegin();
-	setStream(stream);
+	setStream(_currentStream->nextStream());
 }
 
 void

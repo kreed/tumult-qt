@@ -21,8 +21,8 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
-PlaylistStream::PlaylistStream(const QString &name, const QString &uri)
-	: ListStream(name, uri)
+PlaylistStream::PlaylistStream(const QString &name, const QString &uri, Stream *sibling)
+	: ListStream(name, uri, sibling)
 {
 }
 

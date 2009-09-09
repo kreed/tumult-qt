@@ -20,8 +20,8 @@
 
 #include <qdiriterator.h>
 
-DirectoryStream::DirectoryStream(const QString &name, const QString &uri)
-	: ListStream(name, uri)
+DirectoryStream::DirectoryStream(const QString &name, const QString &uri, Stream *sibling)
+	: ListStream(name, uri, sibling)
 {
 }
 

@@ -25,7 +25,7 @@ class QFileSystemWatcher;
 
 class DirectoryStream : public ListStream {
 public:
-	DirectoryStream(const QString &name, const QString &uri);
+	DirectoryStream(const QString &name, const QString &uri, Stream *sibling);
 
 protected:
 	void populate();

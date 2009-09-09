@@ -22,8 +22,8 @@
 #include <qtconcurrentrun.h>
 #include <qurl.h>
 
-ListStream::ListStream(const QString &name, const QString &uri)
-	: Stream(name)
+ListStream::ListStream(const QString &name, const QString &uri, Stream *sibling)
+	: Stream(name, sibling)
 	, _listSrc(uri)
 	, _watcher(new QFileSystemWatcher(this))
 {

@@ -45,7 +45,7 @@ public slots:
 	void repopulateLater();
 
 protected:
-	ListStream(const QString &name, const QString &source);
+	ListStream(const QString &name, const QString &source, Stream *sibling);
 
 	virtual void populate() = 0;
 

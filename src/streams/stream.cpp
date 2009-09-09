@@ -24,21 +24,27 @@
 #include <qurl.h>
 #include "uri.h"
 
-Stream::Stream(const QString &name)
+Stream::Stream(const QString &name, Stream *sibling)
 	: _name(name)
 	, _currentTime(0)
 {
+	_prev = sibling;
+	if (sibling) {
+		_next = sibling->_next ? sibling->_next : sibling;
+		sibling->_next = _next->_prev = this;
+	} else
+		_next = NULL;
 }
 
 Stream*
-Stream::create(const QString &name, const QString &uri)
+Stream::create(const QString &name, const QString &uri, Stream *sibling)
 {
 	if (QDir(uri).exists())
-		return new DirectoryStream(name, uri);
+		return new DirectoryStream(name, uri, sibling);
 	else if (uri.endsWith(QLatin1String("m3u")))
-		return new PlaylistStream(name, uri);
+		return new PlaylistStream(name, uri, sibling);
 	else
-		return new UriStream(name, uri);
+		return new UriStream(name, uri, sibling);
 }
 
 Phonon::MediaSource

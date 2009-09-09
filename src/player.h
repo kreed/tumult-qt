@@ -20,7 +20,6 @@
 #define PLAYER_H
 
 #include <phonon/mediaobject.h>
-#include <qlinkedlist.h>
 #include <qpointer.h>
 
 class MessageWindow;
@@ -34,7 +33,7 @@ class Player : public Phonon::MediaObject {
 public:
 	Player();
 
-	Stream *currentStream() const { return *_currentStream; }
+	inline Stream *currentStream() const { return _currentStream; }
 
 	void setCurrentSource(const Phonon::MediaSource&);
 	void changeSource(const Phonon::MediaSource&);
@@ -71,14 +70,16 @@ private slots:
 
 private:
 	void saveHit();
-	void setStream(const StreamList::const_iterator &stream);
+	void setStream(Stream *stream);
 	bool fixEmptyOrStopped();
 
-	StreamList _streams;
-	StreamList::const_iterator _currentStream;
 	MessageWindow *_message;
+
 	QPointer<SearchBox> _searchBox;
 	QString _lastSearch;
+
+	Stream *_currentStream;
+
 	bool _expectingSourceChange;
 	QString _savedUrl;
 	bool _metaDataInvalid;

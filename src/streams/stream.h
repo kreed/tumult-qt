@@ -24,7 +24,7 @@
 
 class Stream {
 public:
-	static Stream *create(const QString &name, const QString &uri);
+	static Stream *create(const QString &name, const QString &uri, Stream *sibling);
 
 	Phonon::MediaSource source();
 
@@ -43,13 +43,16 @@ public:
 	inline QString name() const { return _name; }
 	inline QString error() const { return _error; }
 
+	inline Stream *prevStream() const { return _prev; }
+	inline Stream *nextStream() const { return _next; }
+
 	static Phonon::MediaSource createSource(const QString &source);
 
 	qint64 currentTime() const { return _currentTime; }
 	void setCurrentTime(qint64);
 
 protected:
-	Stream(const QString &name);
+	Stream(const QString &name, Stream *stream);
 
 	QString _error;
 	Phonon::MediaSource _source;
@@ -57,6 +60,8 @@ protected:
 private:
 	QString _name;
 	qint64 _currentTime;
+	Stream *_prev;
+	Stream *_next;
 };
 
 #endif

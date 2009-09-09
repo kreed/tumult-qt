@@ -18,8 +18,8 @@
 
 #include "uri.h"
 
-UriStream::UriStream(const QString &name, const QString &uri)
-	: Stream(name)
+UriStream::UriStream(const QString &name, const QString &uri, Stream *sibling)
+	: Stream(name, sibling)
 {
 	_source = createSource(uri);
 }
