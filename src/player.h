@@ -33,8 +33,6 @@ class Player : public Phonon::MediaObject {
 public:
 	Player();
 
-	inline Stream *currentStream() const { return _currentStream; }
-
 	void setCurrentSource(const Phonon::MediaSource&);
 	void changeSource(const Phonon::MediaSource&);
 

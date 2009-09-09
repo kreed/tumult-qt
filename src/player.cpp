@@ -91,9 +91,9 @@ Player::Player()
 bool
 Player::fixEmptyOrStopped()
 {
-	if (currentStream()->count() == 0) {
-		currentStream()->repopulate();
-		if (currentStream()->count() == 0) {
+	if (_currentStream->count() == 0) {
+		_currentStream->repopulate();
+		if (_currentStream->count() == 0) {
 			showStatus();
 			return false;
 		}
@@ -101,7 +101,7 @@ Player::fixEmptyOrStopped()
 
 	if (state() != Phonon::PlayingState) {
 		if (currentSource().type() == Phonon::MediaSource::Empty)
-			setCurrentSource(currentStream()->source());
+			setCurrentSource(_currentStream->source());
 		play();
 		return false;
 	}
@@ -112,11 +112,11 @@ Player::fixEmptyOrStopped()
 void
 Player::showStatus()
 {
-	if (currentStream()->count() == 0) {
-		if (currentStream()->error().isEmpty())
+	if (_currentStream->count() == 0) {
+		if (_currentStream->error().isEmpty())
 			_message->showText("No sources in stream");
 		else
-			_message->showText(currentStream()->error());
+			_message->showText(_currentStream->error());
 		return;
 	}
 
@@ -173,14 +173,14 @@ Player::setStream(Stream *stream)
 
 	// isSeekable does not seem to actually return the correct value... so just ignore urls
 	if (isSeekable() && currentSource().type() != Phonon::MediaSource::Url)
-		currentStream()->setCurrentTime(currentTime());
+		_currentStream->setCurrentTime(currentTime());
 
 	_currentStream = stream;
-	changeSource(currentStream()->source());
+	changeSource(_currentStream->source());
 
-	_toSeek = currentStream()->currentTime();
-	_message->setStream(currentStream()->name());
-	searchAction->setEnabled(currentStream()->count() != 1);
+	_toSeek = _currentStream->currentTime();
+	_message->setStream(_currentStream->name());
+	searchAction->setEnabled(_currentStream->count() != 1);
 }
 
 void
@@ -201,8 +201,8 @@ Player::prevInStream()
 	if (!fixEmptyOrStopped())
 		return;
 
-	if (currentStream()->prev())
-		changeSource(currentStream()->source());
+	if (_currentStream->prev())
+		changeSource(_currentStream->source());
 }
 
 void
@@ -211,14 +211,14 @@ Player::nextInStream()
 	if (!fixEmptyOrStopped())
 		return;
 
-	if (currentStream()->next())
-		changeSource(currentStream()->source());
+	if (_currentStream->next())
+		changeSource(_currentStream->source());
 }
 
 void
 Player::clearQueue()
 {
-	currentStream()->clearQueue();
+	_currentStream->clearQueue();
 }
 
 void
@@ -247,7 +247,7 @@ Player::openSearchBox()
 		return;
 	}
 
-	if (currentStream()->count() < 2)
+	if (_currentStream->count() < 2)
 		return;
 
 	_searchBox = new SearchBox;
@@ -264,20 +264,20 @@ Player::search()
 
 	const QString text = _searchBox->text();
 
-	if (text != _lastSearch || !currentStream()->hasQueue()) {
-		currentStream()->fillQueue(text);
+	if (text != _lastSearch || !_currentStream->hasQueue()) {
+		_currentStream->fillQueue(text);
 		_lastSearch = text;
 	}
 
-	if (currentStream()->hasQueue())
+	if (_currentStream->hasQueue())
 		nextInStream();
 }
 
 void
 Player::loadAnother()
 {
-	currentStream()->next();
-	enqueue(currentStream()->source());
+	_currentStream->next();
+	enqueue(_currentStream->source());
 }
 
 void
@@ -331,5 +331,5 @@ Player::newSource(const Phonon::MediaSource &src)
 void
 Player::repopulateStream()
 {
-	currentStream()->repopulateLater();
+	_currentStream->repopulateLater();
 }
