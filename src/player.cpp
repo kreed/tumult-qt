@@ -32,7 +32,7 @@ Player *Player::instance;
 
 Player::Player()
 	: showStatusAction(new QAction("Show Status", this))
-	, searchAction(new QAction("Search in Stream", this))
+	, searchAction(new QAction("Add to Queue...", this))
 	, playPauseAction(new QAction("Playing", this))
 	, prevStreamAction(new QAction("Previous Stream", this))
 	, nextStreamAction(new QAction("Next Stream", this))
@@ -82,6 +82,7 @@ Player::Player()
 
 	_currentStream = _streams.constBegin();
 	_message->setStream(currentStream()->name());
+	searchAction->setEnabled(currentStream()->count() != 1);
 
 	instance = this;
 }
@@ -180,6 +181,7 @@ Player::setStream(const StreamList::const_iterator &stream)
 
 	_toSeek = currentStream()->currentTime();
 	_message->setStream(currentStream()->name());
+	searchAction->setEnabled(currentStream()->count() != 1);
 }
 
 void
