@@ -77,9 +77,7 @@ Player::Player()
 		_currentStream = Stream::create(key, settings.value(key).toString(), _currentStream);
 
 	if (_currentStream) {
-		_currentStream = _currentStream->nextStream();
-		_message->setStream(_currentStream->name());
-		searchAction->setEnabled(_currentStream->count() != 1);
+		setStream(_currentStream->nextStream(), false);
 	} else {
 		qWarning("No streams specified in '%s'", qPrintable(settings.fileName()));
 		exit(EXIT_FAILURE);
@@ -166,17 +164,18 @@ Player::changeSource(const Phonon::MediaSource &source)
 }
 
 void
-Player::setStream(Stream *stream)
+Player::setStream(Stream *stream, bool play)
 {
 	if (_searchBox)
 		_searchBox->close();
 
 	// isSeekable does not seem to actually return the correct value... so just ignore urls
-	if (isSeekable() && currentSource().type() != Phonon::MediaSource::Url)
+	if (_currentStream && isSeekable() && currentSource().type() != Phonon::MediaSource::Url)
 		_currentStream->setCurrentTime(currentTime());
 
 	_currentStream = stream;
-	changeSource(_currentStream->source());
+	if (play)
+		changeSource(_currentStream->source());
 
 	_toSeek = _currentStream->currentTime();
 	_message->setStream(_currentStream->name());

@@ -68,7 +68,7 @@ private slots:
 
 private:
 	void saveHit();
-	void setStream(Stream *stream);
+	void setStream(Stream *stream, bool play = true);
 	bool fixEmptyOrStopped();
 
 	MessageWindow *_message;
