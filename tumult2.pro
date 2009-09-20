@@ -10,6 +10,10 @@ MOC_DIR = build
 OBJECTS_DIR = build
 RCC_DIR = build
 
+INCLUDEPATH += \
+	src \
+	src/streams
+
 RESOURCES += \
 	res/res.qrc
 

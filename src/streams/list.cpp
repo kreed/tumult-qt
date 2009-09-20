@@ -50,7 +50,7 @@ ListStream::prev()
 	if (_prevSources.isEmpty())
 		return false;
 
-	_queue.prepend(_source.url().toString());
+	_queue.prepend(MediaBackend::sourceUrl(_source));
 	_source = _prevSources.first();
 	_prevSources.pop_front();
 	return true;
@@ -62,16 +62,16 @@ ListStream::next()
 	if (_list.isEmpty())
 		return false;
 
-	if (_source.type() != Phonon::MediaSource::Empty) {
+	if (_source) {
 		_prevSources.prepend(_source);
-		if (_prevSources.size() > 20)
-			_prevSources.resize(20);
+		if (_prevSources.size() > 20) {
+			MediaBackend::deleteSource(_prevSources.last());
+			_prevSources.pop_back();
+		}
 	}
 
-	if (_queue.isEmpty())
-		_source = createSource(_list.at(qrand() % _list.size()));
-	else
-		_source = createSource(_queue.takeFirst());
+	QString string = _queue.isEmpty() ? _list.at(qrand() % _list.size()) : _queue.takeFirst();
+	_source = MediaBackend::createSource(string);
 	return true;
 }
 
@@ -99,7 +99,7 @@ ListStream::repopulate()
 {
 	_list.clear();
 	_error.clear();
-	_source = Phonon::MediaSource();
+	_source = NULL;
 	populate();
 }
 

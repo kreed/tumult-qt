@@ -55,7 +55,7 @@ private:
 	QStringList _queue;
 	QString _listSrc;
 	QFileSystemWatcher *_watcher;
-	QVector<Phonon::MediaSource> _prevSources;
+	QVector<MediaSource*> _prevSources;
 };
 
 #endif

@@ -21,7 +21,12 @@
 UriStream::UriStream(const QString &name, const QString &uri, Stream *sibling)
 	: Stream(name, sibling)
 {
-	_source = createSource(uri);
+	_source = MediaBackend::createSource(uri);
+}
+
+UriStream::~UriStream()
+{
+	MediaBackend::deleteSource(_source);
 }
 
 int

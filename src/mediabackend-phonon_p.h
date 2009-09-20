@@ -16,17 +16,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STREAMURI_H
-#define STREAMURI_H
+#ifndef MEDIABACKEND_PHONON_P
+#define MEDIABACKEND_PHONON_P
 
-#include "stream.h"
+#include <phonon/mediaobject.h>
 
-class UriStream : public Stream {
-public:
-	UriStream(const QString &name, const QString &uri, Stream *sibling);
-	~UriStream();
+class MediaBackend;
 
-	int count() const;
+class MediaBackendPrivate : public Phonon::MediaObject {
+	Q_OBJECT
+private slots:
+	void newState(Phonon::State news, Phonon::State olds);
+	void newSource(const Phonon::MediaSource &src);
+	void newMetaData();
+
+private:
+	MediaBackendPrivate(MediaBackend *parent);
+
+	MediaBackend *q;
+	bool _expectingSourceChange;
+	bool _metaDataInvalid;
+	QString _savedUrl;
+
+	friend class MediaBackend;
 };
 
 #endif

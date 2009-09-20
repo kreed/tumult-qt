@@ -21,11 +21,11 @@
 #include "directory.h"
 #include "playlist.h"
 #include <qdir.h>
-#include <qurl.h>
 #include "uri.h"
 
 Stream::Stream(const QString &name, Stream *sibling)
-	: _name(name)
+	: _source(NULL)
+	, _name(name)
 	, _currentTime(0)
 {
 	_prev = sibling;
@@ -47,19 +47,10 @@ Stream::create(const QString &name, const QString &uri, Stream *sibling)
 		return new UriStream(name, uri, sibling);
 }
 
-Phonon::MediaSource
-Stream::createSource(const QString &uri)
-{
-	if (uri.startsWith('/'))
-		return Phonon::MediaSource(uri);
-	else
-		return Phonon::MediaSource(QUrl(uri));
-}
-
-Phonon::MediaSource
+MediaSource *
 Stream::source()
 {
-	if (_source.type() == Phonon::MediaSource::Empty)
+	if (!_source)
 		next();
 	return _source;
 }

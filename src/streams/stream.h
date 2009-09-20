@@ -19,14 +19,14 @@
 #ifndef STREAM_H
 #define STREAM_H
 
-#include <mediasource.h>
+#include "mediabackend.h"
 #include <qstring.h>
 
 class Stream {
 public:
 	static Stream *create(const QString &name, const QString &uri, Stream *sibling);
 
-	Phonon::MediaSource source();
+	MediaSource *source();
 
 	virtual void repopulate();
 	virtual void repopulateLater();
@@ -46,8 +46,6 @@ public:
 	inline Stream *prevStream() const { return _prev; }
 	inline Stream *nextStream() const { return _next; }
 
-	static Phonon::MediaSource createSource(const QString &source);
-
 	qint64 currentTime() const { return _currentTime; }
 	void setCurrentTime(qint64);
 
@@ -55,7 +53,7 @@ protected:
 	Stream(const QString &name, Stream *stream);
 
 	QString _error;
-	Phonon::MediaSource _source;
+	MediaSource *_source;
 
 private:
 	QString _name;

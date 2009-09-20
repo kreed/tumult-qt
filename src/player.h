@@ -19,22 +19,21 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <phonon/mediaobject.h>
 #include <qpointer.h>
 
+class MediaBackend;
+class MediaSource;
 class MessageWindow;
+class QAction;
 class SearchBox;
 class Stream;
-class QAction;
-typedef QLinkedList<Stream*> StreamList;
 
-class Player : public Phonon::MediaObject {
+class Player : public QObject {
 	Q_OBJECT
 public:
 	Player();
 
-	void setCurrentSource(const Phonon::MediaSource&);
-	void changeSource(const Phonon::MediaSource&);
+	void changeSource(MediaSource *source);
 
 	static Player *instance;
 
@@ -55,22 +54,20 @@ public slots:
 	void nextInStream();
 	void clearQueue();
 	void openSearchBox();
-	void smartStop();
 	void playPause();
 	void repopulateStream();
 
 private slots:
 	void loadAnother();
 	void search();
-	void newState(Phonon::State, Phonon::State);
-	void newSource(const Phonon::MediaSource&);
-	void setMetaData();
+	void saveHit(const QString &url);
+	void newSourceLoaded();
 
 private:
-	void saveHit();
 	void setStream(Stream *stream, bool play = true);
 	bool fixEmptyOrStopped();
 
+	MediaBackend *_backend;
 	MessageWindow *_message;
 
 	QPointer<SearchBox> _searchBox;
@@ -78,9 +75,6 @@ private:
 
 	Stream *_currentStream;
 
-	bool _expectingSourceChange;
-	QString _savedUrl;
-	bool _metaDataInvalid;
 	bool _showNextMetaData;
 	qint64 _toSeek;
 };

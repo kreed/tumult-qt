@@ -18,8 +18,8 @@
 
 #include "player.h"
 
+#include "mediabackend.h"
 #include "messagewindow.h"
-#include <phonon/audiooutput.h>
 #include <qaction.h>
 #include <qapplication.h>
 #include <qsettings.h>
@@ -39,26 +39,24 @@ Player::Player()
 	, prevInStreamAction(new QAction("Previous Item in Stream", this))
 	, nextInStreamAction(new QAction("Next Item in Stream", this))
 	, clearQueueAction(new QAction("Clear Queue", this))
+	, _backend(new MediaBackend(this))
 	, _message(new MessageWindow)
 	, _currentStream(NULL)
-	, _expectingSourceChange(false)
-	, _metaDataInvalid(false)
 	, _showNextMetaData(false)
 	, _toSeek(0)
 {
-	Phonon::AudioOutput *audioOutput =
-		new Phonon::AudioOutput(Phonon::MusicCategory, this);
-	audioOutput->setName("Tumult");
-	Phonon::createPath(this, audioOutput);
-
-	connect(this, SIGNAL(currentSourceChanged(const Phonon::MediaSource&)),
-	              SLOT(newSource(const Phonon::MediaSource&)));
-	connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
-	              SLOT(newState(Phonon::State, Phonon::State)));
-	connect(this, SIGNAL(metaDataChanged()),
-	              SLOT(setMetaData()));
-	connect(this, SIGNAL(aboutToFinish()),
-	              SLOT(loadAnother()));
+	connect(_backend, SIGNAL(sourceChanged(const QString &)),
+	        _message, SLOT(setUrl(const QString &)));
+	connect(_backend, SIGNAL(sourceFinished(const QString &)),
+	                  SLOT(saveHit(const QString &)));
+	connect(_backend, SIGNAL(metaDataChanged(MediaBackend *)),
+	        _message, SLOT(setMetaData(MediaBackend *)));
+	connect(_backend, SIGNAL(newSourceNeeded()),
+	                  SLOT(loadAnother()));
+	connect(_backend, SIGNAL(playingChanged(bool)),
+	        playPauseAction, SLOT(setChecked(bool)));
+	connect(_backend, SIGNAL(sourceLoaded()),
+	                  SLOT(newSourceLoaded()));
 
 	connect(showStatusAction, SIGNAL(triggered()), SLOT(showStatus()));
 	connect(searchAction, SIGNAL(triggered()), SLOT(openSearchBox()));
@@ -97,10 +95,8 @@ Player::fixEmptyOrStopped()
 		}
 	}
 
-	if (state() != Phonon::PlayingState) {
-		if (currentSource().type() == Phonon::MediaSource::Empty)
-			setCurrentSource(_currentStream->source());
-		play();
+	if (!_backend->isPlaying()) {
+		_backend->play(_backend->isSourceNull() ? _currentStream->source() : 0);
 		return false;
 	}
 
@@ -118,49 +114,38 @@ Player::showStatus()
 		return;
 	}
 
-	if (_metaDataInvalid) {
+	if (_backend->isMetaDataInvalid()) {
 		_showNextMetaData = true;
 		return;
 	}
 
-	switch (state()) {
-	case Phonon::ErrorState:
-		_message->showText(errorString() + '\n' + currentSource().url().toString());
-		break;
-	case Phonon::BufferingState:
+	if (!_backend->errorString().isEmpty()) {
+		_message->showText(_backend->errorString(), true);
+		return;
+	}
+
+	switch (_backend->state()) {
+	case MediaBackend::BufferingState:
 		_message->showText("Buffering...");
 		break;
-	case Phonon::PlayingState:
-		_message->setProgress(totalTime() - remainingTime());
+	case MediaBackend::LoadingState:
+		_message->showText("Loading...");
+		break;
+	case MediaBackend::PlayingState:
+		_message->setProgress(_backend->progress());
 		_message->showMetaData();
 		break;
-	case Phonon::LoadingState:
-		if (currentSource().type() != Phonon::MediaSource::Empty) {
-			_message->showText("Loading...");
-			break;
-		}
-		// else we haven't loaded anything yet since the stream has just been created, don't show "Loading..."
-	case Phonon::PausedState:
-	case Phonon::StoppedState:
+	default:
 		_message->showText("Not Playing");
 		break;
 	}
 }
 
 void
-Player::setCurrentSource(const Phonon::MediaSource &source)
-{
-	_expectingSourceChange = true;
-	MediaObject::setCurrentSource(source);
-}
-
-void
-Player::changeSource(const Phonon::MediaSource &source)
+Player::changeSource(MediaSource *source)
 {
 	_message->hide();
-	Phonon::MediaObject::clearQueue();
-	setCurrentSource(source);
-	play();
+	_backend->play(source);
 }
 
 void
@@ -169,9 +154,8 @@ Player::setStream(Stream *stream, bool play)
 	if (_searchBox)
 		_searchBox->close();
 
-	// isSeekable does not seem to actually return the correct value... so just ignore urls
-	if (_currentStream && isSeekable() && currentSource().type() != Phonon::MediaSource::Url)
-		_currentStream->setCurrentTime(currentTime());
+	if (_currentStream && _backend->isSeekable())
+		_currentStream->setCurrentTime(_backend->progress());
 
 	_currentStream = stream;
 	if (play)
@@ -221,21 +205,12 @@ Player::clearQueue()
 }
 
 void
-Player::smartStop()
-{
-	if (currentSource().type() == Phonon::MediaSource::LocalFile)
-		pause();
-	else
-		stop();
-}
-
-void
 Player::playPause()
 {
 	if (!fixEmptyOrStopped())
 		return;
 
-	smartStop();
+	_backend->pause();
 }
 
 void
@@ -276,55 +251,32 @@ void
 Player::loadAnother()
 {
 	_currentStream->next();
-	enqueue(_currentStream->source());
+	_backend->push(_currentStream->source());
 }
 
 void
-Player::newState(Phonon::State news, Phonon::State olds)
+Player::newSourceLoaded()
 {
-	if (news == Phonon::PlayingState && olds == Phonon::LoadingState) {
-		if (_toSeek) {
-			seek(_toSeek);
-			_toSeek = 0;
-		}
-		_metaDataInvalid = false;
-		_message->setMetaData(metaData());
-		_message->setProgress(0, totalTime());
-		if (_showNextMetaData) {
-			_showNextMetaData = false;
-			showStatus();
-		}
+	if (_toSeek) {
+		_backend->seek(_toSeek);
+		_toSeek = 0;
 	}
-	playPauseAction->setChecked(news == Phonon::PlayingState);
+	_message->setMetaData(_backend);
+	_message->setProgress(0, _backend->duration());
+	if (_showNextMetaData) {
+		_showNextMetaData = false;
+		showStatus();
+	}
 }
 
 void
-Player::setMetaData()
-{
-	_metaDataInvalid = false;
-	_message->setMetaData(metaData());
-}
-
-void
-Player::saveHit()
+Player::saveHit(const QString &url)
 {
 	if (static_cast<Tumult*>(qApp)->idleTime() > 180000)
 		return;
 	QSettings settings;
 	settings.beginGroup("hits");
-	settings.setValue(_savedUrl, settings.value(_savedUrl, 0).toInt() + 1);
-}
-
-void
-Player::newSource(const Phonon::MediaSource &src)
-{
-	if (_expectingSourceChange)
-		_expectingSourceChange = false;
-	else
-		saveHit();
-	_savedUrl = src.url().toString();
-	_metaDataInvalid = true;
-	_message->setUrl(_savedUrl);
+	settings.setValue(url, settings.value(url, 0).toInt() + 1);
 }
 
 void

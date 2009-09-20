@@ -22,23 +22,24 @@
 #include <qlabel.h>
 #include <qbasictimer.h>
 
-template<class Key, class T> class QMultiMap;
+class MediaBackend;
 
-class MessageWindow : QLabel {
+class MessageWindow : public QLabel {
 	Q_OBJECT
 public:
 	MessageWindow();
 
-	void showText(const QString &text);
+	void showText(const QString &text, bool withUrl = false);
 	void showMetaData();
 
-	void setMetaData(const QMultiMap<QString, QString>&);
 	void setProgress(qint64 current, qint64 total = 0);
 	void setStream(const QString&);
-	void setUrl(const QString&);
 
-	using QLabel::hide;
 	using QLabel::show;
+
+public slots:
+	void setUrl(const QString &);
+	void setMetaData(MediaBackend *);
 
 protected:
 	void timerEvent(QTimerEvent *ev);

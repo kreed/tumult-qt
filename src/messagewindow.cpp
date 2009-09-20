@@ -18,6 +18,7 @@
 
 #include "messagewindow.h"
 
+#include "mediabackend.h"
 #include <qapplication.h>
 #include <qdatetime.h>
 #include <qdesktopwidget.h>
@@ -51,9 +52,12 @@ MessageWindow::show(int timeout)
 }
 
 void
-MessageWindow::showText(const QString &text)
+MessageWindow::showText(const QString &text, bool withUrl)
 {
-	setText(text);
+	if (withUrl)
+		showText(text + '\n' + _url);
+	else
+		setText(text);
 	_metadataShown = false;
 	show(3500);
 }
@@ -96,17 +100,12 @@ MessageWindow::showMetaData()
 }
 
 void
-MessageWindow::setMetaData(const QMultiMap<QString, QString> &data)
+MessageWindow::setMetaData(MediaBackend *backend)
 {
-	// FIXME: should use join for metadata
-	_title = data.value("TITLE");
-	_artist = data.value("ARTIST");
-	_album = data.value("ALBUM");
-	_date = data.value("DATE");
-
-	int i = _date.indexOf('-');
-	if (i != -1)
-		_date = _date.left(i);
+	_title = backend->metaData(MediaBackend::Title);
+	_artist = backend->metaData(MediaBackend::Artist);
+	_album = backend->metaData(MediaBackend::Album);
+	_date = backend->metaData(MediaBackend::Date);
 
 	if (_artist.isEmpty() && _title.contains(" - ")) {
 		QStringList at = _title.split(" - ");
