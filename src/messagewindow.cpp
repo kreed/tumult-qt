@@ -119,7 +119,7 @@ MessageWindow::setProgress(qint64 current, qint64 total)
 {
 	_currentTime = current;
 	if (total)
-		_totalTime = QTime().addMSecs(total).toString("m:ss");
+		_totalTime = total == -1 ? "inf" : QTime().addMSecs(total).toString("m:ss");
 }
 
 void

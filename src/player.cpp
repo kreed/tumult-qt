@@ -261,8 +261,9 @@ Player::newSourceLoaded()
 		_backend->seek(_toSeek);
 		_toSeek = 0;
 	}
+	qint64 duration = _backend->duration();
+	_message->setProgress(0, duration ? duration : -1);
 	_message->setMetaData(_backend);
-	_message->setProgress(0, _backend->duration());
 	if (_showNextMetaData) {
 		_showNextMetaData = false;
 		showStatus();
