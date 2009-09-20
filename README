@@ -1,0 +1,55 @@
+Music player with an out-of-your-face interface. All interaction is handled
+through global keyboard shortcuts or the system tray icon. Tumult aims to make
+music listening a passive activity that does not disrupt other actions.
+
+=== BUILDING ===
+Tumult is currently only available on X11 platforms (e.g. Linux). For details
+see the TODO file.
+
+Tumult supports two media backends: Phonon and QtMobility Multimedia.
+
+The default is Phonon, which is included with Qt. Phonon is mature, however
+development seems to have ceased and some annoying bugs are present.
+
+QtMobility Multimedia is in development and thus does not yet support all platforms.
+It does seem to work better on platforms it does support, however. To use it
+export the path to it in the QT_MEDIA environment variable. For example:
+"export QT_MEDIA=/path/to/qt-multimedia". QtMobility Multimedia can be downloaded
+using Git from http://qt.gitorious.org/qt-mobility/multimedia
+
+To build:
+	qmake
+	make
+	sudo make install
+
+=== CONFIGURATION ===
+Currently all configuration is handled through an INI file located at
+~/.config/Kreed.org/Tumult.conf. There are two sections in the
+configuration: streams and keys.
+
+The streams section is required. At least one stream must be specified for Tumult
+to run. Streams are specified as key=value, where key is the stream name and
+value is the source. Possible sources are URLs, m3u playlist and directories.
+
+The keys section is optional. It specifies global shortcuts to be grabbed. Keys
+are specified as key=value, where key is the action name and value a string
+containing bracket-enclosed modifiers and the X11 keysym, e.g. "prev_stream=<Alt>J"
+or "play_pause=XF86AudioPlay". Possible action names are play_pause, prev_stream,
+next_stream, status, prev_in_stream, next_in_stream, clear_queue, and search.
+
+See Tumult.conf.sample for an example configuration.
+
+=== USAGE ===
+Use the system tray icon or keyboard shortcuts to interact with Tumult.
+
+Tumult splits music into "streams". Each stream contains one or more sources.
+This mechanic is designed to make it easy to, for example, switch between an
+internet radio station, a playlist, or an entire media library without being
+bothered by a myriad of mouse clicks.
+
+Sources in a stream may be added to a queue. Open the search box with the shortcut
+or the "Add to Queue..." menu action and type a string. All sources with filenames
+or sources containing the string will populate the queue. Sources in the queue will
+be played before other sources in the stream.
+
+(Anything else I should document/clarify?)
