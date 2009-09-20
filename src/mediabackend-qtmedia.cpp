@@ -16,67 +16,59 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef USE_PHONON
+#ifdef USE_QTMEDIA
 
 #include "mediabackend.h"
-#include "mediabackend-phonon_p.h"
+#include "mediabackend-qtmedia_p.h"
 
-#include <phonon/audiooutput.h>
-#include <qstringlist.h>
 #include <qurl.h>
+#include <qvariant.h>
 
-class MediaSource : public Phonon::MediaSource {
+#include <qdebug.h>
+
+class MediaSource : public QMediaSource {
 public:
-	MediaSource(const QString &uri)
-		: Phonon::MediaSource(uri)
-	{
-	}
 	MediaSource(const QUrl &uri)
-		: Phonon::MediaSource(uri)
+		: QMediaSource(uri)
 	{
 	}
 };
 
 MediaBackendPrivate::MediaBackendPrivate(MediaBackend *parent)
-	: Phonon::MediaObject(parent)
+	: QMediaPlayer(parent)
 	, q(parent)
-	, _expectingSourceChange(false)
 	, _metaDataInvalid(false)
 {
-	connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
-	              SLOT(newState(Phonon::State, Phonon::State)));
-	connect(this, SIGNAL(currentSourceChanged(const Phonon::MediaSource&)),
-	              SLOT(newSource(const Phonon::MediaSource&)));
+	connect(this, SIGNAL(stateChanged(QMediaPlayer::State)),
+	              SLOT(newState(QMediaPlayer::State)));
+	connect(this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+	              SLOT(newMediaStatus(QMediaPlayer::MediaStatus)));
 	connect(this, SIGNAL(metaDataChanged()),
 	              SLOT(newMetaData()));
 }
 
 void
-MediaBackendPrivate::newState(Phonon::State news, Phonon::State olds)
+MediaBackendPrivate::newState(QMediaPlayer::State state)
 {
-	Q_UNUSED(olds);
-	if (news == Phonon::PlayingState)
+	if (state == QMediaPlayer::PlayingState) {
+		_metaDataInvalid = false;
 		emit q->sourceLoaded();
-	emit q->playingChanged(news == Phonon::PlayingState);
+	}
+	emit q->playingChanged(state == QMediaPlayer::PlayingState);
 }
 
 void
-MediaBackendPrivate::newSource(const Phonon::MediaSource &src)
+MediaBackendPrivate::newMediaStatus(QMediaPlayer::MediaStatus status)
 {
-	if (_expectingSourceChange)
-		_expectingSourceChange = false;
-	else
-		emit q->sourceFinished(_savedUrl);
-
-	_savedUrl = src.url().toString();
-	_metaDataInvalid = true;
-	emit q->sourceChanged(_savedUrl);
+	if (status == QMediaPlayer::EndOfMedia) {
+		emit q->sourceFinished(media().contentUri().toString());
+		emit q->newSourceNeeded();
+	}
 }
 
 void
 MediaBackendPrivate::newMetaData()
 {
-	_metaDataInvalid = false;
 	emit q->metaDataChanged(q);
 }
 
@@ -84,9 +76,6 @@ MediaBackend::MediaBackend(QObject *parent)
 	: QObject(parent)
 	, d(new MediaBackendPrivate(this))
 {
-	Phonon::AudioOutput *audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
-	audioOutput->setName("Tumult");
-	Phonon::createPath(d, audioOutput);
 }
 
 bool
@@ -98,13 +87,13 @@ MediaBackend::isMetaDataInvalid() const
 bool
 MediaBackend::isPlaying() const
 {
-	return d->state() == Phonon::PlayingState;
+	return d->state() == QMediaPlayer::PlayingState;
 }
 
 bool
 MediaBackend::isSourceNull() const
 {
-	return d->currentSource().type() == Phonon::MediaSource::Empty;
+	return d->media().isNull();
 }
 
 QString
@@ -116,47 +105,49 @@ MediaBackend::errorString() const
 MediaBackend::State
 MediaBackend::state() const
 {
-	switch (d->state()) {
-	case Phonon::BufferingState:
-		return MediaBackend::BufferingState;
-	case Phonon::PlayingState:
-		return MediaBackend::PlayingState;
-	case Phonon::LoadingState:
-		if (!isSourceNull())
+	if (isPlaying()) {
+		switch (d->mediaStatus()) {
+		case QMediaPlayer::LoadingMedia:
 			return MediaBackend::LoadingState;
-		// else we haven't loaded anything yet since the stream has just been created; don't return loading
-	default:
-		return MediaBackend::NotPlayingState;
+		case QMediaPlayer::BufferingMedia:
+			return MediaBackend::BufferingState;
+		case QMediaPlayer::LoadedMedia:
+		case QMediaPlayer::BufferedMedia:
+			return MediaBackend::PlayingState;
+		default:
+			break;
+		}
 	}
+
+	return MediaBackend::NotPlayingState;
 }
 
 qint64
 MediaBackend::progress() const
 {
-	return d->currentTime();
+	return d->position();
 }
 
 qint64
 MediaBackend::duration() const
 {
-	return d->totalTime();
+	return d->duration();
 }
 
 void
 MediaBackend::play(MediaSource *source)
 {
 	if (source) {
-		d->_expectingSourceChange = true;
-		d->setCurrentSource(*source);
+		d->_metaDataInvalid = true;
+		d->setMedia(*source);
 	}
-	d->clearQueue();
 	d->play();
 }
 
 void
 MediaBackend::pause()
 {
-	if (d->currentSource().type() == Phonon::MediaSource::LocalFile)
+	if (d->media().contentUri().scheme() == "file")
 		d->pause();
 	else
 		d->stop();
@@ -165,49 +156,49 @@ MediaBackend::pause()
 bool
 MediaBackend::isSeekable() const
 {
-	return d->isSeekable() && d->currentSource().type() == Phonon::MediaSource::LocalFile;
+	return d->isSeekable();
 }
 
 void
 MediaBackend::push(MediaSource *source)
 {
-	d->enqueue(*source);
+	play(source);
 }
 
 void
 MediaBackend::seek(qint64 position)
 {
-	d->seek(position);
+	d->setPosition(position);
 }
 
 QString
 MediaBackend::metaData(MetaData genericKey) const
 {
-	Phonon::MetaData key;
+	QAbstractMediaObject::MetaData key;
 	switch (genericKey) {
 	case MediaBackend::Title:
-		key = Phonon::TitleMetaData;
+		key = QAbstractMediaObject::Title;
 		break;
 	case MediaBackend::Artist:
-		key = Phonon::ArtistMetaData;
+		key = QAbstractMediaObject::AlbumArtist;
 		break;
 	case MediaBackend::Album:
-		key = Phonon::AlbumMetaData;
+		key = QAbstractMediaObject::AlbumTitle;
 		break;
 	case MediaBackend::Date:
-		key = Phonon::DateMetaData;
+		key = QAbstractMediaObject::Year;
 		break;
 	default:
 		return QString();
 	}
-	return d->metaData(key).join(", ");
+	return d->metaData(key).toString();
 }
 
 MediaSource *
 MediaBackend::createSource(const QString &uri)
 {
 	if (uri.startsWith('/'))
-		return new MediaSource(uri);
+		return new MediaSource(QUrl("file://" + uri));
 	else
 		return new MediaSource(QUrl(uri));
 }
@@ -221,7 +212,7 @@ MediaBackend::deleteSource(MediaSource *source)
 QString
 MediaBackend::sourceUrl(MediaSource *source)
 {
-	return source->url().toString();
+	return source->contentUri().toString();
 }
 
-#endif // USE_PHONON
+#endif // USE_QTMEDIA

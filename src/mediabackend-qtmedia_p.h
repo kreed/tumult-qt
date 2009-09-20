@@ -16,35 +16,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "keys.h"
-#include "player.h"
-#include <qdbusconnection.h>
-#include "trayicon.h"
-#include "tumult.h"
+#ifndef MEDIABACKEND_QTMEDIA_P
+#define MEDIABACKEND_QTMEDIA_P
 
-int
-main(int argc, char **argv)
-{
-	qsrand(time(NULL));
+#ifdef USE_QTMEDIA
 
-	Tumult app(argc, argv);
-#ifdef LIBPATH
-	app.addLibraryPath(LIBPATH);
+#include <qmediaplayer.h>
+
+class MediaBackend;
+
+class MediaBackendPrivate : public QMediaPlayer {
+	Q_OBJECT
+private slots:
+	void newState(QMediaPlayer::State);
+	void newMediaStatus(QMediaPlayer::MediaStatus);
+	void newMetaData();
+
+private:
+	MediaBackendPrivate(MediaBackend *parent);
+
+	MediaBackend *q;
+	bool _metaDataInvalid;
+
+	friend class MediaBackend;
+};
+
+#endif // USE_QTMEDIA
+
 #endif
-	app.setQuitOnLastWindowClosed(false);
-	app.setOrganizationName("Kreed.org");
-	app.setOrganizationDomain("kreed.org");
-	app.setApplicationName("Tumult");
-
-	Player player;
-	Keys keys;
-
-	TrayIcon tray;
-	tray.show();
-
-	QDBusConnection bus = QDBusConnection::sessionBus();
-	bus.registerService("org.tumult");
-	bus.registerObject("/", &player, QDBusConnection::ExportAllSlots);
-
-	return app.exec();
-}

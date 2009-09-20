@@ -19,6 +19,8 @@
 #ifndef MEDIABACKEND_PHONON_P
 #define MEDIABACKEND_PHONON_P
 
+#ifdef USE_PHONON
+
 #include <phonon/mediaobject.h>
 
 class MediaBackend;
@@ -40,5 +42,7 @@ private:
 
 	friend class MediaBackend;
 };
+
+#endif // USE_PHONON
 
 #endif
