@@ -51,8 +51,7 @@ ListStream::prev()
 		return false;
 
 	_queue.prepend(MediaBackend::sourceUrl(_source));
-	_source = _prevSources.first();
-	_prevSources.pop_front();
+	_source = _prevSources.takeFirst();
 	return true;
 }
 
@@ -64,10 +63,8 @@ ListStream::next()
 
 	if (_source) {
 		_prevSources.prepend(_source);
-		if (_prevSources.size() > 20) {
-			MediaBackend::deleteSource(_prevSources.last());
-			_prevSources.pop_back();
-		}
+		if (_prevSources.size() > 20)
+			MediaBackend::deleteSource(_prevSources.takeLast());
 	}
 
 	QString string = _queue.isEmpty() ? _list.at(qrand() % _list.size()) : _queue.takeFirst();
