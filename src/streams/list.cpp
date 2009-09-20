@@ -36,6 +36,12 @@ ListStream::ListStream(const QString &name, const QString &uri, Stream *sibling)
 	QMetaObject::invokeMethod(this, "repopulateLater", Qt::QueuedConnection);
 }
 
+ListStream::~ListStream()
+{
+	foreach (MediaSource *source, _prevSources)
+		MediaBackend::deleteSource(source);
+}
+
 template<class T> static void
 shuffle(QList<T> *list)
 {

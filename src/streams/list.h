@@ -28,6 +28,8 @@ class QFileSystemWatcher;
 class ListStream : protected QObject, public Stream {
 	Q_OBJECT
 public:
+	~ListStream();
+
 	int count() const;
 
 	bool prev();
