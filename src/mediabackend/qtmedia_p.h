@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MEDIABACKEND_QTMEDIA_P
-#define MEDIABACKEND_QTMEDIA_P
+#ifndef QTMEDIA_P
+#define QTMEDIA_P
 
 #ifdef USE_QTMEDIA
 

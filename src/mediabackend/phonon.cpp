@@ -19,7 +19,7 @@
 #ifdef USE_PHONON
 
 #include "mediabackend.h"
-#include "mediabackend-phonon_p.h"
+#include "phonon_p.h"
 
 #include <phonon/audiooutput.h>
 #include <qstringlist.h>

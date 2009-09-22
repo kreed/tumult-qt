@@ -32,6 +32,7 @@ exists($$QT_MEDIA) {
 
 INCLUDEPATH += \
 	src \
+	src/mediabackend \
 	src/streams
 
 RESOURCES += \
@@ -39,8 +40,10 @@ RESOURCES += \
 
 SOURCES += \
 	src/*.cpp \
+	src/mediabackend/*.cpp \
 	src/streams/*.cpp
 
 HEADERS += \
 	src/*.h \
+	src/mediabackend/*.h \
 	src/streams/*.h

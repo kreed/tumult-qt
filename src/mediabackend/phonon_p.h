@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MEDIABACKEND_PHONON_P
-#define MEDIABACKEND_PHONON_P
+#ifndef PHONON_P
+#define PHONON_P
 
 #ifdef USE_PHONON
 

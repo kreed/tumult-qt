@@ -19,7 +19,7 @@
 #ifdef USE_QTMEDIA
 
 #include "mediabackend.h"
-#include "mediabackend-qtmedia_p.h"
+#include "qtmedia_p.h"
 
 #include <qurl.h>
 #include <qvariant.h>
