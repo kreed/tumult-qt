@@ -108,3 +108,14 @@ Stream::setName(const QString &name)
 {
 	_name = name;
 }
+
+Stream *
+Stream::remove()
+{
+	if (_next == this)
+		return NULL;
+
+	_prev->_next = _next;
+	_next->_prev = _prev;
+	return _next;
+}

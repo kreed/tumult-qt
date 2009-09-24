@@ -49,6 +49,7 @@ public:
 
 	inline Stream *prevStream() const { return _prev; }
 	inline Stream *nextStream() const { return _next; }
+	Stream *remove();
 
 	qint64 currentTime() const { return _currentTime; }
 	void setCurrentTime(qint64);
