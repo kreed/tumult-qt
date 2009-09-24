@@ -75,7 +75,8 @@ Player::Player()
 		_currentStream = Stream::create(key, settings.value(key).toString(), _currentStream);
 
 	if (_currentStream) {
-		setStream(_currentStream->nextStream(), false);
+		_firstStream = _currentStream->nextStream();
+		setStream(_firstStream, false);
 	} else {
 		qWarning("No streams specified in '%s'", qPrintable(settings.fileName()));
 		exit(EXIT_FAILURE);

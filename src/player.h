@@ -35,6 +35,8 @@ public:
 
 	void changeSource(MediaSource *source);
 
+	Stream *firstStream() const { return _firstStream; }
+
 	static Player *instance;
 
 	QAction* const showStatusAction;
@@ -73,6 +75,7 @@ private:
 	QPointer<SearchBox> _searchBox;
 	QString _lastSearch;
 
+	Stream *_firstStream;
 	Stream *_currentStream;
 
 	bool _showNextMetaData;

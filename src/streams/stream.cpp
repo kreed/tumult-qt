@@ -28,12 +28,13 @@ Stream::Stream(const QString &name, Stream *sibling)
 	, _name(name)
 	, _currentTime(0)
 {
-	_prev = sibling;
 	if (sibling) {
-		_next = sibling->_next ? sibling->_next : sibling;
+		_prev = sibling;
+		_next = sibling->_next;
 		sibling->_next = _next->_prev = this;
-	} else
-		_next = NULL;
+	} else {
+		_next = _prev = this;
+	}
 }
 
 Stream*
