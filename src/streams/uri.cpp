@@ -18,10 +18,9 @@
 
 #include "uri.h"
 
-UriStream::UriStream(const QString &name, const QString &uri, Stream *sibling)
+UriStream::UriStream(const QString &name, Stream *sibling)
 	: Stream(name, sibling)
 {
-	_source = MediaBackend::createSource(uri);
 }
 
 UriStream::~UriStream()
@@ -33,4 +32,12 @@ int
 UriStream::count() const
 {
 	return 1;
+}
+
+void
+UriStream::setLocation(const QString &uri)
+{
+	MediaBackend::deleteSource(_source);
+	_source = MediaBackend::createSource(uri);
+	_location = uri;
 }

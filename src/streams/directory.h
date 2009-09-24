@@ -25,13 +25,10 @@ class QFileSystemWatcher;
 
 class DirectoryStream : public ListStream {
 public:
-	DirectoryStream(const QString &name, const QString &uri, Stream *sibling);
+	DirectoryStream(const QString &name, Stream *sibling);
 
 protected:
 	void populate();
-
-private:
-	QFileSystemWatcher *_fsWatch;
 };
 
 #endif

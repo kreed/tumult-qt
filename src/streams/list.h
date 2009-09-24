@@ -32,6 +32,8 @@ public:
 
 	int count() const;
 
+	void setLocation(const QString &);
+
 	bool prev();
 	bool next();
 
@@ -39,14 +41,12 @@ public:
 	bool hasQueue() const;
 	void clearQueue();
 
-	QString listSrc() const { return _listSrc; }
-
 public slots:
 	void repopulate();
 	void repopulateLater();
 
 protected:
-	ListStream(const QString &name, const QString &source, Stream *sibling);
+	ListStream(const QString &name, Stream *sibling);
 
 	virtual void populate() = 0;
 
@@ -54,7 +54,6 @@ protected:
 
 private:
 	QStringList _queue;
-	QString _listSrc;
 	QFileSystemWatcher *_watcher;
 	QList<MediaSource*> _prevSources;
 };

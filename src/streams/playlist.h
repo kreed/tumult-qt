@@ -23,7 +23,7 @@
 
 class PlaylistStream : public ListStream {
 public:
-	PlaylistStream(const QString &name, const QString &uri, Stream *sibling);
+	PlaylistStream(const QString &name, Stream *sibling);
 
 protected:
 	void populate();

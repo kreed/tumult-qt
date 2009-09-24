@@ -39,12 +39,15 @@ Stream::Stream(const QString &name, Stream *sibling)
 Stream*
 Stream::create(const QString &name, const QString &uri, Stream *sibling)
 {
+	Stream *stream;
 	if (QDir(uri).exists())
-		return new DirectoryStream(name, uri, sibling);
+		stream = new DirectoryStream(name, sibling);
 	else if (uri.endsWith(QLatin1String("m3u")))
-		return new PlaylistStream(name, uri, sibling);
+		stream = new PlaylistStream(name, sibling);
 	else
-		return new UriStream(name, uri, sibling);
+		stream = new UriStream(name, sibling);
+	stream->setLocation(uri);
+	return stream;
 }
 
 MediaSource *
@@ -97,4 +100,10 @@ void
 Stream::setCurrentTime(qint64 time)
 {
 	_currentTime = time;
+}
+
+void
+Stream::setName(const QString &name)
+{
+	_name = name;
 }

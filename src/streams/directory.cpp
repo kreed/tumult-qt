@@ -20,15 +20,15 @@
 
 #include <qdiriterator.h>
 
-DirectoryStream::DirectoryStream(const QString &name, const QString &uri, Stream *sibling)
-	: ListStream(name, uri, sibling)
+DirectoryStream::DirectoryStream(const QString &name, Stream *sibling)
+	: ListStream(name, sibling)
 {
 }
 
 void
 DirectoryStream::populate()
 {
-	QDirIterator it(listSrc(),
+	QDirIterator it(_location,
 		QStringList() << "*.m4a" << "*.ogg" << "*.mp3" << "*.flac",
 		QDir::Files, QDirIterator::Subdirectories);
 	while (it.hasNext())

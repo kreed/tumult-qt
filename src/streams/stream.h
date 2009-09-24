@@ -41,7 +41,11 @@ public:
 	virtual int count() const = 0;
 
 	inline QString name() const { return _name; }
+	inline QString location() const { return _location; }
 	inline QString error() const { return _error; }
+
+	void setName(const QString &);
+	virtual void setLocation(const QString &) = 0;
 
 	inline Stream *prevStream() const { return _prev; }
 	inline Stream *nextStream() const { return _next; }
@@ -54,6 +58,7 @@ protected:
 
 	QString _error;
 	MediaSource *_source;
+	QString _location;
 
 private:
 	QString _name;

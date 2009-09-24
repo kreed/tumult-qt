@@ -23,10 +23,11 @@
 
 class UriStream : public Stream {
 public:
-	UriStream(const QString &name, const QString &uri, Stream *sibling);
+	UriStream(const QString &name, Stream *sibling);
 	~UriStream();
 
 	int count() const;
+	void setLocation(const QString &);
 };
 
 #endif

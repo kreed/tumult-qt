@@ -21,15 +21,15 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
-PlaylistStream::PlaylistStream(const QString &name, const QString &uri, Stream *sibling)
-	: ListStream(name, uri, sibling)
+PlaylistStream::PlaylistStream(const QString &name, Stream *sibling)
+	: ListStream(name, sibling)
 {
 }
 
 void
 PlaylistStream::populate()
 {
-	QFile file(listSrc());
+	QFile file(_location);
 
 	if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QTextStream in(&file);

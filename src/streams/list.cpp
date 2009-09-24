@@ -22,24 +22,29 @@
 #include <qtconcurrentrun.h>
 #include <qurl.h>
 
-ListStream::ListStream(const QString &name, const QString &uri, Stream *sibling)
+ListStream::ListStream(const QString &name, Stream *sibling)
 	: Stream(name, sibling)
-	, _listSrc(uri)
 	, _watcher(new QFileSystemWatcher(this))
 {
-	_watcher->addPath(uri);
 	connect(_watcher, SIGNAL(directoryChanged(const QString&)),
 	                  SLOT(repopulateLater()));
 	connect(_watcher, SIGNAL(fileChanged(const QString&)),
 	                  SLOT(repopulateLater()));
-
-	QMetaObject::invokeMethod(this, "repopulateLater", Qt::QueuedConnection);
 }
 
 ListStream::~ListStream()
 {
 	foreach (MediaSource *source, _prevSources)
 		MediaBackend::deleteSource(source);
+}
+
+void
+ListStream::setLocation(const QString &uri)
+{
+	_watcher->removePath(_location);
+	_watcher->addPath(uri);
+	_location = uri;
+	repopulateLater();
 }
 
 template<class T> static void
