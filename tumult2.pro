@@ -10,6 +10,8 @@ MOC_DIR = build
 OBJECTS_DIR = build
 RCC_DIR = build
 
+include(src/src.pri)
+
 QT_MEDIA = $$(QT_MEDIA)
 exists($$QT_MEDIA) {
 	message(Using QtMobility multimedia API)
@@ -24,26 +26,15 @@ exists($$QT_MEDIA) {
 	INCLUDEPATH += $$QT_MEDIA $$QT_MEDIA/multimedia
 	LIBS += -lQtMedia -L$$QT_MEDIA_BIN
 	QMAKE_RPATHDIR += $$QT_MEDIA_BIN
+	SOURCES += $$QTMEDIA_SOURCES
+	HEADERS += $$QTMEDIA_HEADERS
 } else {
 	message(Using Phonon)
 	DEFINES += USE_PHONON=1
 	QT += phonon
+	SOURCES += $$QTMEDIA_SOURCES
+	HEADERS += $$QTMEDIA_HEADERS
 }
 
-INCLUDEPATH += \
-	src \
-	src/mediabackend \
-	src/streams
-
-RESOURCES += \
-	res/res.qrc
-
-SOURCES += \
-	src/*.cpp \
-	src/mediabackend/*.cpp \
-	src/streams/*.cpp
-
-HEADERS += \
-	src/*.h \
-	src/mediabackend/*.h \
-	src/streams/*.h
+RESOURCES += res/res.qrc
+SOURCES += src/main.cpp
