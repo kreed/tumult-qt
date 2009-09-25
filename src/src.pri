@@ -1,4 +1,5 @@
 include(mediabackend/mediabackend.pri)
+include(settings/settings.pri)
 include(streams/streams.pri)
 
 INCLUDEPATH += $$PWD

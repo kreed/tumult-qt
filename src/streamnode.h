@@ -19,11 +19,12 @@
 #ifndef STREAMNODE_H
 #define STREAMNODE_H
 
-#include <qstring.h>
+#include <qobject.h>
 
 class Stream;
 
-class StreamNode {
+class StreamNode : public QObject {
+	Q_OBJECT
 public:
 	StreamNode(const QString &name, const QString &uri, StreamNode *sibling);
 
@@ -37,6 +38,10 @@ public:
 	inline StreamNode *prevStream() const { return _prev; }
 	inline StreamNode *nextStream() const { return _next; }
 	StreamNode *remove();
+
+signals:
+	void nameChanged(StreamNode *);
+	void locationChanged(StreamNode *);
 
 private:
 	Stream *_stream;

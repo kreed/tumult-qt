@@ -19,6 +19,7 @@
 #include "trayicon.h"
 
 #include "player.h"
+#include "settingsdialog.h"
 #include <qapplication.h>
 #include <qmenu.h>
 
@@ -48,6 +49,10 @@ TrayIcon::TrayIcon()
 
 	menu->addSeparator();
 
+	menu->addAction("Settings...", this, SLOT(showSettingsDialog()));
+
+	menu->addSeparator();
+
 	menu->addAction("Quit", qApp, SLOT(quit()), QKeySequence("Ctrl+Q"))->setShortcutContext(Qt::ApplicationShortcut);
 
 	setContextMenu(menu);
@@ -58,4 +63,12 @@ TrayIcon::activate(ActivationReason reason)
 {
 	if (reason == Trigger)
 		Player::instance->showStatus();
+}
+
+void
+TrayIcon::showSettingsDialog()
+{
+	SettingsDialog *settings = new SettingsDialog;
+	settings->setAttribute(Qt::WA_DeleteOnClose);
+	settings->show();
 }

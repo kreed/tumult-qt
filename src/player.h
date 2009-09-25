@@ -37,6 +37,9 @@ public:
 
 	StreamNode *firstStream() const { return _firstStream; }
 
+	void setStreamName(const QString &name);
+	void setStreamLocation(const QString &location);
+
 	static Player *instance;
 
 	QAction* const showStatusAction;
@@ -64,6 +67,8 @@ private slots:
 	void search();
 	void saveHit(const QString &url);
 	void newSourceLoaded();
+	void newStreamName(StreamNode *);
+	void newStreamLocation(StreamNode *);
 
 private:
 	void setStream(StreamNode *stream, bool play = true);

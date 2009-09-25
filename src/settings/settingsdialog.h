@@ -16,19 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRAYICON_H
-#define TRAYICON_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
-#include <qsystemtrayicon.h>
+#include <qdialog.h>
 
-class TrayIcon : public QSystemTrayIcon {
+class SettingsDialog : public QDialog {
 	Q_OBJECT
 public:
-	TrayIcon();
+	SettingsDialog(QWidget *parent = 0);
 
-private slots:
-	void activate(QSystemTrayIcon::ActivationReason);
-	void showSettingsDialog();
+	QSize sizeHint() const;
 };
 
 #endif

@@ -163,6 +163,11 @@ Player::setStream(StreamNode *stream, bool play)
 	if (play)
 		changeSource(_currentStream->stream()->source());
 
+	connect(stream, SIGNAL(nameChanged(StreamNode *)),
+	                SLOT(newStreamName(StreamNode *)));
+	connect(stream, SIGNAL(locationChanged(StreamNode *)),
+	                SLOT(newStreamLocation(StreamNode *)));
+
 	_toSeek = _currentStream->stream()->currentTime();
 	_message->setStream(_currentStream->name());
 	searchAction->setEnabled(_currentStream->stream()->count() != 1);
@@ -286,4 +291,20 @@ void
 Player::repopulateStream()
 {
 	_currentStream->stream()->repopulateLater();
+}
+
+void
+Player::newStreamName(StreamNode *stream)
+{
+	if (stream == _currentStream)
+		_message->setStream(_currentStream->name());
+}
+
+void
+Player::newStreamLocation(StreamNode *stream)
+{
+	if (stream == _currentStream) {
+		if (fixEmptyOrStopped())
+			changeSource(_currentStream->stream()->source());
+	}
 }

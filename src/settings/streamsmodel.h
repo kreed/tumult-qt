@@ -16,19 +16,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRAYICON_H
-#define TRAYICON_H
+#ifndef STREAMSMODEL_H
+#define STREAMSMODEL_H
 
-#include <qsystemtrayicon.h>
+#include <qabstractitemmodel.h>
 
-class TrayIcon : public QSystemTrayIcon {
+class StreamsModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	TrayIcon();
+	StreamsModel(QObject *parent = 0);
 
-private slots:
-	void activate(QSystemTrayIcon::ActivationReason);
-	void showSettingsDialog();
+	bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+	int rowCount(const QModelIndex &parent = QModelIndex()) const;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const;
+	Qt::ItemFlags flags(const QModelIndex &index) const;
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 };
 
 #endif
+

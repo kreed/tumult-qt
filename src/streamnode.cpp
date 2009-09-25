@@ -65,12 +65,17 @@ StreamNode::setLocation(const QString &uri)
 	}
 
 	_stream->setLocation(uri);
+	emit locationChanged(this);
 }
 
 void
 StreamNode::setName(const QString &name)
 {
+	if (name == _name)
+		return;
+
 	_name = name;
+	emit nameChanged(this);
 }
 
 StreamNode *
