@@ -24,7 +24,7 @@
 
 class Stream {
 public:
-	static Stream *create(const QString &name, const QString &uri, Stream *sibling);
+	Stream();
 
 	MediaSource *source();
 
@@ -40,32 +40,21 @@ public:
 
 	virtual int count() const = 0;
 
-	inline QString name() const { return _name; }
 	inline QString location() const { return _location; }
 	inline QString error() const { return _error; }
 
-	void setName(const QString &);
 	virtual void setLocation(const QString &) = 0;
-
-	inline Stream *prevStream() const { return _prev; }
-	inline Stream *nextStream() const { return _next; }
-	Stream *remove();
 
 	qint64 currentTime() const { return _currentTime; }
 	void setCurrentTime(qint64);
 
 protected:
-	Stream(const QString &name, Stream *stream);
-
 	QString _error;
 	MediaSource *_source;
 	QString _location;
 
 private:
-	QString _name;
 	qint64 _currentTime;
-	Stream *_prev;
-	Stream *_next;
 };
 
 #endif

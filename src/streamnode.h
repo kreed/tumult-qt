@@ -16,23 +16,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "uri.h"
+#ifndef STREAMNODE_H
+#define STREAMNODE_H
 
-UriStream::~UriStream()
-{
-	MediaBackend::deleteSource(_source);
-}
+#include <qstring.h>
 
-int
-UriStream::count() const
-{
-	return 1;
-}
+class Stream;
 
-void
-UriStream::setLocation(const QString &uri)
-{
-	MediaBackend::deleteSource(_source);
-	_source = MediaBackend::createSource(uri);
-	_location = uri;
-}
+class StreamNode {
+public:
+	StreamNode(const QString &name, const QString &uri, StreamNode *sibling);
+
+	inline Stream *stream() const { return _stream; }
+	inline QString name() const { return _name; }
+	QString location() const;
+
+	void setName(const QString &);
+	void setLocation(const QString &);
+
+	inline StreamNode *prevStream() const { return _prev; }
+	inline StreamNode *nextStream() const { return _next; }
+	StreamNode *remove();
+
+private:
+	Stream *_stream;
+
+	StreamNode *_prev;
+	StreamNode *_next;
+
+	QString _name;
+	QString _location;
+};
+
+#endif

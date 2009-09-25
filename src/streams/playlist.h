@@ -22,9 +22,6 @@
 #include "list.h"
 
 class PlaylistStream : public ListStream {
-public:
-	PlaylistStream(const QString &name, Stream *sibling);
-
 protected:
 	void populate();
 };

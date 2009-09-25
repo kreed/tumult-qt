@@ -23,7 +23,6 @@
 
 class UriStream : public Stream {
 public:
-	UriStream(const QString &name, Stream *sibling);
 	~UriStream();
 
 	int count() const;

@@ -22,14 +22,9 @@
 #include <qtconcurrentrun.h>
 #include <qurl.h>
 
-ListStream::ListStream(const QString &name, Stream *sibling)
-	: Stream(name, sibling)
-	, _watcher(new QFileSystemWatcher(this))
+ListStream::ListStream()
+	: _watcher(NULL)
 {
-	connect(_watcher, SIGNAL(directoryChanged(const QString&)),
-	                  SLOT(repopulateLater()));
-	connect(_watcher, SIGNAL(fileChanged(const QString&)),
-	                  SLOT(repopulateLater()));
 }
 
 ListStream::~ListStream()
@@ -41,7 +36,14 @@ ListStream::~ListStream()
 void
 ListStream::setLocation(const QString &uri)
 {
-	_watcher->removePath(_location);
+	if (!_watcher) {
+		_watcher = new QFileSystemWatcher(this);
+		connect(_watcher, SIGNAL(directoryChanged(const QString&)),
+		                  SLOT(repopulateLater()));
+		connect(_watcher, SIGNAL(fileChanged(const QString&)),
+		                  SLOT(repopulateLater()));
+	} else
+		_watcher->removePath(_location);
 	_watcher->addPath(uri);
 	_location = uri;
 	repopulateLater();

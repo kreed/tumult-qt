@@ -26,7 +26,7 @@ class MediaSource;
 class MessageWindow;
 class QAction;
 class SearchBox;
-class Stream;
+class StreamNode;
 
 class Player : public QObject {
 	Q_OBJECT
@@ -35,7 +35,7 @@ public:
 
 	void changeSource(MediaSource *source);
 
-	Stream *firstStream() const { return _firstStream; }
+	StreamNode *firstStream() const { return _firstStream; }
 
 	static Player *instance;
 
@@ -66,7 +66,7 @@ private slots:
 	void newSourceLoaded();
 
 private:
-	void setStream(Stream *stream, bool play = true);
+	void setStream(StreamNode *stream, bool play = true);
 	bool fixEmptyOrStopped();
 
 	MediaBackend *_backend;
@@ -75,8 +75,8 @@ private:
 	QPointer<SearchBox> _searchBox;
 	QString _lastSearch;
 
-	Stream *_firstStream;
-	Stream *_currentStream;
+	StreamNode *_firstStream;
+	StreamNode *_currentStream;
 
 	bool _showNextMetaData;
 	qint64 _toSeek;

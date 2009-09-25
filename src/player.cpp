@@ -25,7 +25,8 @@
 #include <qsettings.h>
 #include <qurl.h>
 #include "searchbox.h"
-#include "streams/stream.h"
+#include "stream.h"
+#include "streamnode.h"
 #include "tumult.h"
 
 Player *Player::instance;
@@ -72,7 +73,7 @@ Player::Player()
 	QSettings settings;
 	settings.beginGroup("stream");
 	foreach (const QString &key, settings.childKeys())
-		_currentStream = Stream::create(key, settings.value(key).toString(), _currentStream);
+		_currentStream = new StreamNode(key, settings.value(key).toString(), _currentStream);
 
 	if (_currentStream) {
 		_firstStream = _currentStream->nextStream();
@@ -88,16 +89,16 @@ Player::Player()
 bool
 Player::fixEmptyOrStopped()
 {
-	if (_currentStream->count() == 0) {
-		_currentStream->repopulate();
-		if (_currentStream->count() == 0) {
+	if (_currentStream->stream()->count() == 0) {
+		_currentStream->stream()->repopulate();
+		if (_currentStream->stream()->count() == 0) {
 			showStatus();
 			return false;
 		}
 	}
 
 	if (!_backend->isPlaying()) {
-		_backend->play(_backend->isSourceNull() ? _currentStream->source() : 0);
+		_backend->play(_backend->isSourceNull() ? _currentStream->stream()->source() : 0);
 		return false;
 	}
 
@@ -107,11 +108,11 @@ Player::fixEmptyOrStopped()
 void
 Player::showStatus()
 {
-	if (_currentStream->count() == 0) {
-		if (_currentStream->error().isEmpty())
+	if (_currentStream->stream()->count() == 0) {
+		if (_currentStream->stream()->error().isEmpty())
 			_message->showText("No sources in stream");
 		else
-			_message->showText(_currentStream->error());
+			_message->showText(_currentStream->stream()->error());
 		return;
 	}
 
@@ -150,21 +151,21 @@ Player::changeSource(MediaSource *source)
 }
 
 void
-Player::setStream(Stream *stream, bool play)
+Player::setStream(StreamNode *stream, bool play)
 {
 	if (_searchBox)
 		_searchBox->close();
 
 	if (_currentStream && _backend->isSeekable())
-		_currentStream->setCurrentTime(_backend->progress());
+		_currentStream->stream()->setCurrentTime(_backend->progress());
 
 	_currentStream = stream;
 	if (play)
-		changeSource(_currentStream->source());
+		changeSource(_currentStream->stream()->source());
 
-	_toSeek = _currentStream->currentTime();
+	_toSeek = _currentStream->stream()->currentTime();
 	_message->setStream(_currentStream->name());
-	searchAction->setEnabled(_currentStream->count() != 1);
+	searchAction->setEnabled(_currentStream->stream()->count() != 1);
 }
 
 void
@@ -185,8 +186,8 @@ Player::prevInStream()
 	if (!fixEmptyOrStopped())
 		return;
 
-	if (_currentStream->prev())
-		changeSource(_currentStream->source());
+	if (_currentStream->stream()->prev())
+		changeSource(_currentStream->stream()->source());
 }
 
 void
@@ -195,14 +196,14 @@ Player::nextInStream()
 	if (!fixEmptyOrStopped())
 		return;
 
-	if (_currentStream->next())
-		changeSource(_currentStream->source());
+	if (_currentStream->stream()->next())
+		changeSource(_currentStream->stream()->source());
 }
 
 void
 Player::clearQueue()
 {
-	_currentStream->clearQueue();
+	_currentStream->stream()->clearQueue();
 }
 
 void
@@ -222,7 +223,7 @@ Player::openSearchBox()
 		return;
 	}
 
-	if (_currentStream->count() < 2)
+	if (_currentStream->stream()->count() < 2)
 		return;
 
 	_searchBox = new SearchBox;
@@ -239,20 +240,20 @@ Player::search()
 
 	const QString text = _searchBox->text();
 
-	if (text != _lastSearch || !_currentStream->hasQueue()) {
-		_currentStream->fillQueue(text);
+	if (text != _lastSearch || !_currentStream->stream()->hasQueue()) {
+		_currentStream->stream()->fillQueue(text);
 		_lastSearch = text;
 	}
 
-	if (_currentStream->hasQueue())
+	if (_currentStream->stream()->hasQueue())
 		nextInStream();
 }
 
 void
 Player::loadAnother()
 {
-	_currentStream->next();
-	_backend->push(_currentStream->source());
+	_currentStream->stream()->next();
+	_backend->push(_currentStream->stream()->source());
 }
 
 void
@@ -284,5 +285,5 @@ Player::saveHit(const QString &url)
 void
 Player::repopulateStream()
 {
-	_currentStream->repopulateLater();
+	_currentStream->stream()->repopulateLater();
 }

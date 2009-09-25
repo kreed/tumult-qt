@@ -21,11 +21,6 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
-PlaylistStream::PlaylistStream(const QString &name, Stream *sibling)
-	: ListStream(name, sibling)
-{
-}
-
 void
 PlaylistStream::populate()
 {

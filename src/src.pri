@@ -9,6 +9,7 @@ SOURCES += \
 	messagewindow.cpp \
 	player.cpp \
 	searchbox.cpp \
+	streamnode.cpp \
 	trayicon.cpp \
 	tumult.cpp
 
@@ -17,5 +18,6 @@ HEADERS += \
 	messagewindow.h \
 	player.h \
 	searchbox.h \
+	streamnode.h \
 	trayicon.h \
 	tumult.h

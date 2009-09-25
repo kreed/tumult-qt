@@ -18,37 +18,10 @@
 
 #include "stream.h"
 
-#include "directory.h"
-#include "playlist.h"
-#include <qdir.h>
-#include "uri.h"
-
-Stream::Stream(const QString &name, Stream *sibling)
+Stream::Stream()
 	: _source(NULL)
-	, _name(name)
 	, _currentTime(0)
 {
-	if (sibling) {
-		_prev = sibling;
-		_next = sibling->_next;
-		sibling->_next = _next->_prev = this;
-	} else {
-		_next = _prev = this;
-	}
-}
-
-Stream*
-Stream::create(const QString &name, const QString &uri, Stream *sibling)
-{
-	Stream *stream;
-	if (QDir(uri).exists())
-		stream = new DirectoryStream(name, sibling);
-	else if (uri.endsWith(QLatin1String("m3u")))
-		stream = new PlaylistStream(name, sibling);
-	else
-		stream = new UriStream(name, sibling);
-	stream->setLocation(uri);
-	return stream;
 }
 
 MediaSource *
@@ -101,21 +74,4 @@ void
 Stream::setCurrentTime(qint64 time)
 {
 	_currentTime = time;
-}
-
-void
-Stream::setName(const QString &name)
-{
-	_name = name;
-}
-
-Stream *
-Stream::remove()
-{
-	if (_next == this)
-		return NULL;
-
-	_prev->_next = _next;
-	_next->_prev = _prev;
-	return _next;
 }

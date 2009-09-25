@@ -28,6 +28,7 @@ class QFileSystemWatcher;
 class ListStream : protected QObject, public Stream {
 	Q_OBJECT
 public:
+	ListStream();
 	~ListStream();
 
 	int count() const;
@@ -46,8 +47,6 @@ public slots:
 	void repopulateLater();
 
 protected:
-	ListStream(const QString &name, Stream *sibling);
-
 	virtual void populate() = 0;
 
 	QStringList _list;

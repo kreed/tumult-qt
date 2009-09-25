@@ -20,11 +20,6 @@
 
 #include <qdiriterator.h>
 
-DirectoryStream::DirectoryStream(const QString &name, Stream *sibling)
-	: ListStream(name, sibling)
-{
-}
-
 void
 DirectoryStream::populate()
 {
