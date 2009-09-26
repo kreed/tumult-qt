@@ -41,24 +41,43 @@ streamAt(int i)
 	return stream;
 }
 
+// this only inserts streams at the end
+bool
+StreamsModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+	if (count < 1 || parent.isValid())
+		return false;
+
+	row = rowCount();
+	int lastRow = row + count - 1;
+	beginInsertRows(parent, row, lastRow);
+
+	StreamNode *stream = streamAt(0)->prevStream();
+
+	while (--count >= 0)
+		stream = new StreamNode("New Stream", QString(), stream);
+
+	endInsertRows();
+	return true;
+}
+
 bool
 StreamsModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-	if (row < 0 || count <= 0 || count >= rowCount())
+	if (row < 0 || count <= 0 || count >= rowCount() || parent.isValid())
 		return false;
 
 	int lastRow = row + count - 1;
-	beginRemoveRows(parent, row, lastRow);
-
 	StreamNode *stream = streamAt(row);
 	if (!stream)
-		return true;
+		return false;
+
+	beginRemoveRows(parent, row, lastRow);
 
 	while (--count >= 0)
 		stream = stream->remove();
 
 	endRemoveRows();
-
 	return true;
 }
 

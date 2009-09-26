@@ -26,6 +26,7 @@ class StreamsModel : public QAbstractTableModel {
 public:
 	StreamsModel(QObject *parent = 0);
 
+	bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
 	bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const;
