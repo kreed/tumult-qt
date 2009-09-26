@@ -108,21 +108,23 @@ Player::fixEmptyOrStopped()
 void
 Player::showStatus()
 {
-	if (_currentStream->stream()->count() == 0) {
-		if (_currentStream->stream()->error().isEmpty())
-			_message->showText("No sources in stream");
-		else
-			_message->showText(_currentStream->stream()->error());
+	if (!_currentStream->stream()->error().isEmpty()) {
+		_message->showText(_currentStream->stream()->error());
 		return;
 	}
 
-	if (_backend->isMetaDataInvalid()) {
-		_showNextMetaData = true;
+	if (_currentStream->stream()->count() == 0) {
+		_message->showText("No sources in stream");
 		return;
 	}
 
 	if (!_backend->errorString().isEmpty()) {
 		_message->showText(_backend->errorString(), true);
+		return;
+	}
+
+	if (_backend->isMetaDataInvalid()) {
+		_showNextMetaData = true;
 		return;
 	}
 

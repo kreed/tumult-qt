@@ -35,4 +35,5 @@ UriStream::setLocation(const QString &uri)
 	MediaBackend::deleteSource(_source);
 	_source = MediaBackend::createSource(uri);
 	_location = uri;
+	_error = uri.isEmpty() ? "Empty URI specified for stream source" : QString();
 }
