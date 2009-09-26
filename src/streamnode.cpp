@@ -38,6 +38,12 @@ StreamNode::StreamNode(const QString &name, const QString &uri, StreamNode *sibl
 	setLocation(uri);
 }
 
+StreamNode::~StreamNode()
+{
+	_prev->_next = _next;
+	_next->_prev = _prev;
+}
+
 QString
 StreamNode::location() const
 {
@@ -76,15 +82,4 @@ StreamNode::setName(const QString &name)
 
 	_name = name;
 	emit nameChanged(this);
-}
-
-StreamNode *
-StreamNode::remove()
-{
-	if (_next == this)
-		return NULL;
-
-	_prev->_next = _next;
-	_next->_prev = _prev;
-	return _next;
 }

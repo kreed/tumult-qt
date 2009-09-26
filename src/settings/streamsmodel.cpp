@@ -74,8 +74,11 @@ StreamsModel::removeRows(int row, int count, const QModelIndex &parent)
 
 	beginRemoveRows(parent, row, lastRow);
 
-	while (--count >= 0)
-		stream = stream->remove();
+	while (--count >= 0) {
+		StreamNode *next = stream->nextStream();
+		delete stream;
+		stream = next;
+	}
 
 	endRemoveRows();
 	return true;

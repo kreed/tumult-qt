@@ -169,6 +169,8 @@ Player::setStream(StreamNode *stream, bool play)
 	                SLOT(newStreamName(StreamNode *)));
 	connect(stream, SIGNAL(locationChanged(StreamNode *)),
 	                SLOT(newStreamLocation(StreamNode *)));
+	connect(stream, SIGNAL(destroyed(QObject *)),
+	                SLOT(streamDestroyed(QObject *)));
 
 	_toSeek = _currentStream->stream()->currentTime();
 	_message->setStream(_currentStream->name());
@@ -309,4 +311,13 @@ Player::newStreamLocation(StreamNode *stream)
 		if (fixEmptyOrStopped())
 			changeSource(_currentStream->stream()->source());
 	}
+}
+
+void
+Player::streamDestroyed(QObject *object)
+{
+	if (object == _firstStream)
+		_firstStream = _firstStream->nextStream();
+	if (object == _currentStream)
+		setStream(_currentStream->nextStream(), _backend->isPlaying());
 }

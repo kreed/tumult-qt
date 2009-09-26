@@ -18,9 +18,12 @@
 
 #include "settingsdialog.h"
 
+#include "player.h"
+#include "streamnode.h"
 #include "streamsmodel.h"
 #include <qboxlayout.h>
 #include <qheaderview.h>
+#include <qpushbutton.h>
 #include <qtableview.h>
 #include <qtabwidget.h>
 
@@ -29,13 +32,33 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 {
 	QTabWidget *tabWidget = new QTabWidget;
 
-	QTableView *streamsView = new QTableView;
-	streamsView->setModel(new StreamsModel(this));
-	streamsView->horizontalHeader()->setStretchLastSection(true);
-	streamsView->verticalHeader()->hide();
-	streamsView->setShowGrid(false);
-	streamsView->setAlternatingRowColors(true);
-	tabWidget->addTab(streamsView, "Streams");
+	QWidget *streamsTab = new QWidget;
+	QGridLayout *grid = new QGridLayout;
+	grid->setColumnStretch(0, 1);
+	grid->setRowStretch(2, 1);
+
+	_streamsModel = new StreamsModel(this);
+	_streamsView = new QTableView;
+	_streamsView->setModel(_streamsModel);
+	_streamsView->horizontalHeader()->setStretchLastSection(true);
+	_streamsView->verticalHeader()->hide();
+	_streamsView->setShowGrid(false);
+	_streamsView->setAlternatingRowColors(true);
+	_streamsView->setSelectionBehavior(QAbstractItemView::SelectRows);
+	grid->addWidget(_streamsView, 0, 0, -1, 1);
+
+	QPushButton *add = new QPushButton("Add");
+	connect(add, SIGNAL(clicked()),
+	             SLOT(addStream()));
+	grid->addWidget(add, 0, 1);
+
+	QPushButton *remove = new QPushButton("Remove");
+	connect(remove, SIGNAL(clicked()),
+	                SLOT(removeStream()));
+	grid->addWidget(remove, 1, 1);
+
+	streamsTab->setLayout(grid);
+	tabWidget->addTab(streamsTab, "Streams");
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->addWidget(tabWidget);
@@ -46,4 +69,17 @@ QSize
 SettingsDialog::sizeHint() const
 {
 	return QSize(500, 300);
+}
+
+void
+SettingsDialog::addStream()
+{
+	_streamsModel->insertRow(_streamsModel->rowCount());
+}
+
+void
+SettingsDialog::removeStream()
+{
+	foreach (const QModelIndex &index, _streamsView->selectionModel()->selectedRows())
+		_streamsModel->removeRow(index.row());
 }

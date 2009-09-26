@@ -27,6 +27,7 @@ class StreamNode : public QObject {
 	Q_OBJECT
 public:
 	StreamNode(const QString &name, const QString &uri, StreamNode *sibling);
+	~StreamNode();
 
 	inline Stream *stream() const { return _stream; }
 	inline QString name() const { return _name; }
@@ -37,7 +38,6 @@ public:
 
 	inline StreamNode *prevStream() const { return _prev; }
 	inline StreamNode *nextStream() const { return _next; }
-	StreamNode *remove();
 
 signals:
 	void nameChanged(StreamNode *);

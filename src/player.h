@@ -69,6 +69,7 @@ private slots:
 	void newSourceLoaded();
 	void newStreamName(StreamNode *);
 	void newStreamLocation(StreamNode *);
+	void streamDestroyed(QObject *);
 
 private:
 	void setStream(StreamNode *stream, bool play = true);

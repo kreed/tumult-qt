@@ -21,12 +21,23 @@
 
 #include <qdialog.h>
 
+class StreamsModel;
+class QTableView;
+
 class SettingsDialog : public QDialog {
 	Q_OBJECT
 public:
 	SettingsDialog(QWidget *parent = 0);
 
 	QSize sizeHint() const;
+
+public slots:
+	void addStream();
+	void removeStream();
+
+private:
+	StreamsModel *_streamsModel;
+	QTableView *_streamsView;
 };
 
 #endif
