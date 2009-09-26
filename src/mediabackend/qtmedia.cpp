@@ -174,19 +174,19 @@ MediaBackend::seek(qint64 position)
 QString
 MediaBackend::metaData(MetaData genericKey) const
 {
-	QAbstractMediaObject::MetaData key;
+	QMediaObject::MetaData key;
 	switch (genericKey) {
 	case MediaBackend::Title:
-		key = QAbstractMediaObject::Title;
+		key = QMediaObject::Title;
 		break;
 	case MediaBackend::Artist:
-		key = QAbstractMediaObject::AlbumArtist;
+		key = QMediaObject::AlbumArtist;
 		break;
 	case MediaBackend::Album:
-		key = QAbstractMediaObject::AlbumTitle;
+		key = QMediaObject::AlbumTitle;
 		break;
 	case MediaBackend::Date:
-		key = QAbstractMediaObject::Year;
+		key = QMediaObject::Year;
 		break;
 	default:
 		return QString();
