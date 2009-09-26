@@ -32,8 +32,8 @@ exists($$QT_MEDIA) {
 	message(Using Phonon)
 	DEFINES += USE_PHONON=1
 	QT += phonon
-	SOURCES += $$QTMEDIA_SOURCES
-	HEADERS += $$QTMEDIA_HEADERS
+	SOURCES += $$PHONON_SOURCES
+	HEADERS += $$PHONON_HEADERS
 }
 
 RESOURCES += res/res.qrc
