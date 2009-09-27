@@ -57,6 +57,8 @@ signals:
 	void streamChanged(StreamNode *oldStream, StreamNode *newStream);
 
 public slots:
+	void save() const;
+
 	void showStatus();
 	void nextStream();
 	void prevStream();

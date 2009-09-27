@@ -69,6 +69,8 @@ void
 TrayIcon::showSettingsDialog()
 {
 	SettingsDialog *settings = new SettingsDialog;
+	connect(settings, SIGNAL(finished(int)),
+	        Player::instance, SLOT(save()));
 	settings->setAttribute(Qt::WA_DeleteOnClose);
 	settings->show();
 }

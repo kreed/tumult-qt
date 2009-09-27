@@ -42,6 +42,7 @@ Player::Player()
 	, clearQueueAction(new QAction("Clear Queue", this))
 	, _backend(new MediaBackend(this))
 	, _message(new MessageWindow)
+	, _firstStream(NULL)
 	, _currentStream(NULL)
 	, _showNextMetaData(false)
 	, _toSeek(0)
@@ -71,12 +72,15 @@ Player::Player()
 	playPauseAction->setCheckable(true);
 
 	QSettings settings;
-	settings.beginGroup("stream");
-	foreach (const QString &key, settings.childKeys())
-		_currentStream = new StreamNode(key, settings.value(key).toString(), _currentStream);
+	int count = settings.beginReadArray("streams");
 
-	if (_currentStream) {
-		_firstStream = _currentStream->nextStream();
+	for (int i = 0; i != count; ++i) {
+		settings.setArrayIndex(i);
+		_firstStream = new StreamNode(settings.value("name").toString(), settings.value("location").toString(), _firstStream);
+	}
+
+	if (_firstStream) {
+		_firstStream = _firstStream->nextStream();
 		setStream(_firstStream, false);
 	} else {
 		qWarning("No streams specified in '%s'", qPrintable(settings.fileName()));
@@ -365,4 +369,23 @@ Player::streamCount() const
 		stream = stream->nextStream();
 
 	return count;
+}
+
+void
+Player::save() const
+{
+	QSettings settings;
+	settings.beginWriteArray("streams", streamCount());
+
+	StreamNode *stream = _firstStream;
+	for (int i = 0; ; ++i) {
+		settings.setArrayIndex(i);
+		settings.setValue("name", stream->name());
+		settings.setValue("location", stream->location());
+		stream = stream->nextStream();
+		if (stream == _firstStream)
+			break;
+	}
+
+	settings.endArray();
 }
