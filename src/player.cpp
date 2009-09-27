@@ -34,7 +34,7 @@ Player *Player::instance;
 Player::Player()
 	: showStatusAction(new QAction("Show Status", this))
 	, searchAction(new QAction("Add to Queue...", this))
-	, playPauseAction(new QAction("Playing", this))
+	, playPauseAction(new QAction(this))
 	, prevStreamAction(new QAction("Previous Stream", this))
 	, nextStreamAction(new QAction("Next Stream", this))
 	, prevInStreamAction(new QAction("Previous Item in Stream", this))
@@ -56,7 +56,7 @@ Player::Player()
 	connect(_backend, SIGNAL(newSourceNeeded()),
 	                  SLOT(loadAnother()));
 	connect(_backend, SIGNAL(playingChanged(bool)),
-	        playPauseAction, SLOT(setChecked(bool)));
+	                  SLOT(updatePlayActionText(bool)));
 	connect(_backend, SIGNAL(sourceLoaded()),
 	                  SLOT(newSourceLoaded()));
 
@@ -69,7 +69,7 @@ Player::Player()
 	connect(nextInStreamAction, SIGNAL(triggered()), SLOT(nextInStream()));
 	connect(clearQueueAction, SIGNAL(triggered()), SLOT(clearQueue()));
 
-	playPauseAction->setCheckable(true);
+	updatePlayActionText(false);
 
 	QSettings settings;
 
@@ -442,4 +442,10 @@ Player::timerEvent(QTimerEvent *event)
 {
 	if (event->timerId() == _saveTimer.timerId())
 		save();
+}
+
+void
+Player::updatePlayActionText(bool playing)
+{
+	playPauseAction->setText(playing ? "Pause" : "Play");
 }

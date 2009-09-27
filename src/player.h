@@ -78,6 +78,7 @@ private slots:
 	void newStreamName(StreamNode *);
 	void newStreamLocation(StreamNode *);
 	void streamDestroyed(QObject *);
+	void updatePlayActionText(bool playing);
 
 protected:
 	void timerEvent(QTimerEvent *);
