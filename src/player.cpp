@@ -439,8 +439,10 @@ Player::save() const
 void
 Player::timerEvent(QTimerEvent *event)
 {
-	if (event->timerId() == _saveTimer.timerId())
+	if (event->timerId() == _saveTimer.timerId()) {
 		save();
+		_saveTimer.stop();
+	}
 }
 
 void
