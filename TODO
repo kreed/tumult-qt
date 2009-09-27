@@ -1,9 +1,7 @@
 - Get a global shortcut API in Qt and use that. This will allow Tumult to be
   cross-platform and simplify code qutie a bit.
 - Ditto for idle time API
-- Add a GUI configuration dialog. It should be trivial to add one for streams.
-  For keyboard shortcuts it may be better to hold off until we have a Qt API
-  for them.
+- Add GUI configuation for keybaord shortcuts
 - Support playlist formats other than m3u
 - Show cover art in the status box
 - Save song play count outside of the configuration file

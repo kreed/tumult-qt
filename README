@@ -23,21 +23,22 @@ To build:
 	sudo make install
 
 === CONFIGURATION ===
+There are two things that can be configured in Tumult: streams and keyboard shortcuts.
+Streams can be configured through the settings dialog accessible from the system
+tray icon. Keyboard shortcuts must currently be edited by hand in the configuration
+file.
+
 Currently all configuration is handled through an INI file located at
 ~/.config/Kreed.org/Tumult.conf. There are two sections in the
 configuration: streams and keys.
 
-The streams section is required. At least one stream must be specified for Tumult
-to run. Streams are specified as key=value, where key is the stream name and
-value is the source. Possible sources are URLs, m3u playlist and directories.
-
-The keys section is optional. It specifies global shortcuts to be grabbed. Keys
+The keys section in the file specifies global shortcuts to be grabbed. Keys
 are specified as key=value, where key is the action name and value a string
 containing bracket-enclosed modifiers and the X11 keysym, e.g. "prev_stream=<Alt>J"
 or "play_pause=XF86AudioPlay". Possible action names are play_pause, prev_stream,
 next_stream, status, prev_in_stream, next_in_stream, clear_queue, and search.
 
-See Tumult.conf.sample for an example configuration.
+See Tumult.conf.sample for an example keyboard configuration.
 
 === USAGE ===
 Use the system tray icon or keyboard shortcuts to interact with Tumult.

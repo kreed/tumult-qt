@@ -7,8 +7,3 @@ prev_in_stream=XF86AudioPrev
 next_in_stream=XF86AudioNext
 clear_queue=<Mod1>B
 search=<Mod1>V
-
-[stream]
-Cool%20Station=http://example.station:42/
-Jamful%20Playlist=/path/to/playlist.m3u
-Media%20Library=/path/to/library/
