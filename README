@@ -28,11 +28,8 @@ Streams can be configured through the settings dialog accessible from the system
 tray icon. Keyboard shortcuts must currently be edited by hand in the configuration
 file.
 
-Currently all configuration is handled through an INI file located at
-~/.config/Kreed.org/Tumult.conf. There are two sections in the
-configuration: streams and keys.
-
-The keys section in the file specifies global shortcuts to be grabbed. Keys
+Configuration is stored an INI file located at ~/.config/Kreed.org/Tumult.conf.
+The keys section in this file specifies global shortcuts to be grabbed. Keys
 are specified as key=value, where key is the action name and value a string
 containing bracket-enclosed modifiers and the X11 keysym, e.g. "prev_stream=<Alt>J"
 or "play_pause=XF86AudioPlay". Possible action names are play_pause, prev_stream,
