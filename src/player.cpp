@@ -324,3 +324,45 @@ Player::streamDestroyed(QObject *object)
 	if (object == _currentStream)
 		setStream(_currentStream->nextStream(), _backend->isPlaying());
 }
+
+StreamNode *
+Player::streamAt(int i) const
+{
+	StreamNode *stream = _firstStream;
+
+	for (int j = 0; j != i; ++j) {
+		stream = stream->nextStream();
+		if (stream == _firstStream)
+			return NULL;
+	}
+
+	return stream;
+}
+
+int
+Player::indexOf(StreamNode *needle) const
+{
+	StreamNode *stream = _firstStream;
+
+	for (int i = 0; ; ++i) {
+		if (stream == needle)
+			return i;
+		stream = stream->nextStream();
+		if (stream == _firstStream)
+			break;
+	}
+
+	return -1;
+}
+
+int
+Player::streamCount() const
+{
+	StreamNode *stream = _firstStream;
+	int count = 1;
+
+	for (; stream->nextStream() != _firstStream; ++count)
+		stream = stream->nextStream();
+
+	return count;
+}

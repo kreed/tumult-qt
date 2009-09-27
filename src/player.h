@@ -35,7 +35,9 @@ public:
 
 	void changeSource(MediaSource *source);
 
-	StreamNode *firstStream() const { return _firstStream; }
+	StreamNode *streamAt(int i) const;
+	int indexOf(StreamNode *) const;
+	int streamCount() const;
 
 	void setStreamName(const QString &name);
 	void setStreamLocation(const QString &location);

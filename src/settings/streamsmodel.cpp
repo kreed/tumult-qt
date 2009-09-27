@@ -29,36 +29,6 @@ StreamsModel::StreamsModel(QObject *parent)
 	                          SLOT(newStream(StreamNode *, StreamNode *)));
 }
 
-static StreamNode *
-streamAt(int i)
-{
-	StreamNode *first = Player::instance->firstStream();
-	StreamNode *stream = first;
-
-	for (int j = 0; j != i; ++j) {
-		stream = stream->nextStream();
-		if (stream == first)
-			return NULL;
-	}
-
-	return stream;
-}
-
-static int
-indexOf(StreamNode *needle)
-{
-	StreamNode *first = Player::instance->firstStream();
-	StreamNode *stream = first;
-
-	for (int i = 0; ; ++i) {
-		if (stream == needle)
-			return i;
-		stream = stream->nextStream();
-		if (stream == first)
-			return -1;
-	}
-}
-
 // this only inserts streams at the end
 bool
 StreamsModel::insertRows(int row, int count, const QModelIndex &parent)
@@ -70,7 +40,7 @@ StreamsModel::insertRows(int row, int count, const QModelIndex &parent)
 	int lastRow = row + count - 1;
 	beginInsertRows(parent, row, lastRow);
 
-	StreamNode *stream = streamAt(0)->prevStream();
+	StreamNode *stream = Player::instance->streamAt(0)->prevStream();
 
 	while (--count >= 0)
 		stream = new StreamNode("New Stream", QString(), stream);
@@ -86,7 +56,7 @@ StreamsModel::removeRows(int row, int count, const QModelIndex &parent)
 		return false;
 
 	int lastRow = row + count - 1;
-	StreamNode *stream = streamAt(row);
+	StreamNode *stream = Player::instance->streamAt(row);
 	if (!stream)
 		return false;
 
@@ -108,16 +78,7 @@ StreamsModel::rowCount(const QModelIndex &parent) const
 	if (parent.isValid())
 		return 0;
 
-	StreamNode *first = Player::instance->firstStream();
-	StreamNode *stream = first;
-	int count = 1;
-
-	while (stream->nextStream() != first) {
-		stream = stream->nextStream();
-		++count;
-	}
-
-	return count;
+	return Player::instance->streamCount();
 }
 
 int
@@ -140,7 +101,7 @@ StreamsModel::data(const QModelIndex &index, int role) const
 	if (index.row() < 0 || index.row() >= rowCount())
 		return QVariant();
 
-	StreamNode *stream = streamAt(index.row());
+	StreamNode *stream = Player::instance->streamAt(index.row());
 	if (!stream)
 		return QVariant();
 
@@ -176,7 +137,7 @@ StreamsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 	if (index.row() < 0 || role != Qt::EditRole)
 		return false;
 
-	StreamNode *stream = streamAt(index.row());
+	StreamNode *stream = Player::instance->streamAt(index.row());
 	if (!stream)
 		return false;
 
@@ -225,8 +186,8 @@ StreamsModel::move(int row, Direction direction)
 	int offset = direction == Down ? 1 : 0;
 	beginMoveRows(QModelIndex(), row, row, QModelIndex(), destination + offset);
 
-	StreamNode *stream = streamAt(row);
-	StreamNode *destStream = streamAt(destination);
+	StreamNode *stream = Player::instance->streamAt(row);
+	StreamNode *destStream = Player::instance->streamAt(destination);
 	StreamNode::swap(stream, destStream);
 
 	if (row == 0)
@@ -241,8 +202,8 @@ StreamsModel::move(int row, Direction direction)
 void
 StreamsModel::newStream(StreamNode *oldStream, StreamNode *newStream)
 {
-	int rOld = indexOf(oldStream);
-	int rNew = indexOf(newStream);
+	int rOld = Player::instance->indexOf(oldStream);
+	int rNew = Player::instance->indexOf(newStream);
 
 	int lower = qMin(rOld, rNew);
 	int upper = qMax(rOld, rNew);
