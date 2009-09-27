@@ -185,3 +185,31 @@ StreamsModel::headerData(int section, Qt::Orientation orientation, int role) con
 
 	return QVariant();
 }
+
+bool
+StreamsModel::move(int row, Direction direction)
+{
+	int rows = rowCount();
+	if (row < 0 || row >= rows)
+		return false;
+	if (direction == Up && row == 0)
+		return false;
+	if (direction == Down && row == rows - 1)
+		return false;
+
+	int destination = row + direction;
+	int offset = direction == Down ? 1 : 0;
+	beginMoveRows(QModelIndex(), row, row, QModelIndex(), destination + offset);
+
+	StreamNode *stream = streamAt(row);
+	StreamNode *destStream = streamAt(destination);
+	StreamNode::swap(stream, destStream);
+
+	if (row == 0)
+		Player::instance->_firstStream = destStream;
+	if (destination == 0)
+		Player::instance->_firstStream = stream;
+
+	endMoveRows();
+	return true;
+}

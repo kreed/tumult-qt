@@ -34,6 +34,8 @@ public:
 public slots:
 	void addStream();
 	void removeStream();
+	void moveUp();
+	void moveDown();
 
 private:
 	StreamsModel *_streamsModel;

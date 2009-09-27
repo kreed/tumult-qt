@@ -35,7 +35,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	QWidget *streamsTab = new QWidget;
 	QGridLayout *grid = new QGridLayout;
 	grid->setColumnStretch(0, 1);
-	grid->setRowStretch(2, 1);
+	grid->setRowStretch(4, 1);
 
 	_streamsModel = new StreamsModel(this);
 	_streamsView = new QTableView;
@@ -56,6 +56,16 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(remove, SIGNAL(clicked()),
 	                SLOT(removeStream()));
 	grid->addWidget(remove, 1, 1);
+
+	QPushButton *up = new QPushButton("Move Up");
+	connect(up, SIGNAL(clicked()),
+	            SLOT(moveUp()));
+	grid->addWidget(up, 2, 1);
+
+	QPushButton *down = new QPushButton("Move Down");
+	connect(down, SIGNAL(clicked()),
+	              SLOT(moveDown()));
+	grid->addWidget(down, 3, 1);
 
 	streamsTab->setLayout(grid);
 	tabWidget->addTab(streamsTab, "Streams");
@@ -82,4 +92,24 @@ SettingsDialog::removeStream()
 {
 	foreach (const QModelIndex &index, _streamsView->selectionModel()->selectedRows())
 		_streamsModel->removeRow(index.row());
+}
+
+void
+SettingsDialog::moveUp()
+{
+	QModelIndexList row = _streamsView->selectionModel()->selectedRows();
+	if (row.size() != 1)
+		return;
+
+	_streamsModel->move(row.first().row(), StreamsModel::Up);
+}
+
+void
+SettingsDialog::moveDown()
+{
+	QModelIndexList row = _streamsView->selectionModel()->selectedRows();
+	if (row.size() != 1)
+		return;
+
+	_streamsModel->move(row.first().row(), StreamsModel::Down);
 }

@@ -34,6 +34,12 @@ public:
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+	enum Direction {
+		Up = -1,
+		Down = 1
+	};
+	bool move(int row, Direction);
 };
 
 #endif

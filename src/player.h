@@ -86,6 +86,8 @@ private:
 
 	bool _showNextMetaData;
 	qint64 _toSeek;
+
+	friend class StreamsModel;
 };
 
 #endif

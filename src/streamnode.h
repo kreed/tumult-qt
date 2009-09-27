@@ -39,11 +39,15 @@ public:
 	inline StreamNode *prevStream() const { return _prev; }
 	inline StreamNode *nextStream() const { return _next; }
 
+	static void swap(StreamNode *a, StreamNode *b);
+
 signals:
 	void nameChanged(StreamNode *);
 	void locationChanged(StreamNode *);
 
 private:
+	static void link(StreamNode *a, StreamNode *b);
+
 	Stream *_stream;
 
 	StreamNode *_prev;

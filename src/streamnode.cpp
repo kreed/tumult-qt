@@ -83,3 +83,33 @@ StreamNode::setName(const QString &name)
 	_name = name;
 	emit nameChanged(this);
 }
+
+void
+StreamNode::link(StreamNode *a, StreamNode *b)
+{
+	a->_next = b;
+	b->_prev = a;
+}
+
+void
+StreamNode::swap(StreamNode *a, StreamNode *b)
+{
+	StreamNode *beforeA = b->_prev;
+	StreamNode *afterA = b->_next;
+	StreamNode *beforeB = a->_prev;
+	StreamNode *afterB = a->_next;
+
+	if (beforeA == a)
+		beforeA = b;
+	if (afterA == a)
+		afterA = b;
+	if (beforeB == b)
+		beforeB = a;
+	if (afterB == b)
+		afterB = a;
+
+	link(beforeA, a);
+	link(a, afterA);
+	link(beforeB, b);
+	link(b, afterB);
+}
