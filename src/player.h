@@ -20,6 +20,7 @@
 #define PLAYER_H
 
 #include <qbasictimer.h>
+#include <qdatetime.h>
 #include <qpointer.h>
 
 class MediaBackend;
@@ -78,7 +79,7 @@ private slots:
 	void newStreamName(StreamNode *);
 	void newStreamLocation(StreamNode *);
 	void streamDestroyed(QObject *);
-	void updatePlayActionText(bool playing);
+	void updatePlaying(bool playing);
 
 protected:
 	void timerEvent(QTimerEvent *);
@@ -101,6 +102,7 @@ private:
 	qint64 _toSeek;
 
 	QBasicTimer _saveTimer;
+	mutable QDateTime _playStartTime;
 
 	friend class StreamsModel;
 };

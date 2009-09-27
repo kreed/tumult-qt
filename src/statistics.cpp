@@ -33,9 +33,26 @@ Statistics::location(Statistic stat)
 	switch (stat) {
 	case TopSources:
 		return location + "/hits";
+	case PlayTime:
+		return location + "/playtime";
 	}
 
 	return QString();
+}
+
+void
+Statistics::addPlayTime(int seconds)
+{
+	QFile file(location(PlayTime));
+	if (file.open(QIODevice::ReadWrite)) {
+		qlonglong current = 0;
+		QByteArray data = file.readAll();
+		if (!data.isEmpty())
+			current = data.toLongLong();
+
+		file.reset();
+		file.write(QByteArray::number(current + seconds));
+	}
 }
 
 void

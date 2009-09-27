@@ -47,6 +47,7 @@ Player::Player()
 	, _currentStream(NULL)
 	, _showNextMetaData(false)
 	, _toSeek(0)
+	, _playStartTime(QDateTime::currentDateTime())
 {
 	connect(_backend, SIGNAL(sourceChanged(const QString &)),
 	        _message, SLOT(setUrl(const QString &)));
@@ -57,7 +58,7 @@ Player::Player()
 	connect(_backend, SIGNAL(newSourceNeeded()),
 	                  SLOT(loadAnother()));
 	connect(_backend, SIGNAL(playingChanged(bool)),
-	                  SLOT(updatePlayActionText(bool)));
+	                  SLOT(updatePlaying(bool)));
 	connect(_backend, SIGNAL(sourceLoaded()),
 	                  SLOT(newSourceLoaded()));
 
@@ -70,7 +71,7 @@ Player::Player()
 	connect(nextInStreamAction, SIGNAL(triggered()), SLOT(nextInStream()));
 	connect(clearQueueAction, SIGNAL(triggered()), SLOT(clearQueue()));
 
-	updatePlayActionText(false);
+	updatePlaying(false);
 
 	QSettings settings;
 
@@ -419,6 +420,12 @@ Player::save() const
 	if (!_firstStream)
 		return;
 
+	if (_backend->isPlaying()) {
+		QDateTime now = QDateTime::currentDateTime();
+		Statistics::addPlayTime(_playStartTime.secsTo(now));
+		_playStartTime = now;
+	}
+
 	QSettings settings;
 	settings.setValue("streams/active", _currentStream->name());
 	settings.beginWriteArray("streams", streamCount());
@@ -446,7 +453,11 @@ Player::timerEvent(QTimerEvent *event)
 }
 
 void
-Player::updatePlayActionText(bool playing)
+Player::updatePlaying(bool playing)
 {
 	playPauseAction->setText(playing ? "Pause" : "Play");
+	if (playing)
+		_playStartTime = QDateTime::currentDateTime();
+	else
+		Statistics::addPlayTime(_playStartTime.secsTo(QDateTime::currentDateTime()));
 }

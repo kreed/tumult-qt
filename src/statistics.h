@@ -24,10 +24,12 @@ class QString;
 class Statistics {
 public:
 	enum Statistic {
-		TopSources
+		TopSources,
+		PlayTime
 	};
 
 	static QString location(Statistic);
+	static void addPlayTime(int seconds);
 	static void sourcePlayed(const QString &url);
 };
 
