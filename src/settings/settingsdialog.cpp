@@ -40,6 +40,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	_streamsModel = new StreamsModel(this);
 	_streamsView = new QTableView;
 	_streamsView->setModel(_streamsModel);
+	_streamsView->horizontalHeader()->resizeSection(0, 160);
 	_streamsView->horizontalHeader()->setStretchLastSection(true);
 	_streamsView->verticalHeader()->hide();
 	_streamsView->setShowGrid(false);
@@ -78,7 +79,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 QSize
 SettingsDialog::sizeHint() const
 {
-	return QSize(500, 300);
+	return QSize(600, 300);
 }
 
 void
