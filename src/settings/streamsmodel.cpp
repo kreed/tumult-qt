@@ -40,12 +40,18 @@ StreamsModel::insertRows(int row, int count, const QModelIndex &parent)
 	int lastRow = row + count - 1;
 	beginInsertRows(parent, row, lastRow);
 
-	StreamNode *stream = Player::instance->streamAt(0)->prevStream();
+	StreamNode *stream = row ? Player::instance->streamAt(0)->prevStream() : NULL;
 
 	while (--count >= 0)
 		stream = new StreamNode("New Stream", QString(), stream);
 
 	endInsertRows();
+
+	if (!row) {
+		Player::instance->_firstStream = stream;
+		Player::instance->setStream(stream, false);
+	}
+
 	return true;
 }
 

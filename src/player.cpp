@@ -90,17 +90,28 @@ Player::Player()
 	if (_firstStream) {
 		_firstStream = _firstStream->nextStream();
 		setStream(lastStream ? lastStream : _firstStream, false);
-	} else {
-		qWarning("No streams specified in '%s'", qPrintable(settings.fileName()));
-		exit(EXIT_FAILURE);
 	}
 
 	instance = this;
 }
 
 bool
+Player::fixNoStream()
+{
+	if (!_currentStream) {
+		showStatus();
+		return false;
+	}
+
+	return true;
+}
+
+bool
 Player::fixEmptyOrStopped()
 {
+	if (!fixNoStream())
+		return false;
+
 	if (_currentStream->stream()->count() == 0) {
 		_currentStream->stream()->repopulate();
 		if (_currentStream->stream()->count() == 0) {
@@ -120,6 +131,11 @@ Player::fixEmptyOrStopped()
 void
 Player::showStatus()
 {
+	if (!_currentStream) {
+		_message->showText("No streams specified. Add some in the settings dialog.");
+		return;
+	}
+
 	if (!_currentStream->stream()->error().isEmpty()) {
 		_message->showText(_currentStream->stream()->error());
 		return;
@@ -197,12 +213,18 @@ Player::setStream(StreamNode *stream, bool play)
 void
 Player::prevStream()
 {
+	if (!fixNoStream())
+		return;
+
 	setStream(_currentStream->prevStream());
 }
 
 void
 Player::nextStream()
 {
+	if (!fixNoStream())
+		return;
+
 	setStream(_currentStream->nextStream());
 }
 
@@ -229,6 +251,9 @@ Player::nextInStream()
 void
 Player::clearQueue()
 {
+	if (!fixNoStream())
+		return;
+
 	_currentStream->stream()->clearQueue();
 }
 
@@ -244,6 +269,9 @@ Player::playPause()
 void
 Player::openSearchBox()
 {
+	if (!fixNoStream())
+		return;
+
 	if (_searchBox) {
 		_searchBox->close();
 		return;
@@ -311,7 +339,8 @@ Player::saveHit(const QString &url)
 void
 Player::repopulateStream()
 {
-	_currentStream->stream()->repopulateLater();
+	if (_currentStream)
+		_currentStream->stream()->repopulateLater();
 }
 
 void
@@ -343,6 +372,8 @@ StreamNode *
 Player::streamAt(int i) const
 {
 	StreamNode *stream = _firstStream;
+	if (!stream)
+		return NULL;
 
 	for (int j = 0; j != i; ++j) {
 		stream = stream->nextStream();
@@ -357,6 +388,8 @@ int
 Player::indexOf(StreamNode *needle) const
 {
 	StreamNode *stream = _firstStream;
+	if (!stream)
+		return -1;
 
 	for (int i = 0; ; ++i) {
 		if (stream == needle)
@@ -373,6 +406,9 @@ int
 Player::streamCount() const
 {
 	StreamNode *stream = _firstStream;
+	if (!stream)
+		return 0;
+
 	int count = 1;
 
 	for (; stream->nextStream() != _firstStream; ++count)
@@ -384,6 +420,9 @@ Player::streamCount() const
 void
 Player::save() const
 {
+	if (!_firstStream)
+		return;
+
 	QSettings settings;
 	settings.beginWriteArray("streams", streamCount());
 

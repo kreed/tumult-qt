@@ -84,6 +84,7 @@ protected:
 
 private:
 	void setStream(StreamNode *stream, bool play = true);
+	bool fixNoStream();
 	bool fixEmptyOrStopped();
 
 	MediaBackend *_backend;
