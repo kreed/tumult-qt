@@ -421,6 +421,7 @@ Player::save() const
 		return;
 
 	QSettings settings;
+	settings.setValue("streams/active", _currentStream->name());
 	settings.beginWriteArray("streams", streamCount());
 
 	StreamNode *stream = _firstStream;
@@ -439,6 +440,6 @@ Player::save() const
 void
 Player::timerEvent(QTimerEvent *event)
 {
-	if (_currentStream && event->timerId() == _saveTimer.timerId())
-		QSettings().setValue("streams/active", _currentStream->name());
+	if (event->timerId() == _saveTimer.timerId())
+		save();
 }
