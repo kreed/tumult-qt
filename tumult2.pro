@@ -1,3 +1,7 @@
+lessThan(QT_VERSION, 4.6.0) {
+	error(Tumult requires Qt 4.6 or greater)
+}
+
 TEMPLATE = app
 CONFIG += warn_on
 TARGET = tumult
