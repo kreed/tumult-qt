@@ -18,6 +18,7 @@
 
 #include "player.h"
 
+#include "hitlist.h"
 #include "mediabackend.h"
 #include "messagewindow.h"
 #include <qaction.h>
@@ -328,9 +329,7 @@ Player::saveHit(const QString &url)
 {
 	if (static_cast<Tumult*>(qApp)->idleTime() > 180000)
 		return;
-	QSettings settings;
-	settings.beginGroup("hits");
-	settings.setValue(url, settings.value(url, 0).toInt() + 1);
+	HitList::increment(url);
 }
 
 void

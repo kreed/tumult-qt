@@ -6,6 +6,7 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 SOURCES += \
+	hitlist.cpp \
 	keys.cpp \
 	messagewindow.cpp \
 	player.cpp \
@@ -15,6 +16,7 @@ SOURCES += \
 	tumult.cpp
 
 HEADERS += \
+	hitlist.h \
 	keys.h \
 	messagewindow.h \
 	player.h \
