@@ -72,16 +72,24 @@ Player::Player()
 	playPauseAction->setCheckable(true);
 
 	QSettings settings;
-	int count = settings.beginReadArray("streams");
 
+	StreamNode *lastStream = NULL;
+	QString lastStreamName = settings.value("streams/active").toString();
+
+	int count = settings.beginReadArray("streams");
 	for (int i = 0; i != count; ++i) {
 		settings.setArrayIndex(i);
-		_firstStream = new StreamNode(settings.value("name").toString(), settings.value("location").toString(), _firstStream);
+		QString name = settings.value("name").toString();
+		QString location = settings.value("location").toString();
+		_firstStream = new StreamNode(name, location, _firstStream);
+		if (name == lastStreamName)
+			lastStream = _firstStream;
 	}
+	settings.endArray();
 
 	if (_firstStream) {
 		_firstStream = _firstStream->nextStream();
-		setStream(_firstStream, false);
+		setStream(lastStream ? lastStream : _firstStream, false);
 	} else {
 		qWarning("No streams specified in '%s'", qPrintable(settings.fileName()));
 		exit(EXIT_FAILURE);
@@ -182,6 +190,8 @@ Player::setStream(StreamNode *stream, bool play)
 	searchAction->setEnabled(_currentStream->stream()->count() != 1);
 
 	emit streamChanged(old, stream);
+
+	_saveTimer.start(3000, this);
 }
 
 void
@@ -388,4 +398,11 @@ Player::save() const
 	}
 
 	settings.endArray();
+}
+
+void
+Player::timerEvent(QTimerEvent *event)
+{
+	if (_currentStream && event->timerId() == _saveTimer.timerId())
+		QSettings().setValue("streams/active", _currentStream->name());
 }
