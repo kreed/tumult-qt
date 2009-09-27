@@ -16,15 +16,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HITLIST_H
-#define HITLIST_H
+#ifndef STATISTICS_H
+#define STATISTICS_H
 
 class QString;
 
-class HitList {
+class Statistics {
 public:
-	static QString location();
-	static void increment(const QString &url);
+	enum Statistic {
+		TopSources
+	};
+
+	static QString location(Statistic);
+	static void sourcePlayed(const QString &url);
 };
 
 #endif

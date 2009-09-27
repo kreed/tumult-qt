@@ -16,24 +16,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "hitlist.h"
+#include "statistics.h"
 
 #include <qdesktopservices.h>
 #include <qdir.h>
 #include <qtemporaryfile.h>
 
 QString
-HitList::location()
+Statistics::location(Statistic stat)
 {
 	QString location = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 	QDir dir(location);
 	if (!dir.exists())
 		dir.mkpath(dir.absolutePath());
-	return location + "/hits";
+
+	switch (stat) {
+	case TopSources:
+		return location + "/hits";
+	}
+
+	return QString();
 }
 
 void
-HitList::increment(const QString &url)
+Statistics::sourcePlayed(const QString &url)
 {
 	QTemporaryFile out;
 	out.setAutoRemove(false);
@@ -45,7 +51,7 @@ HitList::increment(const QString &url)
 	bool written = false;
 	QByteArray urlData = (url + '\t').toUtf8();
 
-	QString inLocation = location();
+	QString inLocation = location(TopSources);
 	QFile in(inLocation);
 
 	if (in.exists()) {

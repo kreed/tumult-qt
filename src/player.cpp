@@ -18,7 +18,6 @@
 
 #include "player.h"
 
-#include "hitlist.h"
 #include "mediabackend.h"
 #include "messagewindow.h"
 #include <qaction.h>
@@ -26,6 +25,7 @@
 #include <qsettings.h>
 #include <qurl.h>
 #include "searchbox.h"
+#include "statistics.h"
 #include "stream.h"
 #include "streamnode.h"
 #include "tumult.h"
@@ -329,7 +329,7 @@ Player::saveHit(const QString &url)
 {
 	if (static_cast<Tumult*>(qApp)->idleTime() > 180000)
 		return;
-	HitList::increment(url);
+	Statistics::sourcePlayed(url);
 }
 
 void

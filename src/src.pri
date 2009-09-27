@@ -6,11 +6,11 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 SOURCES += \
-	hitlist.cpp \
 	keys.cpp \
 	messagewindow.cpp \
 	player.cpp \
 	searchbox.cpp \
+	statistics.cpp \
 	streamnode.cpp \
 	trayicon.cpp \
 	tumult.cpp
@@ -21,6 +21,7 @@ HEADERS += \
 	messagewindow.h \
 	player.h \
 	searchbox.h \
+	statistics.h \
 	streamnode.h \
 	trayicon.h \
 	tumult.h
