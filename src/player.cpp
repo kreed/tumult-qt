@@ -161,6 +161,7 @@ Player::setStream(StreamNode *stream, bool play)
 	if (_currentStream && _backend->isSeekable())
 		_currentStream->stream()->setCurrentTime(_backend->progress());
 
+	StreamNode *old = _currentStream;
 	_currentStream = stream;
 	if (play)
 		changeSource(_currentStream->stream()->source());
@@ -175,6 +176,8 @@ Player::setStream(StreamNode *stream, bool play)
 	_toSeek = _currentStream->stream()->currentTime();
 	_message->setStream(_currentStream->name());
 	searchAction->setEnabled(_currentStream->stream()->count() != 1);
+
+	emit streamChanged(old, stream);
 }
 
 void

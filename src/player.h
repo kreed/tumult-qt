@@ -51,6 +51,9 @@ public:
 	QAction* const nextInStreamAction;
 	QAction* const clearQueueAction;
 
+signals:
+	void streamChanged(StreamNode *oldStream, StreamNode *newStream);
+
 public slots:
 	void showStatus();
 	void nextStream();

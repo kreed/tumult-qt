@@ -20,10 +20,13 @@
 
 #include "player.h"
 #include "streamnode.h"
+#include <qfont.h>
 
 StreamsModel::StreamsModel(QObject *parent)
 	: QAbstractTableModel(parent)
 {
+	connect(Player::instance, SIGNAL(streamChanged(StreamNode *, StreamNode *)),
+	                          SLOT(newStream(StreamNode *, StreamNode *)));
 }
 
 static StreamNode *
@@ -39,6 +42,21 @@ streamAt(int i)
 	}
 
 	return stream;
+}
+
+static int
+indexOf(StreamNode *needle)
+{
+	StreamNode *first = Player::instance->firstStream();
+	StreamNode *stream = first;
+
+	for (int i = 0; ; ++i) {
+		if (stream == needle)
+			return i;
+		stream = stream->nextStream();
+		if (stream == first)
+			return -1;
+	}
 }
 
 // this only inserts streams at the end
@@ -143,6 +161,12 @@ StreamsModel::data(const QModelIndex &index, int role) const
 		break;
 	}
 
+	if (role == Qt::FontRole) {
+		QFont font;
+		font.setBold(Player::instance->_currentStream == stream);
+		return font;
+	}
+
 	return QVariant();
 }
 
@@ -212,4 +236,15 @@ StreamsModel::move(int row, Direction direction)
 
 	endMoveRows();
 	return true;
+}
+
+void
+StreamsModel::newStream(StreamNode *oldStream, StreamNode *newStream)
+{
+	int rOld = indexOf(oldStream);
+	int rNew = indexOf(newStream);
+
+	int lower = qMin(rOld, rNew);
+	int upper = qMax(rOld, rNew);
+	emit dataChanged(createIndex(lower, 0), createIndex(upper, 1));
 }

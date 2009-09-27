@@ -21,6 +21,8 @@
 
 #include <qabstractitemmodel.h>
 
+class StreamNode;
+
 class StreamsModel : public QAbstractTableModel {
 	Q_OBJECT
 public:
@@ -40,6 +42,9 @@ public:
 		Down = 1
 	};
 	bool move(int row, Direction);
+
+private slots:
+	void newStream(StreamNode *, StreamNode *);
 };
 
 #endif
