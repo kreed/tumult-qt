@@ -113,11 +113,8 @@ Player::fixEmptyOrStopped()
 		return false;
 
 	if (_currentStream->stream()->count() == 0) {
-		_currentStream->stream()->repopulate();
-		if (_currentStream->stream()->count() == 0) {
-			showStatus();
-			return false;
-		}
+		_currentStream->stream()->repopulateLater();
+		return false;
 	}
 
 	if (!_backend->isPlaying()) {
