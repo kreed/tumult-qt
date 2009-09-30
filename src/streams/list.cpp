@@ -39,14 +39,14 @@ ListStream::setLocation(const QString &uri)
 	if (!_watcher) {
 		_watcher = new QFileSystemWatcher(this);
 		connect(_watcher, SIGNAL(directoryChanged(const QString&)),
-		                  SLOT(repopulateLater()));
+		                  SLOT(repopulate()));
 		connect(_watcher, SIGNAL(fileChanged(const QString&)),
-		                  SLOT(repopulateLater()));
+		                  SLOT(repopulate()));
 	} else
 		_watcher->removePath(_location);
 	_watcher->addPath(uri);
 	_location = uri;
-	repopulateLater();
+	repopulate();
 }
 
 template<class T> static void
@@ -105,7 +105,7 @@ ListStream::clearQueue()
 }
 
 void
-ListStream::repopulate()
+ListStream::repopulateCall()
 {
 	_list.clear();
 	_error.clear();
@@ -114,9 +114,9 @@ ListStream::repopulate()
 }
 
 void
-ListStream::repopulateLater()
+ListStream::repopulate()
 {
-	QtConcurrent::run(this, &ListStream::repopulate);
+	QtConcurrent::run(this, &ListStream::repopulateCall);
 }
 
 int

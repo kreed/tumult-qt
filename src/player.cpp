@@ -115,7 +115,7 @@ Player::fixEmptyOrStopped()
 		return false;
 
 	if (_currentStream->stream()->count() == 0) {
-		_currentStream->stream()->repopulateLater();
+		_currentStream->stream()->repopulate();
 		return false;
 	}
 
@@ -337,7 +337,7 @@ void
 Player::repopulateStream()
 {
 	if (_currentStream)
-		_currentStream->stream()->repopulateLater();
+		_currentStream->stream()->repopulate();
 }
 
 void

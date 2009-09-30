@@ -66,11 +66,6 @@ Stream::repopulate()
 }
 
 void
-Stream::repopulateLater()
-{
-}
-
-void
 Stream::setCurrentTime(qint64 time)
 {
 	_currentTime = time;
