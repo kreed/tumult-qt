@@ -46,16 +46,16 @@ public slots:
 	void repopulate();
 
 protected:
-	virtual void populate() = 0;
-
-	QStringList _list;
+	virtual void populate(QStringList *) = 0;
 
 private:
-	void repopulateCall();
+	void repopulateCall(QStringList *);
 
+	QStringList *_list;
 	QStringList _queue;
 	QFileSystemWatcher *_watcher;
 	QList<MediaSource*> _prevSources;
+	bool _repopulating;
 };
 
 #endif

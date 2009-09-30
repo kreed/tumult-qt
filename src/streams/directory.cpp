@@ -21,11 +21,11 @@
 #include <qdiriterator.h>
 
 void
-DirectoryStream::populate()
+DirectoryStream::populate(QStringList *list)
 {
 	QDirIterator it(_location,
 		QStringList() << "*.m4a" << "*.ogg" << "*.mp3" << "*.flac",
 		QDir::Files, QDirIterator::Subdirectories);
 	while (it.hasNext())
-		_list.append(it.next());
+		list->append(it.next());
 }

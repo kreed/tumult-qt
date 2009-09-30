@@ -25,7 +25,7 @@ class QFileSystemWatcher;
 
 class DirectoryStream : public ListStream {
 protected:
-	void populate();
+	void populate(QStringList *);
 };
 
 #endif

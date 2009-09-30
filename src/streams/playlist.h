@@ -23,7 +23,7 @@
 
 class PlaylistStream : public ListStream {
 protected:
-	void populate();
+	void populate(QStringList *);
 };
 
 #endif

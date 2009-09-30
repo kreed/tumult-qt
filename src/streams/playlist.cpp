@@ -22,7 +22,7 @@
 #include <qtextstream.h>
 
 void
-PlaylistStream::populate()
+PlaylistStream::populate(QStringList *list)
 {
 	QFile file(_location);
 
@@ -31,7 +31,7 @@ PlaylistStream::populate()
 		while (!in.atEnd()) {
 			QString line = in.readLine();
 			if (!line.startsWith('#'))
-				_list << line;
+				list->append(line);
 		}
 	} else {
 		_error = QString("Could not read playlist '%1'").arg(file.fileName());

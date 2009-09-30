@@ -23,12 +23,15 @@
 #include <qurl.h>
 
 ListStream::ListStream()
-	: _watcher(NULL)
+	: _list(NULL)
+	, _watcher(NULL)
+	, _repopulating(false)
 {
 }
 
 ListStream::~ListStream()
 {
+	MediaBackend::deleteSource(_source);
 	foreach (MediaSource *source, _prevSources)
 		MediaBackend::deleteSource(source);
 }
@@ -71,7 +74,7 @@ ListStream::prev()
 bool
 ListStream::next()
 {
-	if (_list.isEmpty())
+	if (_list->isEmpty())
 		return false;
 
 	if (_source) {
@@ -80,7 +83,7 @@ ListStream::next()
 			MediaBackend::deleteSource(_prevSources.takeLast());
 	}
 
-	QString string = _queue.isEmpty() ? _list.at(qrand() % _list.size()) : _queue.takeFirst();
+	QString string = _queue.isEmpty() ? _list->at(qrand() % _list->size()) : _queue.takeFirst();
 	_source = MediaBackend::createSource(string);
 	return true;
 }
@@ -88,7 +91,7 @@ ListStream::next()
 void
 ListStream::fillQueue(const QString &text)
 {
-	_queue = _list.filter(text, Qt::CaseInsensitive);
+	_queue = _list->filter(text, Qt::CaseInsensitive);
 	shuffle(&_queue);
 }
 
@@ -105,22 +108,43 @@ ListStream::clearQueue()
 }
 
 void
-ListStream::repopulateCall()
+ListStream::repopulateCall(QStringList *list)
 {
-	_list.clear();
 	_error.clear();
+
+	populate(list);
+
+	if (_list != list) {
+		QStringList *oldList = _list;
+		_list = list;
+		delete oldList;
+	}
+
+	MediaSource *source = _source;
 	_source = NULL;
-	populate();
+	MediaBackend::deleteSource(source);
+	_repopulating = false;
 }
 
 void
 ListStream::repopulate()
 {
-	QtConcurrent::run(this, &ListStream::repopulateCall);
+	if (_repopulating)
+		return;
+
+	_repopulating = true;
+	QStringList *newList = new QStringList;
+	if (_list && _list->isEmpty()) {
+		delete _list;
+		_list = NULL;
+	}
+	if (!_list)
+		_list = newList;
+	QtConcurrent::run(this, &ListStream::repopulateCall, newList);
 }
 
 int
 ListStream::count() const
 {
-	return _list.count();
+	return _list->count();
 }
