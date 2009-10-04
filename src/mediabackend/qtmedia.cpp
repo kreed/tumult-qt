@@ -24,8 +24,6 @@
 #include <qurl.h>
 #include <qvariant.h>
 
-#include <qdebug.h>
-
 class MediaSource : public QMediaSource {
 public:
 	MediaSource(const QUrl &uri)
@@ -198,7 +196,7 @@ MediaSource *
 MediaBackend::createSource(const QString &uri)
 {
 	if (uri.startsWith('/'))
-		return new MediaSource(QUrl("file://" + uri));
+		return new MediaSource(QUrl::fromLocalFile(QUrl::toPercentEncoding(uri, "/")));
 	else
 		return new MediaSource(QUrl(uri));
 }
