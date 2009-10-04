@@ -97,6 +97,8 @@ MediaBackend::isSourceNull() const
 QString
 MediaBackend::errorString() const
 {
+	if (d->mediaStatus() == QMediaPlayer::InvalidMedia)
+		return "Invalid source";
 	return d->errorString();
 }
 

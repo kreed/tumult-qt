@@ -119,7 +119,7 @@ Player::fixEmptyOrStopped()
 		return false;
 	}
 
-	if (!_backend->isPlaying()) {
+	if (!_backend->isPlaying() && _backend->errorString().isEmpty()) {
 		_backend->play(_backend->isSourceNull() ? _currentStream->stream()->source() : 0);
 		return false;
 	}
