@@ -24,10 +24,10 @@
 #include <qurl.h>
 #include <qvariant.h>
 
-class MediaSource : public QMediaSource {
+class MediaSource : public QMediaContent {
 public:
 	MediaSource(const QUrl &uri)
-		: QMediaSource(uri)
+		: QMediaContent(uri)
 	{
 	}
 };
@@ -174,19 +174,19 @@ MediaBackend::seek(qint64 position)
 QString
 MediaBackend::metaData(MetaData genericKey) const
 {
-	QMediaObject::MetaData key;
+	QtMedia::MetaData key;
 	switch (genericKey) {
 	case MediaBackend::Title:
-		key = QMediaObject::Title;
+		key = QtMedia::Title;
 		break;
 	case MediaBackend::Artist:
-		key = QMediaObject::AlbumArtist;
+		key = QtMedia::AlbumArtist;
 		break;
 	case MediaBackend::Album:
-		key = QMediaObject::AlbumTitle;
+		key = QtMedia::AlbumTitle;
 		break;
 	case MediaBackend::Date:
-		key = QMediaObject::Year;
+		key = QtMedia::Year;
 		break;
 	default:
 		return QString();
