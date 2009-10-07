@@ -60,14 +60,20 @@ StreamNode::setLocation(const QString &uri)
 		return;
 
 	if (uri.endsWith(QLatin1String("m3u"))) {
-		if (!dynamic_cast<PlaylistStream*>(_stream))
+		if (!dynamic_cast<PlaylistStream*>(_stream)) {
+			delete _stream;
 			_stream = new PlaylistStream;
+		}
 	} else if (!uri.isEmpty() && QDir(uri).exists()) {
-		if (!dynamic_cast<DirectoryStream*>(_stream))
+		if (!dynamic_cast<DirectoryStream*>(_stream)) {
+			delete _stream;
 			_stream = new DirectoryStream;
+		}
 	} else {
-		if (!dynamic_cast<UriStream*>(_stream))
+		if (!dynamic_cast<UriStream*>(_stream)) {
+			delete _stream;
 			_stream = new UriStream;
+		}
 	}
 
 	_stream->setLocation(uri);
