@@ -43,7 +43,6 @@ public:
 
 signals:
 	void nameChanged(StreamNode *);
-	void locationChanged(StreamNode *);
 
 private:
 	static void link(StreamNode *a, StreamNode *b);

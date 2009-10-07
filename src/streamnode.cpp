@@ -77,7 +77,6 @@ StreamNode::setLocation(const QString &uri)
 	}
 
 	_stream->setLocation(uri);
-	emit locationChanged(this);
 }
 
 void

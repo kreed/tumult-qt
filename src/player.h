@@ -77,7 +77,6 @@ private slots:
 	void saveHit(const QString &url);
 	void newSourceLoaded();
 	void newStreamName(StreamNode *);
-	void newStreamLocation(StreamNode *);
 	void streamDestroyed(QObject *);
 	void updatePlaying(bool playing);
 

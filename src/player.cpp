@@ -195,8 +195,6 @@ Player::setStream(StreamNode *stream, bool play)
 
 	connect(stream, SIGNAL(nameChanged(StreamNode *)),
 	                SLOT(newStreamName(StreamNode *)));
-	connect(stream, SIGNAL(locationChanged(StreamNode *)),
-	                SLOT(newStreamLocation(StreamNode *)));
 	connect(stream, SIGNAL(destroyed(QObject *)),
 	                SLOT(streamDestroyed(QObject *)));
 
@@ -345,15 +343,6 @@ Player::newStreamName(StreamNode *stream)
 {
 	if (stream == _currentStream)
 		_message->setStream(_currentStream->name());
-}
-
-void
-Player::newStreamLocation(StreamNode *stream)
-{
-	if (stream == _currentStream) {
-		if (fixEmptyOrStopped())
-			changeSource(_currentStream->stream()->source());
-	}
 }
 
 void
