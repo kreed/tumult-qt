@@ -359,8 +359,6 @@ Player::newStreamLocation(StreamNode *stream)
 void
 Player::streamDestroyed(QObject *object)
 {
-	if (object == _firstStream)
-		_firstStream = _firstStream->nextStream();
 	if (object == _currentStream)
 		setStream(_currentStream->nextStream(), _backend->isPlaying());
 }

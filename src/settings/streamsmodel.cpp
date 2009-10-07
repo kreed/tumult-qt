@@ -65,6 +65,8 @@ StreamsModel::removeRows(int row, int count, const QModelIndex &parent)
 	StreamNode *stream = Player::instance->streamAt(row);
 	if (!stream)
 		return false;
+	if (stream == Player::instance->_firstStream)
+		Player::instance->_firstStream = stream->nextStream();
 
 	beginRemoveRows(parent, row, lastRow);
 
