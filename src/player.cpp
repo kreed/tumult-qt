@@ -236,9 +236,9 @@ Player::prevInStream()
 }
 
 void
-Player::nextInStream()
+Player::nextInStream(bool force)
 {
-	if (!fixEmptyOrStopped())
+	if (!force && !fixEmptyOrStopped())
 		return;
 
 	if (_currentStream->stream()->next())
@@ -297,7 +297,7 @@ Player::search()
 	}
 
 	if (_currentStream->stream()->hasQueue())
-		nextInStream();
+		nextInStream(true);
 }
 
 void
