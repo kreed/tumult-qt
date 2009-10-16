@@ -16,7 +16,6 @@ SOURCES += \
 	tumult.cpp
 
 HEADERS += \
-	hitlist.h \
 	keys.h \
 	messagewindow.h \
 	player.h \
