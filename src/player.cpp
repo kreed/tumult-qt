@@ -156,13 +156,11 @@ Player::showStatus()
 	}
 
 	switch (_backend->state()) {
-	case MediaBackend::BufferingState:
-		_message->showText("Buffering...");
-		break;
 	case MediaBackend::LoadingState:
 		_message->showText("Loading...");
 		break;
 	case MediaBackend::PlayingState:
+	case MediaBackend::BufferingState:
 		_message->setProgress(_backend->progress());
 		_message->showMetaData();
 		break;
