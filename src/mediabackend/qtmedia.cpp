@@ -59,7 +59,7 @@ void
 MediaBackendPrivate::newMediaStatus(QMediaPlayer::MediaStatus status)
 {
 	if (status == QMediaPlayer::EndOfMedia) {
-		emit q->sourceFinished(media().contentUri().toString());
+		emit q->sourceFinished(media().canonicalUri().toString());
 		emit q->newSourceNeeded();
 	}
 }
@@ -147,7 +147,7 @@ MediaBackend::play(MediaSource *source)
 void
 MediaBackend::pause()
 {
-	if (d->media().contentUri().scheme() == "file")
+	if (d->media().canonicalUri().scheme() == "file")
 		d->pause();
 	else
 		d->stop();
@@ -212,7 +212,7 @@ MediaBackend::deleteSource(MediaSource *source)
 QString
 MediaBackend::sourceUrl(MediaSource *source)
 {
-	return source->contentUri().toString();
+	return source->canonicalUri().toString();
 }
 
 #endif // USE_QTMEDIA
